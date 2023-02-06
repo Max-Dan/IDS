@@ -18,6 +18,10 @@ public class ActivityRegistrationController {
     @Autowired
     private ActivityRegistrationService activityRegistrationService;
 
+    private record ActivityRequest(String name, String address, String telephoneNumber, String email,
+                                   List<ContentCategory> category) {
+    }
+
     @PostMapping("/register")
     public void registerActivity(@RequestBody ActivityRequest activityRequest) {
         Activity activity = new Activity();
@@ -28,9 +32,5 @@ public class ActivityRegistrationController {
         activity.setCategory(activityRequest.category());
         activity.setRegistrationDate(LocalDateTime.now());
         activityRegistrationService.registerActivity(activity);
-    }
-
-    private record ActivityRequest(String name, String address, String telephoneNumber, String email,
-                                   List<ContentCategory> category) {
     }
 }
