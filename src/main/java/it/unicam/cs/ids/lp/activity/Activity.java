@@ -1,8 +1,9 @@
 package it.unicam.cs.ids.lp.activity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -10,7 +11,6 @@ import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -24,8 +24,8 @@ public class Activity {
     private String address;
     private String telephoneNumber;
     private String email;
-    @OneToMany
-    private List<ContentCategory> category;
+    @Enumerated(EnumType.STRING)
+    private ContentCategory category;
     private LocalDate registrationDate;
 
     @Override

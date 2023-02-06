@@ -10,6 +10,5 @@ public interface ActivityDataValidator<T extends Activity> {
      * @param activity l'attività da registrare
      * @return true se è possibile registrare l'attività, false altrimenti
      */
-    boolean checkActivityValues(T activity);
-
+    boolean areActivityValuesValid(T activity);
 }

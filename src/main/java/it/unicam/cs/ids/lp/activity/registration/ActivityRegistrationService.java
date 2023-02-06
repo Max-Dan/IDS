@@ -16,15 +16,19 @@ public class ActivityRegistrationService implements ActivityDataValidator<Activi
      * Registra l'attività nel database
      *
      * @param activity l'attività da registrare
+     * @return true se l'attività è stata registrata con successo, false altrimenti
      */
-    public void registerActivity(Activity activity) {
-        if (checkActivityValues(activity))
-            activityRepository.save(activity);
+    public boolean registerActivity(Activity activity) {
+        if (!areActivityValuesValid(activity))
+            return false;
+        activityRepository.save(activity);
+        return true;
     }
 
     @Override
-    public boolean checkActivityValues(Activity activity) {
-        return !isAlreadyUsed(activity) && !checkTelephoneNumber(activity.getTelephoneNumber());
+    public boolean areActivityValuesValid(Activity activity) {
+        return !isNameAlreadyUsed(activity)
+                && isTelephoneNumberValid(activity.getTelephoneNumber());
     }
 
     /**
@@ -33,7 +37,7 @@ public class ActivityRegistrationService implements ActivityDataValidator<Activi
      * @param telephoneNumber il numero da verificare
      * @return true se è scritto correttamente, false altrimenti
      */
-    private boolean checkTelephoneNumber(String telephoneNumber) {
+    private boolean isTelephoneNumberValid(String telephoneNumber) {
         return telephoneNumber.matches("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$");
     }
 
@@ -43,7 +47,7 @@ public class ActivityRegistrationService implements ActivityDataValidator<Activi
      * @param activity l'attività da controllare
      * @return true se il nome è già stato utilizzato
      */
-    private boolean isAlreadyUsed(Activity activity) {
+    private boolean isNameAlreadyUsed(Activity activity) {
         return !activityRepository.findById(activity.getName())
                 .equals(Optional.empty());
     }
