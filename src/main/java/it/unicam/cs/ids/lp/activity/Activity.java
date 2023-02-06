@@ -2,14 +2,14 @@ package it.unicam.cs.ids.lp.activity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,9 +24,9 @@ public class Activity {
     private String address;
     private String telephoneNumber;
     private String email;
-    @ManyToOne
+    @OneToMany
     private List<ContentCategory> category;
-    private LocalDateTime registrationDate;
+    private LocalDate registrationDate;
 
     @Override
     public boolean equals(Object o) {

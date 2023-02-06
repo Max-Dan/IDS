@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -30,7 +30,7 @@ public class ActivityRegistrationController {
         activity.setTelephoneNumber(activityRequest.telephoneNumber());
         activity.setEmail(activityRequest.email());
         activity.setCategory(activityRequest.category());
-        activity.setRegistrationDate(LocalDateTime.now());
+        activity.setRegistrationDate(LocalDate.now());
         activityRegistrationService.registerActivity(activity);
     }
 }
