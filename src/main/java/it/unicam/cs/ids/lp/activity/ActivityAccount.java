@@ -1,12 +1,14 @@
 package it.unicam.cs.ids.lp.activity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -14,22 +16,19 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class Activity {
+public class ActivityAccount {
+
     @Id
     private String name;
-    private String address;
-    private String telephoneNumber;
-    private String email;
-    @Enumerated(EnumType.STRING)
-    private ContentCategory category;
+    private String password;
+    private LocalDate registrationDate;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Activity activity = (Activity) o;
-        return name != null && Objects.equals(name, activity.name);
+        ActivityAccount that = (ActivityAccount) o;
+        return name != null && Objects.equals(name, that.name);
     }
 
     @Override
