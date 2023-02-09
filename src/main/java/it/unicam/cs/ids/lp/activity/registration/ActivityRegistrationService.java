@@ -2,7 +2,6 @@ package it.unicam.cs.ids.lp.activity.registration;
 
 import it.unicam.cs.ids.lp.activity.Activity;
 import it.unicam.cs.ids.lp.activity.ActivityAccount;
-import it.unicam.cs.ids.lp.activity.ContentCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -87,7 +86,7 @@ public class ActivityRegistrationService
      * @param category la categoria da verificare
      * @return true se la categoria è corretta, false altrimenti
      */
-    private boolean isCategoryValid(ContentCategory category) {
+    private boolean isCategoryValid(Activity.ContentCategory category) {
         Objects.requireNonNull(category);
         //TODO controllarla meglio
         return true;

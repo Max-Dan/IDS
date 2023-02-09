@@ -36,4 +36,10 @@ public class Activity {
     public int hashCode() {
         return getClass().hashCode();
     }
+
+    public enum ContentCategory {
+        TECH,
+        LIFESTYLE,
+        FITNESS,
+    }
 }

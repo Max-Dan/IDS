@@ -2,7 +2,6 @@ package it.unicam.cs.ids.lp.activity.registration;
 
 import it.unicam.cs.ids.lp.activity.Activity;
 import it.unicam.cs.ids.lp.activity.ActivityAccount;
-import it.unicam.cs.ids.lp.activity.ContentCategory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,7 @@ class ActivityRegistrationServiceTest {
         activity.setAddress("via california");
         activity.setEmail("test@gmail.com");
         activity.setTelephoneNumber("445-678-9034");
-        activity.setCategory(ContentCategory.TECH);
+        activity.setCategory(Activity.ContentCategory.TECH);
 
         ActivityAccount activityAccount = new ActivityAccount();
         activityAccount.setName(activity.getName());
