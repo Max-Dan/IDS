@@ -1,6 +1,5 @@
-package it.unicam.cs.ids.lp.activity.registration;
+package it.unicam.cs.ids.lp.activity;
 
-import it.unicam.cs.ids.lp.activity.ActivityAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ActivityAccountRepository

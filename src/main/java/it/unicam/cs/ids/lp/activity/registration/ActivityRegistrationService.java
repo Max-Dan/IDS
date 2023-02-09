@@ -2,6 +2,8 @@ package it.unicam.cs.ids.lp.activity.registration;
 
 import it.unicam.cs.ids.lp.activity.Activity;
 import it.unicam.cs.ids.lp.activity.ActivityAccount;
+import it.unicam.cs.ids.lp.activity.ActivityAccountRepository;
+import it.unicam.cs.ids.lp.activity.ActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
