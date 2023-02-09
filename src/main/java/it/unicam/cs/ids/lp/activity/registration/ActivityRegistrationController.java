@@ -6,15 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/activityRegistration")
 public class ActivityRegistrationController {
 
     @Autowired
@@ -22,7 +18,7 @@ public class ActivityRegistrationController {
     @Autowired
     private ActivityRegistrationService activityRegistrationService;
 
-    @PostMapping("/register")
+    @PutMapping("/activityRegistration/register")
     public ResponseEntity<?> registerActivity(@RequestBody ActivityRequest activityRequest) {
         Activity activity = setActivity(activityRequest);
         ActivityAccount activityAccount = setActivityProfile(activityRequest);
@@ -47,6 +43,12 @@ public class ActivityRegistrationController {
         activity.setEmail(activityRequest.email());
         activity.setCategory(activityRequest.category());
         return activity;
+    }
+
+    @DeleteMapping("/activityUnregistration/{name}")
+    public ResponseEntity<?> unregisterActivity(@PathVariable String name) {
+        activityRegistrationService.unregisterActivityByName(name);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     protected record ActivityRequest(String name, String address, String telephoneNumber, String email,

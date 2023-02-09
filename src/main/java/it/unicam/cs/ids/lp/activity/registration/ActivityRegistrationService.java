@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Service
 public class ActivityRegistrationService
-        implements ActivityDataValidator<Activity>, ActivityRecorder<Activity, ActivityAccount> {
+        implements ActivityDataValidator<Activity>, ActivityRegistry<Activity, ActivityAccount> {
 
     @Autowired
     private ActivityRepository activityRepository;
@@ -90,5 +90,9 @@ public class ActivityRegistrationService
         Objects.requireNonNull(category);
         //TODO controllarla meglio
         return true;
+    }
+
+    public void unregisterActivityByName(String name) {
+        activityRepository.deleteById(name);
     }
 }
