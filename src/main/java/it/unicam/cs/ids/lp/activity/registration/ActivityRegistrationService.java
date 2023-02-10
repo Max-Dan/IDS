@@ -2,7 +2,8 @@ package it.unicam.cs.ids.lp.activity.registration;
 
 import it.unicam.cs.ids.lp.activity.Activity;
 import it.unicam.cs.ids.lp.activity.ActivityAccount;
-import it.unicam.cs.ids.lp.activity.ContentCategory;
+import it.unicam.cs.ids.lp.activity.ActivityAccountRepository;
+import it.unicam.cs.ids.lp.activity.ActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +11,7 @@ import java.util.Objects;
 
 @Service
 public class ActivityRegistrationService
-        implements ActivityDataValidator<Activity>, ActivityRecorder<Activity, ActivityAccount> {
+        implements ActivityDataValidator<Activity>, ActivityRegistry<Activity, ActivityAccount> {
 
     @Autowired
     private ActivityRepository activityRepository;
@@ -28,8 +29,8 @@ public class ActivityRegistrationService
 
     @Override
     public boolean areActivityValuesValid(Activity activity) {
-        Objects.requireNonNull(activity);
-        return isNameValid(activity.getName())
+        return activity == null
+                || isNameValid(activity.getName())
                 && isAddressValid(activity.getAddress())
                 && isTelephoneNumberValid(activity.getTelephoneNumber())
                 && isEmailValid(activity.getEmail())
@@ -43,8 +44,8 @@ public class ActivityRegistrationService
      * @return true se è scritto correttamente, false altrimenti
      */
     protected boolean isNameValid(String name) {
-        Objects.requireNonNull(name);
-        return name.length() > 0
+        return name == null
+                || name.length() > 0
                 && name.length() < 255
                 && !name.contains("\\.[]{}()<>*+-=!?^$|");
     }
@@ -66,8 +67,8 @@ public class ActivityRegistrationService
      * @return true se è scritto correttamente, false altrimenti
      */
     protected boolean isTelephoneNumberValid(String telephoneNumber) {
-        Objects.requireNonNull(telephoneNumber);
-        return telephoneNumber.matches("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$");
+        return telephoneNumber == null
+                || telephoneNumber.matches("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$");
     }
 
     /**
@@ -77,8 +78,8 @@ public class ActivityRegistrationService
      * @return true se l'email è valida, false altrimenti
      */
     protected boolean isEmailValid(String email) {
-        Objects.requireNonNull(email);
-        return email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
+        return email == null
+                || email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
     }
 
     /**
@@ -87,9 +88,13 @@ public class ActivityRegistrationService
      * @param category la categoria da verificare
      * @return true se la categoria è corretta, false altrimenti
      */
-    private boolean isCategoryValid(ContentCategory category) {
+    private boolean isCategoryValid(Activity.ContentCategory category) {
         Objects.requireNonNull(category);
         //TODO controllarla meglio
         return true;
+    }
+
+    public void unregisterActivityByName(String name) {
+        activityRepository.deleteById(name);
     }
 }

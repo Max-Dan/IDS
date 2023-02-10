@@ -1,6 +1,9 @@
 package it.unicam.cs.ids.lp.activity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -14,7 +17,6 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Activity {
     @Id
     private String name;
@@ -35,5 +37,11 @@ public class Activity {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    public enum ContentCategory {
+        TECH,
+        LIFESTYLE,
+        FITNESS,
     }
 }
