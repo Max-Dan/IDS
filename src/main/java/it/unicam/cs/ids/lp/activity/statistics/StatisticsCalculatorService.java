@@ -1,9 +1,13 @@
 package it.unicam.cs.ids.lp.activity.statistics;
 
+import it.unicam.cs.ids.lp.activity.Activity;
+import it.unicam.cs.ids.lp.activity.ActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -13,19 +17,26 @@ public class StatisticsCalculatorService {
     @Autowired
     private StatisticRepository statisticRepository;
 
-    private Statistic typeToStatistic(StatisticType statisticType) {
-        return null;
+    @Autowired
+    private ActivityRepository activityRepository;
+
+    public List<Statistic> analyzeData(Collection<StatisticType> statisticTypes, String activityNameId) {
+        Activity activity = activityRepository.findById(activityNameId).orElseThrow();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        return statisticTypes.stream()
+                .map(statisticType -> getStatistic(activity, executorService, statisticType))
+                .toList();
     }
 
-    public void analyzeData(Collection<StatisticType> statisticTypes) {
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        statisticTypes
-                .forEach(statisticType ->
-                        executorService.execute(() -> {
-                            Statistic statistic = typeToStatistic(statisticType);
-                            statistic.setValue(statistic.calculate());
-                            statisticRepository.save(statistic);
-                        })
-                );
+    private Statistic getStatistic(Activity activity, ExecutorService executorService, StatisticType statisticType) {
+        try {
+            return executorService.submit(() -> {
+                Statistic statistic = StatisticFactory.createStatistic(activity, statisticType);
+                statisticRepository.save(statistic);
+                return statistic;
+            }).get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
