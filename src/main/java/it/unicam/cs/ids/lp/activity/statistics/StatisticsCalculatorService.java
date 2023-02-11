@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,7 +19,7 @@ public class StatisticsCalculatorService {
     @Autowired
     private ActivityRepository activityRepository;
 
-    public List<Statistic> analyzeData(Collection<StatisticType> statisticTypes, String activityNameId) {
+    public Collection<Statistic> analyzeData(Collection<StatisticType> statisticTypes, String activityNameId) {
         Activity activity = activityRepository.findById(activityNameId).orElseThrow();
         ExecutorService executorService = Executors.newCachedThreadPool();
         return statisticTypes.stream()
