@@ -5,10 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.ManyToOne;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.Hibernate;
 
 import java.io.Serializable;
@@ -38,25 +35,33 @@ public abstract class Statistic {
         this.date = LocalDate.now();
     }
 
-    abstract double calculate();
+    /**
+     * Calcola la statistica dell'attività
+     *
+     * @param activity l'attività su cui fare la statistica
+     * @return il valore della statistica
+     */
+    abstract double calculate(Activity activity);
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Statistic statistic = (Statistic) o;
-        return activity != null && Objects.equals(activity, statistic.activity);
+        return activity != null && Objects.equals(activity, statistic.activity)
+                && type != null && Objects.equals(type, statistic.type)
+                && date != null && Objects.equals(date, statistic.date);
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(activity, type, date);
     }
 
-    public static class StatisticId implements Serializable {
+    public static @Data class StatisticId implements Serializable {
         private Activity activity;
         private Activity.ContentCategory category;
         private LocalDate date;
     }
-}
 
+}
