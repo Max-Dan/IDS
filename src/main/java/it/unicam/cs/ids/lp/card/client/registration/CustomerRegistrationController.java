@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.lp.card.client.registration;
 
+import it.unicam.cs.ids.lp.card.CustomerCard;
 import it.unicam.cs.ids.lp.card.client.Customer;
 import it.unicam.cs.ids.lp.card.client.CustomerAccount;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +36,21 @@ public class CustomerRegistrationController {
         return customerAccount;
     }
 
-    private Customer setCustomer(CustomerRequest activityRequest) {
+    private Customer setCustomer(CustomerRequest customerRequest) {
         Customer customer = new Customer();
-        customer.setName(activityRequest.name());
-        customer.setSurname(activityRequest.surname());
-        customer.setTelephoneNumber(activityRequest.telephoneNumber());
-        customer.setEmail(activityRequest.email());
+        customer.setName(customerRequest.name());
+        customer.setSurname(customerRequest.surname());
+        customer.setTelephoneNumber(customerRequest.telephoneNumber());
+        customer.setEmail(customerRequest.email());
         return customer;
+    }
+
+    private CustomerCard setCustomerCard(CustomerRequest customerRequest) {
+        CustomerCard customerCard = new CustomerCard();
+        customerCard.setIdentificator(customerRequest.name() + customerRequest.surname());
+        customerCard.setTelephoneNumber(customerRequest.telephoneNumber());
+        customerCard.setEmail(customerRequest.email());
+        return customerCard;
     }
 
     @DeleteMapping("/customerUnregistration/{name}")
