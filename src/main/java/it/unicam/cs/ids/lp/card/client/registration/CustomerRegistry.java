@@ -1,9 +1,10 @@
 package it.unicam.cs.ids.lp.card.client.registration;
 
+import it.unicam.cs.ids.lp.card.CustomerCard;
 import it.unicam.cs.ids.lp.card.client.Customer;
 import it.unicam.cs.ids.lp.card.client.CustomerAccount;
 
-public interface CustomerRegistry<C extends Customer, Account extends CustomerAccount> {
+public interface CustomerRegistry<C extends Customer, Account extends CustomerAccount, CSC extends CustomerCard> {
 
     /**
      * Registra il customer nel database
@@ -12,7 +13,7 @@ public interface CustomerRegistry<C extends Customer, Account extends CustomerAc
      * @param customerAccount il profilo del customer da registrare
      * @return true se il customer è stata registrato con successo, false altrimenti
      */
-    boolean registerCustomer(C customer, Account customerAccount);
+    boolean registerCustomer(C customer, Account customerAccount, CSC customerCard);
 
     /**
      * Disiscrive il customer nel database

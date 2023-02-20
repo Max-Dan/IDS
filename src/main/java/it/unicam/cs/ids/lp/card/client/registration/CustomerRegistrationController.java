@@ -23,7 +23,8 @@ public class CustomerRegistrationController {
     public ResponseEntity<?> registerCustomer(@RequestBody CustomerRequest customerRequest) {
         Customer customer = setCustomer(customerRequest);
         CustomerAccount customerAccount = setCustomerProfile(customerRequest);
-        boolean registered = customerRegistrationService.registerCustomer(customer, customerAccount);
+        CustomerCard customerCard = setCustomerCard(customerRequest);
+        boolean registered = customerRegistrationService.registerCustomer(customer, customerAccount, customerCard);
         if (registered) return new ResponseEntity<>(HttpStatus.CREATED);
         else return new ResponseEntity<>(HttpStatus.CONFLICT);
     }

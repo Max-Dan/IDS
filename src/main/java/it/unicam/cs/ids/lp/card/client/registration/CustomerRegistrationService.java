@@ -1,5 +1,7 @@
 package it.unicam.cs.ids.lp.card.client.registration;
 
+import it.unicam.cs.ids.lp.card.CustomerCard;
+import it.unicam.cs.ids.lp.card.CustomerCardRepository;
 import it.unicam.cs.ids.lp.card.client.Customer;
 import it.unicam.cs.ids.lp.card.client.CustomerAccount;
 import it.unicam.cs.ids.lp.card.client.CustomerAccountRepository;
@@ -9,19 +11,23 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CustomerRegistrationService
-        implements CustomerRegistry<Customer, CustomerAccount> {
+        implements CustomerRegistry<Customer, CustomerAccount, CustomerCard> {
 
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
     private CustomerAccountRepository customerAccountRepository;
 
+    @Autowired
+    private CustomerCardRepository customerCardRepository;
+
     @Override
-    public boolean registerCustomer(Customer customer, CustomerAccount customerAccount) {
+    public boolean registerCustomer(Customer customer, CustomerAccount customerAccount, CustomerCard customerCard) {
         if (!registrationValuesCorrectness(customer))
             return false;
         customerRepository.save(customer);
         customerAccountRepository.save(customerAccount);
+        customerCardRepository.save(customerCard);
         return true;
     }
 

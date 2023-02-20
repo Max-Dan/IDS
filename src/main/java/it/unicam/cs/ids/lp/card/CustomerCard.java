@@ -24,7 +24,7 @@ public class CustomerCard {
     private String email;
 
     @Enumerated(EnumType.STRING)
-    private CustomerCard.CardProgram program;
+    private CardProgram program;
 
 
     @Override
