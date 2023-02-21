@@ -1,15 +1,12 @@
 package it.unicam.cs.ids.lp.activity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.Hibernate;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -19,16 +16,20 @@ import java.util.Objects;
 public class ActivityAccount {
 
     @Id
-    private String name;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
+    private Long id;
     private String password;
     private LocalDate registrationDate;
+    @OneToOne(mappedBy = "activityAccount")
+    private Activity activity;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         ActivityAccount that = (ActivityAccount) o;
-        return name != null && Objects.equals(name, that.name);
+        return activity.equals(that.activity) && password.equals(that.password) && registrationDate.equals(that.registrationDate);
     }
 
     @Override

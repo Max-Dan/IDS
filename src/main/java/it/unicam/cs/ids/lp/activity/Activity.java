@@ -1,9 +1,6 @@
 package it.unicam.cs.ids.lp.activity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -25,6 +22,9 @@ public class Activity {
     private String email;
     @Enumerated(EnumType.STRING)
     private ContentCategory category;
+    @OneToOne(cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private ActivityAccount activityAccount;
 
     @Override
     public boolean equals(Object o) {

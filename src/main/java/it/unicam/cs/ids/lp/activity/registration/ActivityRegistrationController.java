@@ -2,6 +2,7 @@ package it.unicam.cs.ids.lp.activity.registration;
 
 import it.unicam.cs.ids.lp.activity.Activity;
 import it.unicam.cs.ids.lp.activity.ActivityAccount;
+import it.unicam.cs.ids.lp.activity.ActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,8 @@ public class ActivityRegistrationController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private ActivityRegistrationService activityRegistrationService;
+    @Autowired
+    private ActivityRepository activityRepository;
 
     @PutMapping("/activityRegistration/register")
     public ResponseEntity<?> registerActivity(@RequestBody ActivityRequest activityRequest) {
@@ -29,7 +32,7 @@ public class ActivityRegistrationController {
 
     private ActivityAccount setActivityProfile(ActivityRequest activityRequest) {
         ActivityAccount activityAccount = new ActivityAccount();
-        activityAccount.setName(activityRequest.name());
+        activityAccount.setActivity(activityRepository.findById(activityRequest.name).orElseThrow());
         activityAccount.setPassword(passwordEncoder.encode(activityRequest.password()));
         activityAccount.setRegistrationDate(LocalDate.now());
         return activityAccount;
