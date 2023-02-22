@@ -25,6 +25,7 @@ public class CustomerCard {
     private CardProgram program;
     private Integer points = 0;
     private Integer tier = 1;
+    private Boolean family = false;
 
     @Override
     public boolean equals(Object o) {

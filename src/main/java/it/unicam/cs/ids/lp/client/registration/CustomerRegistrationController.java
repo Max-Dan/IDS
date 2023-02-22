@@ -51,6 +51,7 @@ public class CustomerRegistrationController {
 
     private CustomerCard setCustomerCard(CustomerRequest customerRequest) {
         CustomerCard customerCard = new CustomerCard();
+        customerCard.setFamily(customerRequest.isFamily);
         customerCard.setCustomer(customerRepository.findById(customerRequest.name).orElseThrow());
         return customerCard;
     }
@@ -62,6 +63,7 @@ public class CustomerRegistrationController {
     }
 
     protected record CustomerRequest(String name, String surname, String telephoneNumber, String email,
+                                     Boolean isFamily,
                                      String password) {
     }
 }
