@@ -1,11 +1,11 @@
-package it.unicam.cs.ids.lp.card.client.registration;
+package it.unicam.cs.ids.lp.client.registration;
 
-import it.unicam.cs.ids.lp.card.CustomerCard;
-import it.unicam.cs.ids.lp.card.CustomerCardRepository;
-import it.unicam.cs.ids.lp.card.client.Customer;
-import it.unicam.cs.ids.lp.card.client.CustomerAccount;
-import it.unicam.cs.ids.lp.card.client.CustomerAccountRepository;
-import it.unicam.cs.ids.lp.card.client.CustomerRepository;
+import it.unicam.cs.ids.lp.client.Customer;
+import it.unicam.cs.ids.lp.client.CustomerAccount;
+import it.unicam.cs.ids.lp.client.CustomerAccountRepository;
+import it.unicam.cs.ids.lp.client.CustomerRepository;
+import it.unicam.cs.ids.lp.client.card.CustomerCard;
+import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,6 @@ public class CustomerRegistrationService
     private CustomerRepository customerRepository;
     @Autowired
     private CustomerAccountRepository customerAccountRepository;
-
     @Autowired
     private CustomerCardRepository customerCardRepository;
 

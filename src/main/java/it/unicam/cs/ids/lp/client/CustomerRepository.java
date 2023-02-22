@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.lp.card.client;
+package it.unicam.cs.ids.lp.client;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

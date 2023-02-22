@@ -1,8 +1,8 @@
-package it.unicam.cs.ids.lp.card.client.registration;
+package it.unicam.cs.ids.lp.client.registration;
 
-import it.unicam.cs.ids.lp.card.CustomerCard;
-import it.unicam.cs.ids.lp.card.client.Customer;
-import it.unicam.cs.ids.lp.card.client.CustomerAccount;
+import it.unicam.cs.ids.lp.client.Customer;
+import it.unicam.cs.ids.lp.client.CustomerAccount;
+import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +27,13 @@ class CustomerRegistrationServiceTest {
         customer.setTelephoneNumber("132-456-7890");
 
         CustomerCard customerCard = new CustomerCard();
-        //customerCard.setIdentificator("Steve"+"Jobs");????
-        customerCard.setTelephoneNumber("132-456-7890");
-        customerCard.setEmail("StivJobs@gmail.com");
+        customerCard.setCustomer(customer);
         customerCard.setProgram(CustomerCard.CardProgram.Points);
 
         CustomerAccount customerAccount = new CustomerAccount();
-        customerAccount.setName(customer.getName());
+        customerAccount.setCustomer(customer);
         customerAccount.setPassword("SteveIlJobs");
         Assertions.assertTrue(customerRegistrationService.registerCustomer(customer, customerAccount, customerCard));
-
-
     }
 
     @Test

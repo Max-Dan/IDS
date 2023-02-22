@@ -1,8 +1,8 @@
-package it.unicam.cs.ids.lp.card.client.registration;
+package it.unicam.cs.ids.lp.client.registration;
 
-import it.unicam.cs.ids.lp.card.CustomerCard;
-import it.unicam.cs.ids.lp.card.client.Customer;
-import it.unicam.cs.ids.lp.card.client.CustomerAccount;
+import it.unicam.cs.ids.lp.client.Customer;
+import it.unicam.cs.ids.lp.client.CustomerAccount;
+import it.unicam.cs.ids.lp.client.card.CustomerCard;
 
 public interface CustomerRegistry<C extends Customer, Account extends CustomerAccount, CSC extends CustomerCard> {
 

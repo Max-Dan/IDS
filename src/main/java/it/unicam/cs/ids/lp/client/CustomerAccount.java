@@ -1,12 +1,10 @@
-package it.unicam.cs.ids.lp.card.client;
+package it.unicam.cs.ids.lp.client;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.Hibernate;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -19,20 +17,24 @@ import java.util.Objects;
 public class CustomerAccount {
 
     @Id
-    private String name;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
+    private Long id;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Customer customer;
     private String password;
     private LocalDate registrationDate;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         CustomerAccount that = (CustomerAccount) o;
-        return name != null && Objects.equals(name, that.name);
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(id);
     }
 }
