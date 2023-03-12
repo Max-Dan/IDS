@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-
 @Entity
 @Getter
 @Setter
@@ -22,5 +21,4 @@ public class Password {
 
     @Column(nullable = false)
     private String password;
-
 }
