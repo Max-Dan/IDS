@@ -2,6 +2,10 @@ package it.unicam.cs.ids.lp.client.card;
 
 import it.unicam.cs.ids.lp.client.Customer;
 import it.unicam.cs.ids.lp.client.card.CustomerCard.CardProgram;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,34 +42,14 @@ public class CustomerCardController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class CustomerCardRequest {
         private String customerName;
         private CardProgram program;
         private boolean family;
-
-        public String getCustomerName() {
-            return customerName;
-        }
-
-        public void setCustomerName(String customerName) {
-            this.customerName = customerName;
-        }
-
-        public CardProgram getProgram() {
-            return program;
-        }
-
-        public void setProgram(CardProgram program) {
-            this.program = program;
-        }
-
-        public boolean isFamily() {
-            return family;
-        }
-
-        public void setFamily(boolean family) {
-            this.family = family;
-        }
 
         public Customer toCustomer() {
             Customer customer = new Customer();
