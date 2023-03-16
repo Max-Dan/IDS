@@ -1,16 +1,15 @@
 package it.unicam.cs.ids.lp.client;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.Hibernate;
 
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 
@@ -19,28 +18,31 @@ import java.util.Set;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class Customer {
+public class Customer implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
     private String name;
     private String surname;
     private String telephoneNumber;
     private String email;
-    @OneToOne(mappedBy = "customer")
-    private CustomerAccount customerAccount;
-    @OneToMany(mappedBy = "id")
+    @JsonIgnore
+    private String password;
+    private LocalDate registrationDate;
+    @OneToMany
     private Set<CustomerCard> cards;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Customer customer = (Customer) o;
-        return name != null && Objects.equals(name, customer.name);
+        return id == customer.id;
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(id);
     }
 }
 

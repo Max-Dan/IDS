@@ -15,12 +15,12 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 public class CustomerCard {
-    @ManyToOne
-    private Customer customer;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
+    @ManyToOne
+    private Customer customer;
     @Enumerated(EnumType.STRING)
     private CardProgram program;
     private Integer points = 0;
@@ -32,20 +32,12 @@ public class CustomerCard {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CustomerCard that = (CustomerCard) o;
-        return id.equals(that.id);
+        return customer.equals(that.customer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    public enum CardProgram {
-        Points,
-        Levels,
-        Membership,
-        Cashback,
-        Coalition,
+        return Objects.hash(customer);
     }
 }
 

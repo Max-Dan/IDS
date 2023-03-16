@@ -1,38 +1,31 @@
 package it.unicam.cs.ids.lp.client.registration;
 
 import it.unicam.cs.ids.lp.client.Customer;
-import it.unicam.cs.ids.lp.client.CustomerAccount;
-import it.unicam.cs.ids.lp.client.CustomerAccountRepository;
 import it.unicam.cs.ids.lp.client.CustomerRepository;
-import it.unicam.cs.ids.lp.client.card.CustomerCard;
-import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class CustomerRegistrationService
-        implements CustomerRegistry<Customer, CustomerAccount, CustomerCard> {
+        implements CustomerRegistry<Customer> {
 
     @Autowired
     private CustomerRepository customerRepository;
-    @Autowired
-    private CustomerAccountRepository customerAccountRepository;
-    @Autowired
-    private CustomerCardRepository customerCardRepository;
 
     @Override
-    public boolean registerCustomer(Customer customer, CustomerAccount customerAccount, CustomerCard customerCard) {
-        if (!registrationValuesCorrectness(customer))
+    public boolean registerCustomer(Customer customer) {
+        Objects.requireNonNull(customer);
+        if (customerRepository.existsByEmail(customer.getEmail())
+                || !areRegistrationValuesValid(customer))
             return false;
         customerRepository.save(customer);
-        customerAccountRepository.save(customerAccount);
-        customerCardRepository.save(customerCard);
         return true;
     }
 
-    public boolean registrationValuesCorrectness(Customer customer) {
-        return customer == null
-                || isNameValid(customer.getName())
+    public boolean areRegistrationValuesValid(Customer customer) {
+        return isNameValid(customer.getName())
                 && isSurnameValid(customer.getSurname())
                 && isTelephoneNumberValid(customer.getTelephoneNumber())
                 && isEmailValid(customer.getEmail());
@@ -83,7 +76,7 @@ public class CustomerRegistrationService
                 || email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
     }
 
-    public void unregisterCustomerByName(String name) {
-        customerRepository.deleteById(name);
+    public void unregisterCustomer(long customerId) {
+        customerRepository.deleteById(customerId);
     }
 }
