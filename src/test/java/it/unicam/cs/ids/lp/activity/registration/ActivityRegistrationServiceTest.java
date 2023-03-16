@@ -1,7 +1,7 @@
 package it.unicam.cs.ids.lp.activity.registration;
 
 import it.unicam.cs.ids.lp.activity.Activity;
-import it.unicam.cs.ids.lp.activity.ActivityAccount;
+import it.unicam.cs.ids.lp.activity.ContentCategory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,38 +14,21 @@ class ActivityRegistrationServiceTest {
 
     @Autowired
     private ActivityRegistrationService activityRegistrationService;
+    @Autowired
+    private ActivityMapper activityMapper;
 
     @Test
     void registerActivity() {
         assertThrows(NullPointerException.class,
-                () -> activityRegistrationService.registerActivity(null, new ActivityAccount()));
-        Activity activity = new Activity();
-        activity.setName("Apple");
-        activity.setAddress("via california");
-        activity.setEmail("test@gmail.com");
-        activity.setTelephoneNumber("445-678-9034");
-        activity.setCategory(Activity.ContentCategory.TECH);
-
-        ActivityAccount activityAccount = new ActivityAccount();
-        activityAccount.setName(activity.getName());
-        activityAccount.setPassword("sonoLaApple");
-        Assertions.assertTrue(activityRegistrationService.registerActivity(activity, activityAccount));
-    }
-
-    @Test
-    void isNameValid() {
-
-    }
-
-    @Test
-    void isAddressValid() {
-    }
-
-    @Test
-    void isTelephoneNumberValid() {
-    }
-
-    @Test
-    void isEmailValid() {
+                () -> activityRegistrationService.registerActivity(null));
+        Activity activity = activityMapper.apply(new ActivityRequest(
+                "Apple",
+                "via california",
+                "445-678-9034",
+                "test@gmail.com",
+                ContentCategory.TECHNOLOGY,
+                "sonoLaApple"
+        ));
+        Assertions.assertTrue(activityRegistrationService.registerActivity(activity));
     }
 }
