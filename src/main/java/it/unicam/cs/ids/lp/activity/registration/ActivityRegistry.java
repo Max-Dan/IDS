@@ -2,7 +2,7 @@ package it.unicam.cs.ids.lp.activity.registration;
 
 import it.unicam.cs.ids.lp.activity.Activity;
 
-public interface ActivityRegistry<A extends Activity> {
+public interface ActivityRegistry<A extends Activity, ID> {
 
     /**
      * Registra l'attività nel database
@@ -15,7 +15,7 @@ public interface ActivityRegistry<A extends Activity> {
     /**
      * Disiscrive l'attività nel database
      *
-     * @param name il nome dell'attività
+     * @param id l'id dell'attività
      */
-    void unregisterActivityByName(String name);
+    void unregisterActivityById(ID id);
 }

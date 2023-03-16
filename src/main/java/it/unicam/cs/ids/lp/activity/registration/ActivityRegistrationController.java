@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/activity")
 public class ActivityRegistrationController {
 
     @Autowired
@@ -14,7 +15,7 @@ public class ActivityRegistrationController {
     @Autowired
     private ActivityRegistrationService activityRegistrationService;
 
-    @PutMapping("/activityRegistration/register")
+    @PutMapping("/register")
     public ResponseEntity<?> registerActivity(@RequestBody ActivityRequest activityRequest) {
         Activity activity = activityMapper.apply(activityRequest);
         boolean registered = activityRegistrationService.registerActivity(activity);
@@ -22,9 +23,9 @@ public class ActivityRegistrationController {
         else return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
-    @DeleteMapping("/activityUnregistration/{name}")
-    public ResponseEntity<?> unregisterActivity(@PathVariable String name) {
-        activityRegistrationService.unregisterActivityByName(name);
+    @DeleteMapping("/unregister/{activityId}")
+    public ResponseEntity<?> unregisterActivity(@PathVariable long activityId) {
+        activityRegistrationService.unregisterActivityById(activityId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

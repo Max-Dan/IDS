@@ -10,7 +10,7 @@ import java.util.Objects;
 
 @Service
 public class ActivityRegistrationService
-        implements ActivityDataValidator<Activity>, ActivityRegistry<Activity> {
+        implements ActivityDataValidator<Activity>, ActivityRegistry<Activity, Long> {
 
     @Autowired
     private ActivityRepository activityRepository;
@@ -89,7 +89,7 @@ public class ActivityRegistrationService
         return true;
     }
 
-    public void unregisterActivityByName(String name) {
-        activityRepository.deleteByName(name);
+    public void unregisterActivityById(Long id) {
+        activityRepository.deleteById(id);
     }
 }
