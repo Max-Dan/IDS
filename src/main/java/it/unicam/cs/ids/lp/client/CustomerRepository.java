@@ -12,5 +12,9 @@ public interface CustomerRepository
 
     @Override
     Optional<Customer> findById(Long aLong);
+
+    Optional<Customer> findByReferralCode(String referralCode);
+
+    boolean existsByReferralCode(String referralCode);
 }
 

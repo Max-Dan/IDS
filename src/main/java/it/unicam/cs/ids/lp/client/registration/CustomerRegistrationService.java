@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class CustomerRegistrationService
@@ -20,7 +22,26 @@ public class CustomerRegistrationService
         if (customerRepository.existsByEmail(customer.getEmail())
                 || !areRegistrationValuesValid(customer))
             return false;
-        customerRepository.save(customer);
+
+        // Salva il cliente per avere un id generato
+        Customer savedCustomer = customerRepository.save(customer);
+
+        // Genera e setta un referal unico per il customer
+        String referralCode = generateUniqueReferralCode(savedCustomer.getId());
+        savedCustomer.setReferralCode(referralCode);
+
+        // Setta il campo del referal link usato e incrementa il campo di clienti invitati tramite referal all'account che lo ha fornito
+        String referred = customer.getReferred();
+        if (referred != null && !referred.isEmpty()) {
+            Optional<Customer> referredCustomerOpt = customerRepository.findByReferralCode(referred);
+            if (referredCustomerOpt.isPresent()) {
+                Customer referredCustomer = referredCustomerOpt.get();
+                referredCustomer.setReferredTo(referredCustomer.getReferredTo() + 1);
+                customerRepository.save(referredCustomer);
+            } // Se il referal è invalido o non esiste, la registrazione prosegue dato che non è obbligatorio
+        }
+
+        customerRepository.save(savedCustomer);
         return true;
     }
 
@@ -78,5 +99,27 @@ public class CustomerRegistrationService
 
     public void unregisterCustomer(long customerId) {
         customerRepository.deleteById(customerId);
+    }
+
+    private String generateUniqueReferralCode(Long customerId) {
+        // Caratteri disponibili per creare il codice di riferimento alfanumerico
+        String base62Chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        // Inizializza un oggetto StringBuilder per creare il codice di riferimento
+        StringBuilder referralCode = new StringBuilder();
+        Random random = new Random();
+
+        // Converte l'ID del cliente in una stringa e lo aggiunge al codice di riferimento
+        String customerIdStr = Long.toString(customerId);
+        referralCode.append(customerIdStr);
+
+        // Calcola e riempie il referal con caratteri alfanumerici
+        int remainingChars = 16 - customerIdStr.length();
+        for (int i = 0; i < remainingChars; i++) {
+            int randomIndex = random.nextInt(base62Chars.length());
+            referralCode.append(base62Chars.charAt(randomIndex));
+        }
+
+        // Restituisce il codice di riferimento generato come stringa
+        return referralCode.toString();
     }
 }

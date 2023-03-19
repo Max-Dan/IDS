@@ -13,13 +13,16 @@ class CustomerRegistrationServiceTest {
 
     @Autowired
     private CustomerRegistrationService customerRegistrationService;
+    @Autowired
+    private CustomerMapper customerMapper;
 
     @Test
     void registerCustomer() {
         assertThrows(NullPointerException.class,
                 () -> customerRegistrationService.registerCustomer(null));
-        Customer customer = new Customer();
-        customer.setEmail("customer.email@test.com");
+        CustomerRequest customerRequest =
+                new CustomerRequest("Steve", "jobs", "StivJobs@gmail.com", "132-456-7890", "SteveIlJobs");
+        Customer customer = customerMapper.apply(customerRequest);
         Assertions.assertTrue(customerRegistrationService.registerCustomer(customer));
         Assertions.assertFalse(customerRegistrationService.registerCustomer(customer));
     }
