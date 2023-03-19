@@ -21,7 +21,7 @@ class CustomerRegistrationServiceTest {
         assertThrows(NullPointerException.class,
                 () -> customerRegistrationService.registerCustomer(null));
         CustomerRequest customerRequest =
-                new CustomerRequest("Steve", "jobs", "StivJobs@gmail.com", "132-456-7890", "SteveIlJobs");
+                new CustomerRequest("Steve", "jobs", "StivJobs@gmail.com", "132-456-7890", "SteveIlJobs", "");
         Customer customer = customerMapper.apply(customerRequest);
         Assertions.assertTrue(customerRegistrationService.registerCustomer(customer));
         Assertions.assertFalse(customerRegistrationService.registerCustomer(customer));

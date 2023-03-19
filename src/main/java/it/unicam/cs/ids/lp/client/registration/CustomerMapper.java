@@ -22,6 +22,7 @@ public class CustomerMapper implements Function<CustomerRequest, Customer> {
         customer.setEmail(customerRequest.email());
         customer.setPassword(passwordEncoder.encode(customerRequest.password()));
         customer.setRegistrationDate(LocalDate.now());
+        customer.setReferred(customerRequest.referralCode());
         return customer;
     }
 }
