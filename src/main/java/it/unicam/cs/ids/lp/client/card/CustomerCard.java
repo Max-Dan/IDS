@@ -1,9 +1,11 @@
 package it.unicam.cs.ids.lp.client.card;
 
+import it.unicam.cs.ids.lp.activity.card.Card;
+import it.unicam.cs.ids.lp.activity.card.CardProgram;
 import it.unicam.cs.ids.lp.client.Customer;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -13,39 +15,39 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@NoArgsConstructor
+@IdClass(CustomerCardCompositeId.class)
 public class CustomerCard {
-    @ManyToOne
-    private Customer customer;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private Long id;
-    @Enumerated(EnumType.STRING)
+    private long id;
+    @Id
+    @ManyToOne
+    @JoinColumn
+    private Customer customer;
+    @Id
+    @ManyToOne
+    @JoinColumn
+    private Card card;
+    private int points = 0;
+    private int tier = 1;
+    private String referred;
+    private String referralCode;
     private CardProgram program;
-    private Integer points = 0;
-    private Integer tier = 1;
-    private Boolean family = false;
+    private boolean family = false;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CustomerCard that = (CustomerCard) o;
-        return id.equals(that.id);
+        return id == that.id && customer.equals(that.customer) && card.equals(that.card);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, customer, card);
     }
 
-    public enum CardProgram {
-        Points,
-        Levels,
-        Membership,
-        Cashback,
-        Coalition,
-    }
 }
-
