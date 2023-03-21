@@ -29,6 +29,10 @@ public class CustomerCard {
     private Card card;
     private int points = 0;
     private int tier = 1;
+    private String referred;
+    private String referralCode;
+    private CardProgram program;
+    private boolean family = false;
 
     @Override
     public boolean equals(Object o) {

@@ -2,7 +2,7 @@ package it.unicam.cs.ids.lp.activity.card;
 
 import it.unicam.cs.ids.lp.activity.Activity;
 import it.unicam.cs.ids.lp.activity.campaign.Campaign;
-import it.unicam.cs.ids.lp.client.card.activitycard.CACardProgram;
+import it.unicam.cs.ids.lp.client.card.CardProgram;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class Card {
     private List<Activity> activities;
 
     @Enumerated(EnumType.STRING)
-    private CACardProgram program;
+    private CardProgram program;
 
     @ManyToOne
     @JoinColumn
