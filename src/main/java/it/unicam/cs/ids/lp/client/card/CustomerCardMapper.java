@@ -16,8 +16,6 @@ public class CustomerCardMapper implements Function<CustomerCardRequest, Custome
     public CustomerCard apply(CustomerCardRequest customerCardRequest) {
         CustomerCard customerCard = new CustomerCard();
         customerCard.setCustomer(customerRepository.findById(customerCardRequest.customerId()).orElseThrow());
-        customerCard.setProgram(customerCardRequest.program());
-        customerCard.setFamily(customerCardRequest.family());
         return customerCard;
     }
 }
