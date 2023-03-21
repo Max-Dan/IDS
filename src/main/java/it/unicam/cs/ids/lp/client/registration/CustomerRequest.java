@@ -4,6 +4,5 @@ record CustomerRequest(String name,
                        String surname,
                        String telephoneNumber,
                        String email,
-                       String password,
-                       String referralCode) {
+                       String password) {
 }

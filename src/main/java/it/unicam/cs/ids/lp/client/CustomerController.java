@@ -1,12 +1,10 @@
 package it.unicam.cs.ids.lp.client;
 
+import it.unicam.cs.ids.lp.client.registration.CustomerRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -22,5 +20,19 @@ public class CustomerController {
         Optional<Customer> customer = customerRepository.findById(customerId);
         return customer.isEmpty() ?
                 new ResponseEntity<>(HttpStatus.NOT_FOUND) : ResponseEntity.ok().body(customer.get());
+    }
+
+    @PostMapping("/modifyData/{customerId}")
+    public ResponseEntity<?> modifyData(@PathVariable long customerId, @RequestBody CustomerRequest customerRequest) {
+        Customer customer = customerRepository.getReferenceById(customerId);
+        if (customerRequest.name() != null)
+            customer.setName(customerRequest.name());
+        if (customerRequest.surname() != null)
+            customer.setSurname(customerRequest.surname());
+        if (customerRequest.telephoneNumber() != null)
+            customer.setTelephoneNumber(customerRequest.telephoneNumber());
+        if (customerRequest.email() != null)
+            customer.setEmail(customerRequest.email());
+        return ResponseEntity.ok("");
     }
 }
