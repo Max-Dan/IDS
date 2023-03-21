@@ -2,7 +2,6 @@ package it.unicam.cs.ids.lp.activity.card;
 
 import it.unicam.cs.ids.lp.activity.Activity;
 import it.unicam.cs.ids.lp.activity.campaign.Campaign;
-import it.unicam.cs.ids.lp.client.card.CardProgram;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +23,7 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
     private Long id;
-    @Transient
-    private List<Rule<?>> rules;
-    @OneToMany(mappedBy = "card", orphanRemoval = true, cascade = CascadeType.PERSIST)
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.PERSIST)
     @ToString.Exclude
     private List<Activity> activities;
 

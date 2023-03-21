@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.lp.client.card;
+package it.unicam.cs.ids.lp.activity.card;
 
 public enum CardProgram {
     POINTS,

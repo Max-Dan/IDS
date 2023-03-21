@@ -9,8 +9,6 @@ import java.util.Optional;
 public interface CustomerCardRepository
         extends JpaRepository<CustomerCard, Long> {
 
-    CustomerCard findByCustomer_Id(long id);
-
     Optional<CustomerCard> findByReferralCode(String referralCode);
 
 }
