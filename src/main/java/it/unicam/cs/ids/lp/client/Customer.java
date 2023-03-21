@@ -2,6 +2,7 @@ package it.unicam.cs.ids.lp.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
+import it.unicam.cs.ids.lp.client.order.Order;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -29,8 +31,10 @@ public class Customer implements Serializable {
     @JsonIgnore
     private String password;
     private LocalDate registrationDate;
-    @OneToMany
+    @OneToMany(orphanRemoval = true)
     private Set<CustomerCard> cards;
+    @OneToMany(orphanRemoval = true)
+    private List<Order> orders;
 
     @Override
     public boolean equals(Object o) {
