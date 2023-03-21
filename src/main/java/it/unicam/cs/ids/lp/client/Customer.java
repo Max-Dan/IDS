@@ -31,10 +31,6 @@ public class Customer implements Serializable {
     private LocalDate registrationDate;
     @OneToMany
     private Set<CustomerCard> cards;
-    private String referred;
-    private String referralCode;
-    private int referredTo;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
