@@ -1,11 +1,14 @@
 package it.unicam.cs.ids.lp.client.card;
 
 import it.unicam.cs.ids.lp.activity.card.Card;
+import it.unicam.cs.ids.lp.activity.card.CardProgram;
 import it.unicam.cs.ids.lp.client.Customer;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
@@ -13,7 +16,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @NoArgsConstructor
-@IdClass(CustomerCard.CustomerCardCompositeId.class)
+@IdClass(CustomerCardCompositeId.class)
 public class CustomerCard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,12 +50,4 @@ public class CustomerCard {
         return Objects.hash(id, customer, card);
     }
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class CustomerCardCompositeId implements Serializable {
-        private long id;
-        private Customer customer;
-        private Card card;
-    }
 }

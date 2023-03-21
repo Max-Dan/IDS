@@ -5,6 +5,7 @@ import it.unicam.cs.ids.lp.client.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
@@ -24,7 +25,7 @@ public class CustomerCardMapper implements Function<CustomerCardRequest, Custome
         customerCard.setProgram(customerCardRequest.program());
         customerCard.setFamily(customerCardRequest.family());
         customerCard.setReferred(customerCardRequest.referredCode());
-
+        customerCard.setReferralCode(UUID.randomUUID().toString());
         return customerCard;
     }
 }
