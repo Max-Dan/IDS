@@ -7,8 +7,9 @@ import java.util.Optional;
 
 @Repository
 public interface CustomerCardRepository
-        extends JpaRepository<CustomerCard, Long> {
+        extends JpaRepository<CustomerCard, CustomerCardCompositeId> {
 
     Optional<CustomerCard> findByReferralCode(String referralCode);
 
+    boolean existsByReferralCode(String referralCode);
 }
