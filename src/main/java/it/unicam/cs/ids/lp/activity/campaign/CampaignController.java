@@ -39,12 +39,6 @@ public class CampaignController {
     public ResponseEntity<?> modifyCampaign(@PathVariable long activityId, @RequestBody CampaignRequest campaignRequest) {
         Campaign campaign = campaignRepository.getReferenceById(
                 cardRepository.findByActivities_Id(activityId).orElseThrow().getCampaign().getId());
-        if (campaignRequest.description() != null)
-            campaign.setDescription(campaignRequest.description());
-        if (campaignRequest.shopUrl() != null)
-            campaign.setShopUrl(campaignRequest.shopUrl());
-        if (campaignRequest.category() != null)
-            campaign.setCategory(campaignRequest.category());
         if (campaignRequest.end() != null)
             campaign.setEnd(campaignRequest.end());
         return new ResponseEntity<>(HttpStatus.OK);

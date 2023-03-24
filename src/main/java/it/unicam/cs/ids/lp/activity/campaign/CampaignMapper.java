@@ -12,9 +12,6 @@ public class CampaignMapper implements BiFunction<CampaignRequest, Card, Campaig
     @Override
     public Campaign apply(CampaignRequest campaignRequest, Card card) {
         Campaign campaign = new Campaign();
-        campaign.setDescription(campaignRequest.description());
-        campaign.setCategory(campaignRequest.category());
-        campaign.setShopUrl(campaign.getShopUrl());
         campaign.setActivityCard(card);
         campaign.setStart(LocalDate.now());
         campaign.setEnd(campaignRequest.end());
