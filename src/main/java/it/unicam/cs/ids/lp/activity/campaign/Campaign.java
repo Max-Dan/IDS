@@ -30,7 +30,7 @@ public class Campaign {
     @Enumerated(EnumType.STRING)
     private ContentCategory category;
     @Transient
-    private List<Rule<?>> rules;
+    private List<Rule<?, ?>> rules;
     private LocalDate start;
     private LocalDate end;
 }

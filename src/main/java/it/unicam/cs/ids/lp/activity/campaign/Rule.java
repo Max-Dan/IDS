@@ -1,6 +1,6 @@
 package it.unicam.cs.ids.lp.activity.campaign;
 
-import java.util.function.Consumer;
+import java.util.function.Function;
 
-public interface Rule<E> extends Consumer<E> {
+public interface Rule<T, R> extends Function<T, R> {
 }

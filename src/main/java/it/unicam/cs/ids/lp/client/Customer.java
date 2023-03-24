@@ -2,7 +2,7 @@ package it.unicam.cs.ids.lp.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
-import it.unicam.cs.ids.lp.client.order.Order;
+import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class Customer implements Serializable {
     @OneToMany(orphanRemoval = true)
     private Set<CustomerCard> cards;
     @OneToMany(orphanRemoval = true)
-    private List<Order> orders;
+    private List<CustomerOrder> orders;
 
     @Override
     public boolean equals(Object o) {
