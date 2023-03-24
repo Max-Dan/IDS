@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 import java.util.function.Function;
 
 @Service
-public class RuleMapper implements Function<RulesEnum, Rule<?, ?>> {
+public class RuleMapper implements Function<RulesEnum, Rule<?>> {
 
     @Override
-    public Rule<?, ?> apply(RulesEnum rulesEnum) {
+    public Rule<?> apply(RulesEnum rulesEnum) {
         return switch (rulesEnum) {
             case CASHBACK -> new CashbackRule();
             default -> throw new RuntimeException();

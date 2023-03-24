@@ -18,7 +18,7 @@ import java.util.Set;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class CashbackRule implements Rule<CustomerOrder, Integer> {
+public class CashbackRule implements Rule<Integer> {
 
     @Id
     @GeneratedValue

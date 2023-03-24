@@ -26,7 +26,7 @@ public class Campaign {
     @ToString.Exclude
     private Card activityCard;
     @Transient
-    private List<Rule<?, ?>> rules;
+    private List<Rule<?>> rules;
     private LocalDate start;
     private LocalDate end;
 }
