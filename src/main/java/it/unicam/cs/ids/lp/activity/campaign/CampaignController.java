@@ -39,7 +39,9 @@ public class CampaignController {
     public ResponseEntity<?> modifyCampaign(@PathVariable long activityId, @RequestBody CampaignRequest campaignRequest) {
         Campaign campaign = campaignRepository.getReferenceById(
                 cardRepository.findByActivities_Id(activityId).orElseThrow().getCampaign().getId());
-        if (campaignRequest.end() != null)
+        if (campaignRequest.end() != null
+                && campaign.getEnd() != null
+                && campaignRequest.end().isAfter(campaign.getEnd()))
             campaign.setEnd(campaignRequest.end());
         return new ResponseEntity<>(HttpStatus.OK);
     }
