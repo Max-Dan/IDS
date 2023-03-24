@@ -23,22 +23,27 @@ public class CashbackRule implements Rule<CustomerOrder, Integer> {
     @Id
     @GeneratedValue
     private long id;
+    /**
+     * prodotti soggetti al cashback
+     */
     @OneToMany(orphanRemoval = true)
     @JoinColumn
     @ToString.Exclude
     private Set<Product> products;
+    /**
+     * percentuale di cashback per i prodotti
+     */
     private float cashbackRate;
 
     @Override
     public Integer apply(CustomerOrder order) {
-//        return order.getProducts()
-//                .parallelStream()
-//                .filter(product -> this.getProducts()
-//                        .contains(product))
-//                .map(product -> (int) Math.floor(product.getPrice() / 100 * this.getCashbackRate()))
-//                .reduce(Integer::sum)
-//                .orElse(0);
-        return null;
+        return order.getProducts()
+                .parallelStream()
+                .filter(product -> this.getProducts()
+                        .contains(product))
+                .map(product -> (int) (product.getPrice() / 100 * this.getCashbackRate()))
+                .reduce(Integer::sum)
+                .orElse(0);
     }
 
     @Override

@@ -17,7 +17,7 @@ public class ProductMapper implements Function<ProductRequest, Product> {
         Product product = new Product();
         product.setName(productRequest.name());
         product.setActivities(activityRepository.findAllById(productRequest.activitiesIds()));
-        product.setPrice(product.getPrice());
+        product.setPrice(productRequest.price());
         return product;
     }
 }
