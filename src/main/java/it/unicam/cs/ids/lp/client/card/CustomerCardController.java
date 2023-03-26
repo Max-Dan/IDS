@@ -24,7 +24,7 @@ public class CustomerCardController {
     @PostMapping("/createCard")
     public ResponseEntity<CustomerCard> createCustomerCard(@RequestBody CustomerCardRequest request) {
         CustomerCard customerCard = customerCardMapper.apply(request);
-        // Set the referral link used
+
         String referred = customerCard.getReferred();
         if (referred != null && !referred.isEmpty()) {
             Optional<CustomerCard> referredCardOpt = repository.findByReferralCode(referred);
@@ -52,7 +52,6 @@ public class CustomerCardController {
                 repository.save(referredCard);
             }
         }
-        // Save the updated CustomerCard
         repository.save(customerCard);
         return new ResponseEntity<>(customerCard, HttpStatus.CREATED);
     }
