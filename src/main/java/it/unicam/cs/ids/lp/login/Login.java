@@ -1,6 +1,9 @@
 package it.unicam.cs.ids.lp.login;
 
+import it.unicam.cs.ids.lp.admin.Admin;
+import it.unicam.cs.ids.lp.client.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class Login {
 
     @Autowired
-    private PasswordStorage passwordStorage;
+    private UserService userService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/login")
     public String showLoginPage() {
@@ -19,24 +25,20 @@ public class Login {
     }
 
     @PostMapping("/login")
-    public String loginUser(@RequestParam String username, @RequestParam String password, Model model) {
-        Password savedPassword = passwordStorage.findByUsername(username);
-        if (savedPassword != null && savedPassword.getPassword().equals(password)) {
-            return "redirect:/home";
-        } else {
-            model.addAttribute("error", "Invalid username or password");
-            return "login";
+    public String loginUser(@RequestParam String email, @RequestParam String password, Model model) {
+        Object user = userService.findByEmail(email);
+        if (user instanceof Admin admin) {
+            if (passwordEncoder.matches(password, admin.getPassword())) {
+                return "redirect:/admin/home";
+            }
+        } else if (user instanceof Customer customer) {
+            if (passwordEncoder.matches(password, customer.getPassword())) {
+                return "redirect:/customer/home";
+            }
         }
+        model.addAttribute("error", "Invalid email or password");
+        return "login";
     }
 
-    @PostMapping("/savePassword")
-    public String savePassword(@RequestParam String username, @RequestParam String password) {
-        Password newPassword = new Password();
-        newPassword.setUsername(username);
-        newPassword.setPassword(password);
-        passwordStorage.save(newPassword);
-        return "redirect:/login";
-    }
-
-    // other methods
 }
+
