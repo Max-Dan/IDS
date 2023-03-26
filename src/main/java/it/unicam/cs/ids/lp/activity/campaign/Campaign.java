@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.lp.activity.campaign;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.unicam.cs.ids.lp.activity.campaign.rules.AbstractRule;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import jakarta.persistence.*;
@@ -29,6 +30,7 @@ public class Campaign {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn
     @ToString.Exclude
+    @JsonIgnore
     private Card card;
     private LocalDate start;
     private LocalDate end;

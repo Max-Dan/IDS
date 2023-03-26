@@ -1,5 +1,7 @@
 package it.unicam.cs.ids.lp.activity.campaign;
 
+import it.unicam.cs.ids.lp.activity.campaign.rules.AbstractRule;
+import it.unicam.cs.ids.lp.activity.campaign.rules.AbstractRuleRepository;
 import it.unicam.cs.ids.lp.activity.campaign.rules.RuleMapper;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,8 @@ public class CampaignMapper implements BiFunction<CampaignRequest, Card, Campaig
 
     @Autowired
     private RuleMapper ruleMapper;
+    @Autowired
+    private AbstractRuleRepository<AbstractRule> abstractRuleRepository;
 
     @Override
     public Campaign apply(CampaignRequest campaignRequest, Card card) {
@@ -27,6 +31,7 @@ public class CampaignMapper implements BiFunction<CampaignRequest, Card, Campaig
                         .collect(Collectors.toSet())
         );
         campaign.setCard(card);
+        //abstractRuleRepository.saveAll(campaignRequest.rules());
         return campaign;
     }
 }

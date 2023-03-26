@@ -2,7 +2,6 @@ package it.unicam.cs.ids.lp.activity.card;
 
 import it.unicam.cs.ids.lp.activity.Activity;
 import it.unicam.cs.ids.lp.activity.campaign.Campaign;
-import it.unicam.cs.ids.lp.client.card.CardProgram;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

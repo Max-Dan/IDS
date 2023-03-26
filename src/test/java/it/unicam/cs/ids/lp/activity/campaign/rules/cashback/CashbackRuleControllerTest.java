@@ -65,9 +65,8 @@ public class CashbackRuleControllerTest {
         card.setActivities(List.of(activity1));
         card = cardRepository.save(card);
 
-        card = cardRepository.findById(card.getId()).orElseThrow();
+        cardRepository.findById(card.getId()).orElseThrow();
         Campaign campaign = new Campaign();
-        card.setCampaign(campaign);
         campaignRepository.save(campaign);
     }
 
