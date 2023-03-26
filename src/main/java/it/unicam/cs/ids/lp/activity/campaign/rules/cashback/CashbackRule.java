@@ -1,16 +1,17 @@
 package it.unicam.cs.ids.lp.activity.campaign.rules.cashback;
 
 import it.unicam.cs.ids.lp.activity.campaign.Rule;
+import it.unicam.cs.ids.lp.activity.campaign.rules.AbstractRule;
 import it.unicam.cs.ids.lp.activity.product.Product;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.Hibernate;
 
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -18,11 +19,8 @@ import java.util.Set;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class CashbackRule implements Rule<Integer> {
+public class CashbackRule extends AbstractRule implements Rule<Integer> {
 
-    @Id
-    @GeneratedValue
-    private long id;
     /**
      * prodotti soggetti al cashback
      */
@@ -44,18 +42,5 @@ public class CashbackRule implements Rule<Integer> {
                 .map(product -> (int) (product.getPrice() / 100 * this.getCashbackRate()))
                 .reduce(Integer::sum)
                 .orElse(0);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        CashbackRule that = (CashbackRule) o;
-        return Objects.equals(getId(), that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
     }
 }

@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.lp.activity.campaign;
 
+import it.unicam.cs.ids.lp.activity.campaign.rules.AbstractRule;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -8,7 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -21,12 +22,14 @@ public class Campaign {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String name;
-    @ManyToOne
+    @OneToMany(targetEntity = AbstractRule.class)
     @JoinColumn
     @ToString.Exclude
-    private Card activityCard;
-    @Transient
-    private List<Rule<?>> rules;
+    private Set<Rule<?>> rules;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn
+    @ToString.Exclude
+    private Card card;
     private LocalDate start;
     private LocalDate end;
 }

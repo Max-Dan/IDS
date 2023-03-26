@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.Hibernate;
 
 import java.util.List;
 import java.util.Objects;
@@ -19,33 +18,30 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 public class Card {
-    String name;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
     private Long id;
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.PERSIST)
+    private String name;
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.MERGE)
     @ToString.Exclude
     private List<Activity> activities;
-
     @Enumerated(EnumType.STRING)
     private CardProgram program;
-
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn
     private Campaign campaign;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Card card = (Card) o;
-        return getId() != null && Objects.equals(getId(), card.getId());
+        return id.equals(card.id);
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(id);
     }
-
 }
