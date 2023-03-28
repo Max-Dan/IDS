@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unicam.cs.ids.lp.LoyaltyPlatformApplication;
 import it.unicam.cs.ids.lp.activity.Activity;
 import it.unicam.cs.ids.lp.activity.ActivityRepository;
-import it.unicam.cs.ids.lp.activity.campaign.Campaign;
-import it.unicam.cs.ids.lp.activity.campaign.CampaignRepository;
+import it.unicam.cs.ids.lp.activity.campaign.*;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.activity.product.Product;
@@ -48,6 +47,8 @@ public class CashbackRuleControllerTest {
     private CampaignRepository campaignRepository;
     @Autowired
     private CardRepository cardRepository;
+    @Autowired
+    private CampaignMapper campaignMapper;
 
     @BeforeAll
     public void setUp() {
@@ -60,13 +61,12 @@ public class CashbackRuleControllerTest {
         activity1.setName(activityName);
         activity = activityRepository.save(activity1);
 
-        activity1 = activityRepository.findById(activity.getId()).orElseThrow();
         Card card = new Card();
-        card.setActivities(List.of(activity1));
-        card = cardRepository.save(card);
+        card.setActivities(List.of(activity));
+        cardRepository.save(card);
 
-        cardRepository.findById(card.getId()).orElseThrow();
-        Campaign campaign = new Campaign();
+        Campaign campaign = campaignMapper.apply(
+                new CampaignRequest("test cash", null, Set.of(RulesEnum.CASHBACK)), card);
         campaignRepository.save(campaign);
     }
 

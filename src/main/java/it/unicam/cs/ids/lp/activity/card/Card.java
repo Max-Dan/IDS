@@ -10,6 +10,7 @@ import lombok.ToString;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -27,9 +28,10 @@ public class Card {
     private List<Activity> activities;
     @Enumerated(EnumType.STRING)
     private CardProgram program;
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn
-    private Campaign campaign;
+
+    @OneToMany(mappedBy = "card")
+    @ToString.Exclude
+    private Set<Campaign> campaigns;
 
     @Override
     public boolean equals(Object o) {

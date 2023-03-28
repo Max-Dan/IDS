@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 @Service
 public class CampaignMapper implements BiFunction<CampaignRequest, Card, Campaign> {
@@ -25,12 +25,15 @@ public class CampaignMapper implements BiFunction<CampaignRequest, Card, Campaig
         campaign.setName(campaignRequest.name());
         campaign.setStart(LocalDate.now());
         campaign.setEnd(campaignRequest.end());
-        campaign.setRules(
-                campaignRequest.rules().stream()
-                        .map(ruleMapper::apply)
-                        .collect(Collectors.toSet())
-        );
+//        campaign.setRules(
+//                campaignRequest.rules().stream()
+//                        .map(ruleMapper::apply)
+//                        .collect(Collectors.toSet())
+//        );
         campaign.setCard(card);
+        Set<Campaign> campaigns = card.getCampaigns();
+        campaigns.add(campaign);
+        card.setCampaigns(campaigns);
         //abstractRuleRepository.saveAll(campaignRequest.rules());
         return campaign;
     }

@@ -3,12 +3,11 @@ package it.unicam.cs.ids.lp.activity.campaign;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 
 @Service
@@ -24,16 +23,9 @@ public class CampaignService {
 
     public Campaign createCampaign(long activityId, CampaignRequest campaignRequest) {
         Objects.requireNonNull(campaignRequest.rules());
-        Card card;
-        try {
-            card = cardRepository.findByActivities_Id(activityId).orElseThrow();
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            return null;
-        }
+        Card card = cardRepository.findByActivities_Id(activityId).orElseThrow();
         Campaign campaign = campaignMapper.apply(campaignRequest, card);
-        card.setCampaign(campaign);
-        cardRepository.save(card);
+        campaignRepository.save(campaign);
         return campaign;
     }
 

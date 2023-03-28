@@ -6,10 +6,10 @@ import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @RestController
-@RequestMapping("/activity/{activityId}/campaign/cashback")
+@RequestMapping("/activity/{activityId}/campaign/{campaignId}/cashback")
 public class CashbackRuleController {
     private final CardRepository cardRepository;
 
@@ -18,18 +18,15 @@ public class CashbackRuleController {
     }
 
     @PostMapping("/setRule")
-    public ResponseEntity<Rule<?>> setCashback(@PathVariable long activityId, @RequestBody CashbackRequest request) {
+    public ResponseEntity<Rule<?>> setCashback(@PathVariable long activityId, @PathVariable long campaignId, @RequestBody CashbackRequest request) {
         CashbackRule cashbackRule = new CashbackRule();
         Card card = cardRepository.findByActivities_Id(activityId).orElseThrow();
         cashbackRule.setProducts(request.products());
         cashbackRule.setCashbackRate(request.cashbackRate());
         card = cardRepository.getReferenceById(card.getId());
-        card.getCampaign().setRules(
-                card.getCampaign().getRules()
-                        .stream()
-                        .map(rule -> rule instanceof CashbackRule ? cashbackRule : rule)
-                        .collect(Collectors.toSet())
-        );
+        card.getCampaigns().stream()
+                .filter(campaign -> campaign.getId() == campaignId)
+                .forEach(campaign -> campaign.setRules(Set.of(cashbackRule)));
         return ResponseEntity.ok(cashbackRule);
     }
 }

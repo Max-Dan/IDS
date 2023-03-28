@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -27,11 +28,25 @@ public class Campaign {
     @JoinColumn
     @ToString.Exclude
     private Set<Rule<?>> rules;
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToOne
     @JoinColumn
     @ToString.Exclude
     @JsonIgnore
     private Card card;
+
     private LocalDate start;
     private LocalDate end;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Campaign campaign = (Campaign) o;
+        return id == campaign.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

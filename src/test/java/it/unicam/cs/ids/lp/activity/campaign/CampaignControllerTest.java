@@ -72,13 +72,11 @@ class CampaignControllerTest {
     @Test
     void createCampaignSuccess() throws Exception {
         CampaignRequest campaignRequest = new CampaignRequest("", null, Set.of(RulesEnum.CASHBACK));
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/addCampaign")
-                        .content(objectMapper.writeValueAsString(campaignRequest))
-                        .contentType(MediaType.APPLICATION_JSON)
-                ).andExpect(status().isOk())
-                .andReturn();
-        Assertions.assertNotNull(mvcResult.getResponse().getContentAsString());
-        Assertions.assertNotNull(campaignRepository.findByCard_Activities_Id(activity.getId()));
+        mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/addCampaign")
+                .content(objectMapper.writeValueAsString(campaignRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+        Assertions.assertTrue(campaignRepository.existsByCard_Activities_Id(activity.getId()));
     }
 
     @Test
