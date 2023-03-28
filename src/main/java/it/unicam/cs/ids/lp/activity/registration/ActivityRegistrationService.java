@@ -1,9 +1,8 @@
 package it.unicam.cs.ids.lp.activity.registration;
 
 import it.unicam.cs.ids.lp.activity.Activity;
-import it.unicam.cs.ids.lp.activity.ActivityAccount;
-import it.unicam.cs.ids.lp.activity.ActivityAccountRepository;
 import it.unicam.cs.ids.lp.activity.ActivityRepository;
+import it.unicam.cs.ids.lp.activity.ContentCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,19 +10,17 @@ import java.util.Objects;
 
 @Service
 public class ActivityRegistrationService
-        implements ActivityDataValidator<Activity>, ActivityRegistry<Activity, ActivityAccount> {
+        implements ActivityDataValidator<Activity>, ActivityRegistry<Activity, Long> {
 
     @Autowired
     private ActivityRepository activityRepository;
-    @Autowired
-    private ActivityAccountRepository activityAccountRepository;
 
     @Override
-    public boolean registerActivity(Activity activity, ActivityAccount activityAccount) {
+    public boolean registerActivity(Activity activity) {
+        Objects.requireNonNull(activity);
         if (!areActivityValuesValid(activity))
             return false;
         activityRepository.save(activity);
-        activityAccountRepository.save(activityAccount);
         return true;
     }
 
@@ -88,13 +85,12 @@ public class ActivityRegistrationService
      * @param category la categoria da verificare
      * @return true se la categoria è corretta, false altrimenti
      */
-    private boolean isCategoryValid(Activity.ContentCategory category) {
+    private boolean isCategoryValid(ContentCategory category) {
         Objects.requireNonNull(category);
-        //TODO controllarla meglio
         return true;
     }
 
-    public void unregisterActivityByName(String name) {
-        activityRepository.deleteById(name);
+    public void unregisterActivityById(Long id) {
+        activityRepository.deleteById(id);
     }
 }

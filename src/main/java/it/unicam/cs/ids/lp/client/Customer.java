@@ -1,40 +1,42 @@
-package it.unicam.cs.ids.lp.activity;
+package it.unicam.cs.ids.lp.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class Activity {
+public class Customer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    long id;
+    private long id;
     private String name;
-    private String address;
+    private String surname;
     private String telephoneNumber;
     private String email;
     @JsonIgnore
     private String password;
     private LocalDate registrationDate;
-    @Enumerated(EnumType.STRING)
-    private ContentCategory category;
-
+    @OneToMany
+    private Set<CustomerCard> cards;
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Activity activity = (Activity) o;
-        return id == activity.id;
+        Customer customer = (Customer) o;
+        return id == customer.id;
     }
 
     @Override
@@ -42,3 +44,4 @@ public class Activity {
         return Objects.hash(id);
     }
 }
+

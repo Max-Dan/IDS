@@ -1,6 +1,7 @@
-package it.unicam.cs.ids.lp.activity;
+package it.unicam.cs.ids.lp.activity.campaign;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.unicam.cs.ids.lp.activity.card.Card;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -10,31 +11,32 @@ import lombok.ToString;
 import java.time.LocalDate;
 import java.util.Objects;
 
+
 @Entity
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class Activity {
+public class Campaign {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    long id;
+    private long id;
     private String name;
-    private String address;
-    private String telephoneNumber;
-    private String email;
+    @ManyToOne
+    @JoinColumn
+    @ToString.Exclude
     @JsonIgnore
-    private String password;
-    private LocalDate registrationDate;
-    @Enumerated(EnumType.STRING)
-    private ContentCategory category;
+    private Card card;
+
+    private LocalDate start;
+    private LocalDate end;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Activity activity = (Activity) o;
-        return id == activity.id;
+        Campaign campaign = (Campaign) o;
+        return id == campaign.id;
     }
 
     @Override

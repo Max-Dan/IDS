@@ -1,7 +1,7 @@
-package it.unicam.cs.ids.lp.activity;
+package it.unicam.cs.ids.lp.client.order;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import it.unicam.cs.ids.lp.activity.product.Product;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -10,25 +10,30 @@ import org.hibernate.Hibernate;
 
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class ActivityAccount {
-
+public class CustomerOrder {
     @Id
-    private String name;
-    private String password;
-    private LocalDate registrationDate;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false)
+    private Long id;
+    @ManyToMany
+    @JoinTable
+    @ToString.Exclude
+    private Set<Product> products;
+    private LocalDate date;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        ActivityAccount that = (ActivityAccount) o;
-        return name != null && Objects.equals(name, that.name);
+        CustomerOrder order = (CustomerOrder) o;
+        return Objects.equals(getId(), order.getId());
     }
 
     @Override
