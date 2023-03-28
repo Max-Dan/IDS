@@ -21,15 +21,15 @@ public class CampaignController {
                 : ResponseEntity.badRequest().body(null);
     }
 
-    @PostMapping("/modifyData")
-    public ResponseEntity<?> modifyCampaign(@PathVariable long activityId, @RequestBody CampaignRequest campaignRequest) {
-        Campaign campaign = campaignService.modifyCampaign(activityId, campaignRequest);
+    @PostMapping("/{campaignId}/modifyData")
+    public ResponseEntity<?> modifyCampaign(@PathVariable long campaignId, @RequestBody CampaignRequest campaignRequest) {
+        Campaign campaign = campaignService.modifyCampaign(campaignId, campaignRequest);
         return ResponseEntity.ok(campaign);
     }
 
-    @PostMapping("/applyRules")
-    public ResponseEntity<List<String>> applyRules(@PathVariable long activityId, @RequestBody CustomerOrder order) {
-        List<String> strings = campaignService.applyRules(activityId, order);
+    @PostMapping("/{campaignId}/applyRules")
+    public ResponseEntity<List<String>> applyRules(@PathVariable long campaignId, @RequestBody CustomerOrder order) {
+        List<String> strings = campaignService.applyRules(campaignId, order);
         return ResponseEntity.ok().body(strings);
     }
 }

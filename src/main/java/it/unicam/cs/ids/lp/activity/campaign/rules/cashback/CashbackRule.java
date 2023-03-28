@@ -1,6 +1,5 @@
 package it.unicam.cs.ids.lp.activity.campaign.rules.cashback;
 
-import it.unicam.cs.ids.lp.activity.campaign.Rule;
 import it.unicam.cs.ids.lp.activity.campaign.rules.AbstractRule;
 import it.unicam.cs.ids.lp.activity.product.Product;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
@@ -19,7 +18,7 @@ import java.util.Set;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class CashbackRule extends AbstractRule implements Rule<Integer> {
+public class CashbackRule extends AbstractRule<Integer> {
 
     /**
      * prodotti soggetti al cashback

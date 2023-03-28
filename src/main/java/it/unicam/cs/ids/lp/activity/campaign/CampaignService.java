@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.lp.activity.campaign;
 
+import it.unicam.cs.ids.lp.activity.campaign.rules.AbstractRuleRepository;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @Transactional
@@ -20,18 +20,18 @@ public class CampaignService {
     private CampaignMapper campaignMapper;
     @Autowired
     private CampaignRepository campaignRepository;
+    @Autowired
+    private AbstractRuleRepository abstractRuleRepository;
 
     public Campaign createCampaign(long activityId, CampaignRequest campaignRequest) {
-        Objects.requireNonNull(campaignRequest.rules());
         Card card = cardRepository.findByActivities_Id(activityId).orElseThrow();
         Campaign campaign = campaignMapper.apply(campaignRequest, card);
         campaignRepository.save(campaign);
         return campaign;
     }
 
-    public Campaign modifyCampaign(long activityId, CampaignRequest campaignRequest) {
-        Campaign campaign = campaignRepository.getReferenceById(
-                campaignRepository.findByCard_Activities_Id(activityId).getId());
+    public Campaign modifyCampaign(long campaignId, CampaignRequest campaignRequest) {
+        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
         if (campaignRequest.end() != null
                 && campaign.getEnd() != null
                 && campaignRequest.end().isAfter(campaign.getEnd()))
@@ -39,9 +39,12 @@ public class CampaignService {
         return campaign;
     }
 
-    public List<String> applyRules(long activityId, CustomerOrder order) {
-        Campaign campaign = campaignRepository.findByCard_Activities_Id(activityId);
-        return campaign.getRules().stream()
+    public List<String> applyRules(long campaignId, CustomerOrder order) {
+        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
+        return abstractRuleRepository.findAll()
+                .stream()
+                .filter(abstractRule -> abstractRule.getCampaign()
+                        .equals(campaign))
                 .map(rule -> "" + rule.getClass().getName() + "\t" + rule.apply(order))
                 .toList();
     }

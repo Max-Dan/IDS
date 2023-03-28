@@ -5,7 +5,6 @@ import it.unicam.cs.ids.lp.LoyaltyPlatformApplication;
 import it.unicam.cs.ids.lp.activity.Activity;
 import it.unicam.cs.ids.lp.activity.ActivityRepository;
 import it.unicam.cs.ids.lp.activity.campaign.rules.cashback.CashbackRequest;
-import it.unicam.cs.ids.lp.activity.campaign.rules.cashback.CashbackRule;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.activity.product.Product;
@@ -71,25 +70,12 @@ class CampaignControllerTest {
 
     @Test
     void createCampaignSuccess() throws Exception {
-        CampaignRequest campaignRequest = new CampaignRequest("", null, Set.of(RulesEnum.CASHBACK));
+        CampaignRequest campaignRequest = new CampaignRequest("", null);
         mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/addCampaign")
                 .content(objectMapper.writeValueAsString(campaignRequest))
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
         Assertions.assertTrue(campaignRepository.existsByCard_Activities_Id(activity.getId()));
-    }
-
-    @Test
-    void createCampaignWithRule() throws Exception {
-        CampaignRequest campaignRequest = new CampaignRequest("", null, Set.of(RulesEnum.CASHBACK));
-        mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/addCampaign")
-                .content(objectMapper.writeValueAsString(campaignRequest))
-                .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk());
-        Assertions.assertTrue(campaignRepository.existsByCard_Activities_Name(activityName));
-        Assertions.assertTrue(campaignRepository.findByCard_Activities_Id(activity.getId())
-                .getRules().stream()
-                .anyMatch(rule -> rule instanceof CashbackRule));
     }
 
     @Test
@@ -100,13 +86,14 @@ class CampaignControllerTest {
 
     @Test
     void modifyCampaign() throws Exception {
-        CampaignRequest campaignRequest = new CampaignRequest("", null, Set.of(RulesEnum.CASHBACK));
-        mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/addCampaign")
+        CampaignRequest campaignRequest = new CampaignRequest("", null);
+        String genCampaign = mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/addCampaign")
                 .content(objectMapper.writeValueAsString(campaignRequest))
                 .contentType(MediaType.APPLICATION_JSON)
-        );
+        ).andReturn().getResponse().getContentAsString();
+        Campaign campaign = objectMapper.readValue(genCampaign, Campaign.class);
 
-        mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/modifyData")
+        mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/" + campaign.getId() + "/modifyData")
                 .content(objectMapper.writeValueAsString(campaignRequest))
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
@@ -124,11 +111,12 @@ class CampaignControllerTest {
 
     @Test
     public void applyRules() throws Exception {
-        CampaignRequest campaignRequest = new CampaignRequest("", null, Set.of(RulesEnum.CASHBACK));
-        mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/addCampaign")
+        CampaignRequest campaignRequest = new CampaignRequest("", null);
+        String campaignJson = mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/addCampaign")
                 .content(objectMapper.writeValueAsString(campaignRequest))
                 .contentType(MediaType.APPLICATION_JSON)
-        );
+        ).andReturn().getResponse().getContentAsString();
+        Campaign campaign = objectMapper.readValue(campaignJson, Campaign.class);
 
         CashbackRequest cashbackRequest = new CashbackRequest(products(), 5);
         mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/cashback/setRule")
@@ -139,11 +127,12 @@ class CampaignControllerTest {
         CustomerOrder order = new CustomerOrder();
         order.setProducts(products());
 
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/applyRules")
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId()
+                                + "/campaign/" + campaign.getId() + "/applyRules")
                         .content(objectMapper.writeValueAsString(order))
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isOk())
                 .andReturn();
-        Assertions.assertTrue(mvcResult.getResponse().getContentAsString().length() > 2);
+        Assertions.assertTrue(mvcResult.getResponse().getContentAsString().length() > 2); // non deve essere "[]"
     }
 }

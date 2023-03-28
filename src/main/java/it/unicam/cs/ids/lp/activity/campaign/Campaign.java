@@ -1,7 +1,6 @@
 package it.unicam.cs.ids.lp.activity.campaign;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import it.unicam.cs.ids.lp.activity.campaign.rules.AbstractRule;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,7 +10,6 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.Objects;
-import java.util.Set;
 
 
 @Entity
@@ -24,10 +22,11 @@ public class Campaign {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String name;
-    @OneToMany(targetEntity = AbstractRule.class)
-    @JoinColumn
-    @ToString.Exclude
-    private Set<Rule<?>> rules;
+    //    @OneToMany
+//    @JoinColumn
+//    @ToString.Exclude
+//    @JsonIgnore
+//    private Set<AbstractRule<?>> rules;
     @ManyToOne
     @JoinColumn
     @ToString.Exclude

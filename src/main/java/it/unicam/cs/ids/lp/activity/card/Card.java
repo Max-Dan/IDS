@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -31,7 +32,7 @@ public class Card {
 
     @OneToMany(mappedBy = "card")
     @ToString.Exclude
-    private Set<Campaign> campaigns;
+    private Set<Campaign> campaigns = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
