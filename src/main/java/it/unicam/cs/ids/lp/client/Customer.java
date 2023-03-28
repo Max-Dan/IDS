@@ -31,7 +31,6 @@ public class Customer implements Serializable {
     private LocalDate registrationDate;
     @OneToMany
     private Set<CustomerCard> cards;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

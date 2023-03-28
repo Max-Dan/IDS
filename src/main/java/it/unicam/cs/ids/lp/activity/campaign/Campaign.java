@@ -22,11 +22,6 @@ public class Campaign {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String name;
-    //    @OneToMany
-//    @JoinColumn
-//    @ToString.Exclude
-//    @JsonIgnore
-//    private Set<AbstractRule<?>> rules;
     @ManyToOne
     @JoinColumn
     @ToString.Exclude
