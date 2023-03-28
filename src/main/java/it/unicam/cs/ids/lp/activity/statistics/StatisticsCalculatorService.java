@@ -5,10 +5,7 @@ import it.unicam.cs.ids.lp.activity.ActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.List;
 
 @Service
 public class StatisticsCalculatorService {
@@ -19,23 +16,19 @@ public class StatisticsCalculatorService {
     @Autowired
     private ActivityRepository activityRepository;
 
-    public Collection<Statistic> analyzeData(Collection<StatisticType> statisticTypes, String activityNameId) {
-        Activity activity = activityRepository.findById(activityNameId).orElseThrow();
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        return statisticTypes.stream()
-                .map(statisticType -> getStatistic(activity, executorService, statisticType))
+    @Autowired
+    private StatisticMapper statisticMapper;
+
+    public List<String> analyzeData(List<StatisticType> statisticTypes, long acrivityId) {
+        Activity activity = activityRepository.findById(acrivityId).orElseThrow();
+        return statisticTypes.parallelStream()
+                .map(statisticType -> calculateAndSaveStatistic(activity, statisticType))
                 .toList();
     }
 
-    private Statistic getStatistic(Activity activity, ExecutorService executorService, StatisticType statisticType) {
-        try {
-            return executorService.submit(() -> {
-                Statistic statistic = StatisticFactory.createStatistic(activity, statisticType);
-                statisticRepository.save(statistic);
-                return statistic;
-            }).get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+    private String calculateAndSaveStatistic(Activity activity, StatisticType statisticType) {
+        AbstractStatistic<?> statistic = statisticMapper.apply(statisticType, activity);
+        statisticRepository.save(statistic);
+        return "" + statistic.getClass().getSimpleName() + "    " + statistic.getValue();
     }
 }
