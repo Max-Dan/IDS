@@ -1,6 +1,8 @@
 package it.unicam.cs.ids.lp.activity.campaign.rules.cashback;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import it.unicam.cs.ids.lp.activity.campaign.rules.AbstractRuleRepository;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface CashbackRuleRepository extends JpaRepository<CashbackRule, Long> {
+@Transactional
+public interface CashbackRuleRepository extends AbstractRuleRepository<CashbackRule> {
 }

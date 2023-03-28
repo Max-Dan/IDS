@@ -1,8 +1,9 @@
 package it.unicam.cs.ids.lp.activity.campaign.rules;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.NoRepositoryBean;
 
-@Repository
-public interface AbstractRuleRepository extends JpaRepository<AbstractRule<?>, Long> {
+@NoRepositoryBean
+public interface AbstractRuleRepository<T extends AbstractRule<?>>
+        extends JpaRepository<T, Long> {
 }

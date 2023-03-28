@@ -21,7 +21,7 @@ public class CampaignService {
     @Autowired
     private CampaignRepository campaignRepository;
     @Autowired
-    private AbstractRuleRepository abstractRuleRepository;
+    private AbstractRuleRepository<?> abstractRuleRepository;
 
     public Campaign createCampaign(long activityId, CampaignRequest campaignRequest) {
         Card card = cardRepository.findByActivities_Id(activityId).orElseThrow();
@@ -45,7 +45,7 @@ public class CampaignService {
                 .stream()
                 .filter(abstractRule -> abstractRule.getCampaign()
                         .equals(campaign))
-                .map(rule -> "" + rule.getClass().getName() + "\t" + rule.apply(order))
+                .map(rule -> "" + rule.getClass().getSimpleName() + "   " + rule.apply(order))
                 .toList();
     }
 }

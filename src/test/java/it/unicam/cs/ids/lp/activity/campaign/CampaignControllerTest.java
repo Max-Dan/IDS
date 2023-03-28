@@ -113,16 +113,18 @@ class CampaignControllerTest {
     public void applyRules() throws Exception {
         CampaignRequest campaignRequest = new CampaignRequest("", null);
         String campaignJson = mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/addCampaign")
-                .content(objectMapper.writeValueAsString(campaignRequest))
-                .contentType(MediaType.APPLICATION_JSON)
-        ).andReturn().getResponse().getContentAsString();
+                        .content(objectMapper.writeValueAsString(campaignRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
         Campaign campaign = objectMapper.readValue(campaignJson, Campaign.class);
 
         CashbackRequest cashbackRequest = new CashbackRequest(products(), 5);
-        mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/cashback/setRule")
+        mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/" +
+                        campaign.getId() + "/cashback/add")
                 .content(objectMapper.writeValueAsString(cashbackRequest))
                 .contentType(MediaType.APPLICATION_JSON)
-        );
+        ).andExpect(status().isOk());
 
         CustomerOrder order = new CustomerOrder();
         order.setProducts(products());
@@ -133,6 +135,7 @@ class CampaignControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isOk())
                 .andReturn();
+        System.out.println("AAAAAAAAAAAAA" + mvcResult.getResponse().getContentAsString());
         Assertions.assertTrue(mvcResult.getResponse().getContentAsString().length() > 2); // non deve essere "[]"
     }
 }
