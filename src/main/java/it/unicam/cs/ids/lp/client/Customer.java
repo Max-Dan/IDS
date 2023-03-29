@@ -11,7 +11,6 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -21,24 +20,16 @@ import java.util.Set;
 @ToString
 @RequiredArgsConstructor
 public class Customer implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-
     private String name;
-
     private String surname;
-
     private String telephoneNumber;
-
     private String email;
-
     @JsonIgnore
     private String password;
-
     private LocalDate registrationDate;
-
     @OneToMany
     @ToString.Exclude
     private Set<CustomerCard> cards = new HashSet<>();

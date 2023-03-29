@@ -4,17 +4,17 @@ import org.hibernate.cfg.NotYetImplementedException;
 
 import java.util.List;
 
-public class StatisticFactory {
+public class StatisticTypeFactory {
 
-    public static List<StatisticType> getActivityStatistics() {
+    public static List<StatisticType> getActivityTypeStatistics() {
         throw new NotYetImplementedException();
     }
 
-    public static List<StatisticType> getCampaignStatistics() {
+    public static List<StatisticType> getCampaignTypeStatistics() {
         throw new NotYetImplementedException();
     }
 
-    public static List<StatisticType> getCardStatistics() {
+    public static List<StatisticType> getCardTypeStatistics() {
         return List.of(StatisticType.CARD_CLIENTS);
     }
 }
