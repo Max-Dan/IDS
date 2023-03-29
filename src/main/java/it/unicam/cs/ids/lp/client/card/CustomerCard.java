@@ -42,10 +42,8 @@ public class CustomerCard {
 
     public void extendMembership(int weeks) {
         if (membership == null) {
-            // Set the initial membership date to two weeks from now, if not already set
             membership = LocalDate.now().plusWeeks(weeks);
         } else {
-            // If the membership date is already set, extend it by the specified number of weeks
             membership = membership.plusWeeks(weeks);
         }
     }
