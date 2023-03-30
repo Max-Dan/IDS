@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.lp.activity.statistics;
 
+import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,10 +17,14 @@ public class StatisticsController {
     @Autowired
     private StatisticsCalculatorService statisticsCalculatorService;
 
+    @Autowired
+    private CardRepository cardRepository;
+
     @GetMapping("/cardStats")
     public ResponseEntity<List<String>> getCardStatistics(@PathVariable long activityId) {
         return ResponseEntity.ok(
-                statisticsCalculatorService.analyzeCardData(StatisticTypeFactory.getCardTypeStatistics(), activityId)
+                statisticsCalculatorService.analyzeData(StatisticTypeFactory.getCardTypeStatistics(),
+                        cardRepository.findByActivities_Id(activityId).orElseThrow())
         );
     }
 

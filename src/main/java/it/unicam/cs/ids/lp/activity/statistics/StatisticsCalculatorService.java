@@ -1,7 +1,6 @@
 package it.unicam.cs.ids.lp.activity.statistics;
 
 import it.unicam.cs.ids.lp.activity.card.Card;
-import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.activity.statistics.card.CardStatistic;
 import it.unicam.cs.ids.lp.activity.statistics.card.CardStatisticMapper;
 import org.springframework.beans.factory.BeanFactory;
@@ -11,13 +10,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class StatisticsCalculatorService {
+public class StatisticsCalculatorService implements StatisticAnalyzer<Card> {
 
     @Autowired
     private StatisticRepository statisticRepository;
-
-    @Autowired
-    private CardRepository cardRepository;
 
     @Autowired
     private CardStatisticMapper cardStatisticMapper;
@@ -27,14 +23,14 @@ public class StatisticsCalculatorService {
     @Autowired
     private StatisticMapper statisticMapper;
 
-    public List<String> analyzeCardData(List<StatisticType> statisticTypes, long activityId) {
-        Card card = cardRepository.findByActivities_Id(activityId).orElseThrow();
+    @Override
+    public List<String> analyzeData(List<StatisticType> statisticTypes, Card card) {
         return statisticTypes.parallelStream()
-                .map(type -> this.calculateAndSaveStatistic(type, card))
+                .map(type -> this.calculateAndSaveCardStatistic(type, card))
                 .toList();
     }
 
-    private String calculateAndSaveStatistic(StatisticType type, Card card) {
+    private String calculateAndSaveCardStatistic(StatisticType type, Card card) {
         CardStatistic statistic = cardStatisticMapper.apply(type, card);
         //crea il bean per usare la dependency injection
         CardStatistic cardStatisticBean = (CardStatistic) beanFactory.getBean(
