@@ -16,6 +16,7 @@ class CustomerRegistrationServiceTest {
     @Autowired
     private CustomerMapper customerMapper;
 
+    //to adjust
     @Test
     void registerCustomer() {
         assertThrows(NullPointerException.class,
