@@ -17,6 +17,7 @@ public class ActivityRegistrationService
 
     @Override
     public boolean registerActivity(Activity activity) {
+        Objects.requireNonNull(activity);
         if (!areActivityValuesValid(activity))
             return false;
         activityRepository.save(activity);

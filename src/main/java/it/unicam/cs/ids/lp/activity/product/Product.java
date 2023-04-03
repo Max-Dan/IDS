@@ -1,49 +1,44 @@
-package it.unicam.cs.ids.lp.activity.card;
+package it.unicam.cs.ids.lp.activity.product;
 
 import it.unicam.cs.ids.lp.activity.Activity;
-import it.unicam.cs.ids.lp.activity.campaign.Campaign;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.Hibernate;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class Card {
+public class Product {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
     private Long id;
     private String name;
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.MERGE)
+    @ManyToMany
+    @JoinTable
     @ToString.Exclude
     private List<Activity> activities;
-    @Enumerated(EnumType.STRING)
-    private CardProgram program;
-
-    @OneToMany(mappedBy = "card")
-    @ToString.Exclude
-    private Set<Campaign> campaigns = new HashSet<>();
+    private int price;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Card card = (Card) o;
-        return id.equals(card.id);
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Product product = (Product) o;
+        return Objects.equals(getId(), product.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return getClass().hashCode();
     }
 }
