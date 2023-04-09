@@ -1,6 +1,7 @@
 package it.unicam.cs.ids.lp.activity.campaign.rules.cashback;
 
-import it.unicam.cs.ids.lp.activity.card.Card;
+import it.unicam.cs.ids.lp.activity.campaign.Campaign;
+import it.unicam.cs.ids.lp.activity.campaign.CampaignRepository;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,32 +9,31 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/activity/{activityId}/campaign/{campaignId}/cashback")
 public class CashbackRuleController {
-    private final CardRepository cardRepository;
     private final CashbackRuleRepository cashbackRuleRepository;
+    private final CampaignRepository campaignRepository;
+    private final CardRepository cardRepository;
 
-    public CashbackRuleController(CardRepository cardRepository,
-                                  CashbackRuleRepository cashbackRuleRepository) {
-        this.cardRepository = cardRepository;
+    public CashbackRuleController(CashbackRuleRepository cashbackRuleRepository,
+                                  CampaignRepository campaignRepository,
+                                  CardRepository cardRepository) {
         this.cashbackRuleRepository = cashbackRuleRepository;
+        this.campaignRepository = campaignRepository;
+        this.cardRepository = cardRepository;
     }
 
     @PostMapping("/add")
     public ResponseEntity<CashbackRule> setCashback(@PathVariable long activityId, @PathVariable long campaignId, @RequestBody CashbackRequest request) {
-        Card card = cardRepository.findByActivities_Id(activityId).orElseThrow();
-        CashbackRule cashbackRule = getCashbackRule(campaignId, request, card);
+        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
+        if (!campaign.getCard().equals(cardRepository.findByActivities_Id(activityId).orElseThrow()))
+            throw new RuntimeException("Attività non autorizzata a modificare la campagna");
+        CashbackRule cashbackRule = getCashbackRule(campaignId, request);
         cashbackRuleRepository.save(cashbackRule);
-        // cardRepository.save(card);
         return ResponseEntity.ok(cashbackRule);
     }
 
-    private CashbackRule getCashbackRule(long campaignId, CashbackRequest request, Card card) {
+    private CashbackRule getCashbackRule(long campaignId, CashbackRequest request) {
         CashbackRule cashbackRule = new CashbackRule();
-        cashbackRule.setCampaign(
-                card.getCampaigns()
-                        .stream()
-                        .filter(campaign -> campaign.getId() == campaignId)
-                        .findFirst().orElseThrow()
-        );
+        cashbackRule.setCampaign(campaignRepository.findById(campaignId).orElseThrow());
         cashbackRule.setProducts(request.products());
         cashbackRule.setCashbackRate(request.cashbackRate());
         return cashbackRule;

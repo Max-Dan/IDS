@@ -1,5 +1,7 @@
 package it.unicam.cs.ids.lp.client;
 
+import it.unicam.cs.ids.lp.activity.campaign.Campaign;
+import it.unicam.cs.ids.lp.activity.campaign.CampaignRepository;
 import it.unicam.cs.ids.lp.client.registration.CustomerRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,8 @@ public class CustomerController {
 
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private CampaignRepository campaignRepository;
 
     @GetMapping("/getData/{customerId}")
     public ResponseEntity<?> getCustomerData(@PathVariable long customerId) {
@@ -33,6 +37,18 @@ public class CustomerController {
             customer.setTelephoneNumber(customerRequest.telephoneNumber());
         if (customerRequest.email() != null)
             customer.setEmail(customerRequest.email());
+        return ResponseEntity.ok("");
+    }
+
+    @GetMapping("{customerId}/subscribeToCampaign/{campaignId}")
+    public ResponseEntity<?> subscribeToCampaign(@PathVariable long customerId, @PathVariable long campaignId) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow();
+        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
+        if (customer.getCards()
+                .stream()
+                .noneMatch(customerCard -> customerCard.getCard().equals(campaign.getCard())))
+            return ResponseEntity.badRequest()
+                    .body("Il customer non ha la carta della campagna");
         return ResponseEntity.ok("");
     }
 }

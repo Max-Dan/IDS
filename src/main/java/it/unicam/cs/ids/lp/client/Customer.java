@@ -10,6 +10,7 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -30,7 +31,9 @@ public class Customer implements Serializable {
     private String password;
     private LocalDate registrationDate;
     @OneToMany
-    private Set<CustomerCard> cards;
+    @ToString.Exclude
+    private Set<CustomerCard> cards = new HashSet<>();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -32,4 +32,9 @@ public class CampaignController {
         List<String> strings = campaignService.applyRules(campaignId, order);
         return ResponseEntity.ok().body(strings);
     }
+
+    @GetMapping("/getCampaigns")
+    public ResponseEntity<?> getActiveCampaigns() {
+        return ResponseEntity.ok(campaignService.getActiveCampaigns());
+    }
 }

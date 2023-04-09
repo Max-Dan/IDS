@@ -21,7 +21,9 @@ public class Campaign {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
     private String name;
+
     @ManyToOne
     @JoinColumn
     @ToString.Exclude
@@ -29,6 +31,7 @@ public class Campaign {
     private Card card;
 
     private LocalDate start;
+
     private LocalDate end;
 
     @Override
