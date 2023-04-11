@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -45,7 +46,15 @@ public class CampaignService {
                 .stream()
                 .filter(abstractRule -> abstractRule.getCampaign()
                         .equals(campaign))
-                .map(rule -> "" + rule.getClass().getSimpleName() + "   " + rule.apply(order))
+                .map(rule -> rule.getClass().getSimpleName() + "   " + rule.apply(order))
+                .toList();
+    }
+
+    public List<Campaign> getActiveCampaigns() {
+        return campaignRepository.findAll()
+                .stream()
+                .filter(campaign -> campaign.getStart().isBefore(LocalDate.now())
+                        && campaign.getEnd().isAfter(LocalDate.now()))
                 .toList();
     }
 }

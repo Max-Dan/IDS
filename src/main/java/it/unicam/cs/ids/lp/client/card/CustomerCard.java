@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.lp.client.card;
 
+import it.unicam.cs.ids.lp.activity.campaign.Campaign;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardProgram;
 import it.unicam.cs.ids.lp.client.Customer;
@@ -10,6 +11,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -19,33 +22,45 @@ import java.util.Objects;
 @NoArgsConstructor
 @IdClass(CustomerCardCompositeId.class)
 public class CustomerCard {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private long id;
+
     @Id
     @ManyToOne
     @JoinColumn
     private Customer customer;
+
     @Id
     @ManyToOne
     @JoinColumn
     private Card card;
+
+    @ManyToMany
+    @ToString.Exclude
+    private List<Campaign> campaigns = new LinkedList<>();
+
     private int points = 0;
+
     private int tier = 1;
+
     private int remainingCashback;
+
     private LocalDate membership;
+
     private String referred;
+
     private String referralCode;
+
     private CardProgram program;
+
     private boolean family = false;
 
     public void extendMembership(int weeks) {
-        if (membership == null) {
-            membership = LocalDate.now().plusWeeks(weeks);
-        } else {
-            membership = membership.plusWeeks(weeks);
-        }
+        membership = Objects.requireNonNullElseGet(membership, LocalDate::now)
+                .plusWeeks(weeks);
     }
 
     @Override
