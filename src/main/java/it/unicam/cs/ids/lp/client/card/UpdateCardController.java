@@ -1,7 +1,5 @@
-package it.unicam.cs.ids.lp.client;
+package it.unicam.cs.ids.lp.client.card;
 
-import it.unicam.cs.ids.lp.client.card.CustomerCard;
-import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

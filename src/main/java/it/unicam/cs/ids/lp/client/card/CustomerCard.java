@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,7 +40,7 @@ public class CustomerCard {
 
     @ManyToMany
     @ToString.Exclude
-    private List<Campaign> campaigns;
+    private List<Campaign> campaigns = new LinkedList<>();
 
     private int points = 0;
 

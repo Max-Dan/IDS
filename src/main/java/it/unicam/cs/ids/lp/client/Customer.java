@@ -1,6 +1,7 @@
 package it.unicam.cs.ids.lp.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.unicam.cs.ids.lp.activity.campaign.Campaign;
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,19 +21,32 @@ import java.util.Set;
 @ToString
 @RequiredArgsConstructor
 public class Customer implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
     private String name;
+
     private String surname;
+
     private String telephoneNumber;
+
     private String email;
+
     @JsonIgnore
     private String password;
+
     private LocalDate registrationDate;
+
     @OneToMany
     @ToString.Exclude
     private Set<CustomerCard> cards = new HashSet<>();
+
+    @OneToMany(orphanRemoval = true)
+    @JoinColumn
+    @ToString.Exclude
+    private Set<Campaign> currentlySubscribedCampaigns = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

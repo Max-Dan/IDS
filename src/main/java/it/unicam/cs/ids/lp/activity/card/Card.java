@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,7 +27,7 @@ public class Card {
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.MERGE)
     @ToString.Exclude
-    private List<Activity> activities;
+    private List<Activity> activities = new LinkedList<>();
 
     @Enumerated(EnumType.STRING)
     private CardProgram program;

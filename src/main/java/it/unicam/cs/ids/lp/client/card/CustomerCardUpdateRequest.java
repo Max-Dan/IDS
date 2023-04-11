@@ -1,7 +1,6 @@
-package it.unicam.cs.ids.lp.client;
+package it.unicam.cs.ids.lp.client.card;
 
 import it.unicam.cs.ids.lp.activity.card.CardProgram;
-import it.unicam.cs.ids.lp.client.card.CustomerCardCompositeId;
 import lombok.Data;
 
 import java.time.LocalDate;
