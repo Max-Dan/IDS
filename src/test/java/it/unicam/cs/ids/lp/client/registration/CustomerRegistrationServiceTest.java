@@ -20,17 +20,17 @@ class CustomerRegistrationServiceTest {
     @Test
     void registerCustomer() {
         assertThrows(NullPointerException.class,
-                () -> customerRegistrationService.registerCustomer(null));
+                () -> customerRegistrationService.register(null));
         CustomerRequest customerRequest =
                 new CustomerRequest("Steve", "Jobs", "132-456-7890", "SteveJobs@gmail.com", "iLoveApple123");
         Customer customer = customerMapper.apply(customerRequest);
-        Assertions.assertTrue(customerRegistrationService.registerCustomer(customer));
-        Assertions.assertFalse(customerRegistrationService.registerCustomer(customer));
+        Assertions.assertTrue(customerRegistrationService.register(customer));
+        Assertions.assertFalse(customerRegistrationService.register(customer));
 
         CustomerRequest anotherCustomerRequest =
                 new CustomerRequest("Tim", "Cook", "123-456-7890", "TimCook@gmail.com", "iLoveAppleToo456");
         Customer anotherCustomer = customerMapper.apply(anotherCustomerRequest);
-        Assertions.assertTrue(customerRegistrationService.registerCustomer(anotherCustomer));
+        Assertions.assertTrue(customerRegistrationService.register(anotherCustomer));
     }
 }
 

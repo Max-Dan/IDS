@@ -2,95 +2,48 @@ package it.unicam.cs.ids.lp.activity.registration;
 
 import it.unicam.cs.ids.lp.activity.Activity;
 import it.unicam.cs.ids.lp.activity.ActivityRepository;
-import it.unicam.cs.ids.lp.activity.ContentCategory;
-import org.springframework.beans.factory.annotation.Autowired;
+import it.unicam.cs.ids.lp.util.DataValidator;
+import it.unicam.cs.ids.lp.util.DataValidatorUtil;
+import it.unicam.cs.ids.lp.util.Registry;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
 @Service
 public class ActivityRegistrationService
-        implements ActivityDataValidator<Activity>, ActivityRegistry<Activity, Long> {
+        implements DataValidator<Activity>, Registry<Activity> {
 
-    @Autowired
-    private ActivityRepository activityRepository;
+    private final ActivityRepository activityRepository;
+
+    private final DataValidatorUtil dataValidatorUtil;
+
+    public ActivityRegistrationService(ActivityRepository activityRepository, DataValidatorUtil dataValidatorUtil) {
+        this.activityRepository = activityRepository;
+        this.dataValidatorUtil = dataValidatorUtil;
+    }
+
 
     @Override
-    public boolean registerActivity(Activity activity) {
+    public boolean areRegistrationValuesValid(Activity activity) {
+        return activity != null
+                && (!dataValidatorUtil.isNameValid(activity.getName())
+                || !dataValidatorUtil.isAddressValid(activity.getAddress())
+                || !dataValidatorUtil.isTelephoneNumberValid(activity.getTelephoneNumber())
+                || !dataValidatorUtil.isEmailValid(activity.getEmail())
+                || !dataValidatorUtil.isCategoryValid(activity.getCategory()));
+    }
+
+    @Override
+    public boolean register(Activity activity) {
         Objects.requireNonNull(activity);
-        if (!areActivityValuesValid(activity))
+        if (areRegistrationValuesValid(activity))
             return false;
         activityRepository.save(activity);
         return true;
     }
 
     @Override
-    public boolean areActivityValuesValid(Activity activity) {
-        return activity == null
-                || isNameValid(activity.getName())
-                && isAddressValid(activity.getAddress())
-                && isTelephoneNumberValid(activity.getTelephoneNumber())
-                && isEmailValid(activity.getEmail())
-                && isCategoryValid(activity.getCategory());
-    }
-
-    /**
-     * Verifica che il nome sia valido
-     *
-     * @param name il nome da verificare
-     * @return true se è scritto correttamente, false altrimenti
-     */
-    protected boolean isNameValid(String name) {
-        return name == null
-                || name.length() > 0
-                && name.length() < 255
-                && !name.contains("\\.[]{}()<>*+-=!?^$|");
-    }
-
-    /**
-     * Verifica che l'indirizzo sia valido
-     *
-     * @param address l'indirizzo da verificare
-     * @return true se è scritto correttamente, false altrimenti
-     */
-    protected boolean isAddressValid(String address) {
-        return isNameValid(address);
-    }
-
-    /**
-     * Verifica che il numero di telefono sia valido
-     *
-     * @param telephoneNumber il numero da verificare
-     * @return true se è scritto correttamente, false altrimenti
-     */
-    protected boolean isTelephoneNumberValid(String telephoneNumber) {
-        return telephoneNumber == null
-                || telephoneNumber.matches("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$");
-    }
-
-    /**
-     * Verifica che l'email sia valida
-     *
-     * @param email l'email
-     * @return true se l'email è valida, false altrimenti
-     */
-    protected boolean isEmailValid(String email) {
-        return email == null
-                || email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
-    }
-
-    /**
-     * Verifica che la categoria sia valida
-     *
-     * @param category la categoria da verificare
-     * @return true se la categoria è corretta, false altrimenti
-     */
-    private boolean isCategoryValid(ContentCategory category) {
-        Objects.requireNonNull(category);
-        return true;
-    }
-
-    public void unregisterActivityById(Long id) {
-        activityRepository.deleteById(id);
+    public void unregister(Activity entity) {
+        activityRepository.delete(entity);
     }
 }

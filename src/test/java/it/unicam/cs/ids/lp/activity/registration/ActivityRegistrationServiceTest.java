@@ -20,7 +20,7 @@ class ActivityRegistrationServiceTest {
     @Test
     void registerActivity() {
         assertThrows(NullPointerException.class,
-                () -> activityRegistrationService.registerActivity(null));
+                () -> activityRegistrationService.register(null));
         Activity activity = activityMapper.apply(new ActivityRequest(
                 "Apple",
                 "via california",
@@ -29,6 +29,6 @@ class ActivityRegistrationServiceTest {
                 ContentCategory.TECHNOLOGY,
                 "sonoLaApple"
         ));
-        Assertions.assertTrue(activityRegistrationService.registerActivity(activity));
+        Assertions.assertTrue(activityRegistrationService.register(activity));
     }
 }
