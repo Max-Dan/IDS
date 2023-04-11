@@ -27,6 +27,7 @@ public class CashbackRule extends AbstractRule<Integer> {
     @JoinColumn
     @ToString.Exclude
     private Set<Product> products;
+
     /**
      * percentuale di cashback per i prodotti
      */

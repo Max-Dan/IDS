@@ -17,9 +17,11 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class AbstractRule<E> implements Rule<E> {
+
     @Id
     @GeneratedValue
     private long id;
+
     @ManyToOne
     @JoinColumn(name = "campaign_id")
     private Campaign campaign;

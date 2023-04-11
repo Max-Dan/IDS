@@ -9,16 +9,22 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/activity/{activityId}/campaign/{campaignId}/cashback")
 public class CashbackRuleController {
+
     private final CashbackRuleRepository cashbackRuleRepository;
-    private final CampaignRepository campaignRepository;
+
     private final CardRepository cardRepository;
 
+    private final CashbackRuleMapper cashbackRuleMapper;
+    private final CampaignRepository campaignRepository;
+
     public CashbackRuleController(CashbackRuleRepository cashbackRuleRepository,
-                                  CampaignRepository campaignRepository,
-                                  CardRepository cardRepository) {
+                                  CardRepository cardRepository,
+                                  CashbackRuleMapper cashbackRuleMapper,
+                                  CampaignRepository campaignRepository) {
         this.cashbackRuleRepository = cashbackRuleRepository;
-        this.campaignRepository = campaignRepository;
+        this.cashbackRuleMapper = cashbackRuleMapper;
         this.cardRepository = cardRepository;
+        this.campaignRepository = campaignRepository;
     }
 
     @PostMapping("/add")
@@ -26,16 +32,8 @@ public class CashbackRuleController {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
         if (!campaign.getCard().equals(cardRepository.findByActivities_Id(activityId).orElseThrow()))
             throw new RuntimeException("Attività non autorizzata a modificare la campagna");
-        CashbackRule cashbackRule = getCashbackRule(campaignId, request);
+        CashbackRule cashbackRule = cashbackRuleMapper.apply(campaign, request);
         cashbackRuleRepository.save(cashbackRule);
         return ResponseEntity.ok(cashbackRule);
-    }
-
-    private CashbackRule getCashbackRule(long campaignId, CashbackRequest request) {
-        CashbackRule cashbackRule = new CashbackRule();
-        cashbackRule.setCampaign(campaignRepository.findById(campaignId).orElseThrow());
-        cashbackRule.setProducts(request.products());
-        cashbackRule.setCashbackRate(request.cashbackRate());
-        return cashbackRule;
     }
 }
