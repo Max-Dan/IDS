@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.lp.activity.statistics;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class AbstractStatistic<T> implements Statistic<T> {
+public abstract class AbstractStatistic<T> {
 
     @Id
     @GeneratedValue
@@ -26,6 +27,15 @@ public abstract class AbstractStatistic<T> implements Statistic<T> {
     private LocalDate date;
 
     private double value;
+
+    @Transient
+    @JsonIgnore
+    private Statistic<T> statistic;
+
+    public final double getResult(T item) {
+        Objects.requireNonNull(statistic);
+        return this.statistic.apply(item);
+    }
 
     @Override
     public boolean equals(Object o) {

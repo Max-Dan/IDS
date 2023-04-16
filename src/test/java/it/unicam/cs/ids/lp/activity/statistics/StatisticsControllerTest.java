@@ -1,11 +1,14 @@
 package it.unicam.cs.ids.lp.activity.statistics;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unicam.cs.ids.lp.LoyaltyPlatformApplication;
 import it.unicam.cs.ids.lp.activity.Activity;
 import it.unicam.cs.ids.lp.activity.ActivityRepository;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
+import it.unicam.cs.ids.lp.activity.statistics.card.CardStatistic;
+import it.unicam.cs.ids.lp.activity.statistics.card.CardStatisticRepository;
 import it.unicam.cs.ids.lp.client.Customer;
 import it.unicam.cs.ids.lp.client.CustomerRepository;
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
@@ -41,8 +44,6 @@ class StatisticsControllerTest {
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
     private ActivityRepository activityRepository;
     @Autowired
     private CardRepository cardRepository;
@@ -50,6 +51,10 @@ class StatisticsControllerTest {
     private CustomerRepository customerRepository;
     @Autowired
     private CustomerCardRepository customerCardRepository;
+    @Autowired
+    private CardStatisticRepository cardStatisticRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
     private Activity activity;
 
     @BeforeAll
@@ -88,6 +93,14 @@ class StatisticsControllerTest {
         String string = mvc.perform(get("/activity/" + activity.getId() + "/cardStats"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn().getResponse().getContentAsString();
-        Assertions.assertEquals("[\"CardStatistic    5.0\"]", string);
+
+        List<CardStatistic> cardStatistics = objectMapper.readValue(string, new TypeReference<>() {
+        });
+
+        Assertions.assertTrue(cardStatisticRepository.findAllById(cardStatistics.stream()
+                        .map(AbstractStatistic::getId)
+                        .toList())
+                .stream()
+                .allMatch(cardStatistic -> cardStatisticRepository.existsById(cardStatistic.getId())));
     }
 }

@@ -135,7 +135,6 @@ class CampaignControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isOk())
                 .andReturn();
-        System.out.println("AAAAAAAAAAAAA" + mvcResult.getResponse().getContentAsString());
         Assertions.assertTrue(mvcResult.getResponse().getContentAsString().length() > 2); // non deve essere "[]"
     }
 }
