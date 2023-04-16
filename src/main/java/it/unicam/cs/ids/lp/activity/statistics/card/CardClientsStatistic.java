@@ -1,17 +1,19 @@
 package it.unicam.cs.ids.lp.activity.statistics.card;
 
 import it.unicam.cs.ids.lp.activity.card.Card;
+import it.unicam.cs.ids.lp.activity.statistics.Statistic;
 import it.unicam.cs.ids.lp.client.CustomerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-public class CardClientsStatistic extends CardStatistic {
+@Component
+public class CardClientsStatistic implements Statistic<Card> {
 
-    @Autowired
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
-    @Override
+    public CardClientsStatistic(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
+
     public Double apply(Card card) {
         return (double) customerRepository.countByCards_Card(card);
     }

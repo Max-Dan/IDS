@@ -1,5 +1,7 @@
 package it.unicam.cs.ids.lp.activity.statistics;
 
+import it.unicam.cs.ids.lp.activity.statistics.card.CardStatistic;
+
 import java.util.List;
 
 /**
@@ -9,5 +11,5 @@ import java.util.List;
  */
 public interface StatisticAnalyzer<I> {
 
-    List<String> analyzeData(List<StatisticType> statisticTypes, I id);
+    List<CardStatistic> analyzeData(List<StatisticType> statisticTypes, I id);
 }

@@ -1,7 +1,7 @@
 package it.unicam.cs.ids.lp.activity.statistics;
 
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import it.unicam.cs.ids.lp.activity.statistics.card.CardStatistic;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,14 +14,18 @@ import java.util.List;
 @RequestMapping("/activity/{activityId}")
 public class StatisticsController {
 
-    @Autowired
-    private StatisticsCalculatorService statisticsCalculatorService;
+    private final StatisticsCalculatorService statisticsCalculatorService;
 
-    @Autowired
-    private CardRepository cardRepository;
+    private final CardRepository cardRepository;
+
+    public StatisticsController(StatisticsCalculatorService statisticsCalculatorService,
+                                CardRepository cardRepository) {
+        this.statisticsCalculatorService = statisticsCalculatorService;
+        this.cardRepository = cardRepository;
+    }
 
     @GetMapping("/cardStats")
-    public ResponseEntity<List<String>> getCardStatistics(@PathVariable long activityId) {
+    public ResponseEntity<List<CardStatistic>> getCardStatistics(@PathVariable long activityId) {
         return ResponseEntity.ok(
                 statisticsCalculatorService.analyzeData(StatisticTypeFactory.getCardTypeStatistics(),
                         cardRepository.findByActivities_Id(activityId).orElseThrow())
