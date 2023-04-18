@@ -82,15 +82,8 @@ class CustomerCardControllerTest {
         testCustomerCard = customerCardRepository.save(testCustomerCard);
 
         long id = testCustomerCard.getId();
-        Customer customer = testCustomerCard.getCustomer();
-        Card card = testCustomerCard.getCard();
 
-        CustomerCardCompositeId customerCardId = new CustomerCardCompositeId();
-        customerCardId.setId(id);
-        customerCardId.setCustomer(customer);
-        customerCardId.setCard(card);
-
-        ResponseEntity<?> response = customerCardController.deleteCard(customerCardId);
+        ResponseEntity<?> response = customerCardController.deleteCard(id);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 

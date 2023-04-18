@@ -4,22 +4,29 @@ import it.unicam.cs.ids.lp.activity.campaign.rules.AbstractRuleRepository;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class CampaignService {
 
     private final CardRepository cardRepository;
     private final CampaignMapper campaignMapper;
     private final CampaignRepository campaignRepository;
     private final AbstractRuleRepository<?> abstractRuleRepository;
+
+    public CampaignService(CardRepository cardRepository,
+                           CampaignMapper campaignMapper,
+                           CampaignRepository campaignRepository,
+                           AbstractRuleRepository<?> abstractRuleRepository) {
+        this.cardRepository = cardRepository;
+        this.campaignMapper = campaignMapper;
+        this.campaignRepository = campaignRepository;
+        this.abstractRuleRepository = abstractRuleRepository;
+    }
 
     public Campaign createCampaign(long activityId, CampaignRequest campaignRequest) {
         Card card = cardRepository.findByActivities_Id(activityId).orElseThrow();
@@ -50,8 +57,22 @@ public class CampaignService {
     public List<Campaign> getActiveCampaigns() {
         return campaignRepository.findAll()
                 .stream()
-                .filter(campaign -> campaign.getStart().isBefore(LocalDate.now())
-                        && campaign.getEnd().isAfter(LocalDate.now()))
+                .filter(campaign -> !campaign.isCurrentlyActive())
+                .toList();
+    }
+
+    /**
+     * Mostra i vantaggi che può portare un ordine senza applicarli
+     *
+     * @return la lista di vantaggi che può portare
+     */
+    public List<String> seeBonuses(long campaignId, CustomerOrder order) {
+        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
+        return abstractRuleRepository.findAll()
+                .stream()
+                .filter(abstractRule -> abstractRule.getCampaign()
+                        .equals(campaign))
+                .map(rule -> rule.getClass().getSimpleName() + "   " + rule.seeBonus(order))
                 .toList();
     }
 }
