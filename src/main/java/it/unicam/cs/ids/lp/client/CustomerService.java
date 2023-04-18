@@ -3,20 +3,16 @@ package it.unicam.cs.ids.lp.client;
 import it.unicam.cs.ids.lp.activity.campaign.Campaign;
 import it.unicam.cs.ids.lp.activity.campaign.CampaignRepository;
 import it.unicam.cs.ids.lp.client.registration.CustomerRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+
     private final CampaignRepository campaignRepository;
-
-    public CustomerService(CustomerRepository customerRepository,
-                           CampaignRepository campaignRepository) {
-        this.customerRepository = customerRepository;
-        this.campaignRepository = campaignRepository;
-    }
-
 
     public void modifyCustomerData(long customerId, CustomerRequest customerRequest) {
         Customer customer = customerRepository.getReferenceById(customerId);

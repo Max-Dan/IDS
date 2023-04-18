@@ -2,23 +2,21 @@ package it.unicam.cs.ids.lp.activity.registration;
 
 import it.unicam.cs.ids.lp.activity.Activity;
 import it.unicam.cs.ids.lp.activity.ActivityRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/activity")
 public class ActivityRegistrationController {
 
-    @Autowired
-    private ActivityMapper activityMapper;
+    private final ActivityMapper activityMapper;
 
-    @Autowired
-    private ActivityRegistrationService activityRegistrationService;
+    private final ActivityRegistrationService activityRegistrationService;
 
-    @Autowired
-    private ActivityRepository activityRepository;
+    private final ActivityRepository activityRepository;
 
     @PutMapping("/register")
     public ResponseEntity<?> registerActivity(@RequestBody ActivityRequest activityRequest) {

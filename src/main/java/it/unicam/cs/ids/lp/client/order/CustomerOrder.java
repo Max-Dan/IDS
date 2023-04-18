@@ -18,14 +18,17 @@ import java.util.Set;
 @ToString
 @RequiredArgsConstructor
 public class CustomerOrder {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
     private Long id;
+
     @ManyToMany
     @JoinTable
     @ToString.Exclude
     private Set<Product> products;
+
     private LocalDate date;
 
     @Override

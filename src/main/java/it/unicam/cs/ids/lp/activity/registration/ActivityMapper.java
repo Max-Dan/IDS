@@ -1,7 +1,7 @@
 package it.unicam.cs.ids.lp.activity.registration;
 
 import it.unicam.cs.ids.lp.activity.Activity;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +9,10 @@ import java.time.LocalDate;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class ActivityMapper implements Function<ActivityRequest, Activity> {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Activity apply(ActivityRequest activityRequest) {

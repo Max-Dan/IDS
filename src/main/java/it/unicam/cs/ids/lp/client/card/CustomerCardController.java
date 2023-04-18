@@ -1,7 +1,7 @@
 package it.unicam.cs.ids.lp.client.card;
 
 import it.unicam.cs.ids.lp.activity.card.CardProgram;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,17 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/customerCard")
 public class CustomerCardController {
 
     private final CustomerCardRepository repository;
-    private final CustomerCardMapper customerCardMapper;
 
-    @Autowired
-    public CustomerCardController(CustomerCardRepository repository, CustomerCardMapper customerCardMapper) {
-        this.repository = repository;
-        this.customerCardMapper = customerCardMapper;
-    }
+    private final CustomerCardMapper customerCardMapper;
 
     @PostMapping("/createCard")
     public ResponseEntity<CustomerCard> createCustomerCard(@RequestBody CustomerCardRequest request) {

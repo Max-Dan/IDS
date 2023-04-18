@@ -3,11 +3,13 @@ package it.unicam.cs.ids.lp.activity.campaign.rules.cashback;
 import it.unicam.cs.ids.lp.activity.campaign.Campaign;
 import it.unicam.cs.ids.lp.activity.campaign.CampaignRepository;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/activity/{activityId}/campaign/{campaignId}/cashback")
+@RequiredArgsConstructor
 public class CashbackRuleController {
 
     private final CashbackRuleRepository cashbackRuleRepository;
@@ -15,17 +17,8 @@ public class CashbackRuleController {
     private final CardRepository cardRepository;
 
     private final CashbackRuleMapper cashbackRuleMapper;
-    private final CampaignRepository campaignRepository;
 
-    public CashbackRuleController(CashbackRuleRepository cashbackRuleRepository,
-                                  CardRepository cardRepository,
-                                  CashbackRuleMapper cashbackRuleMapper,
-                                  CampaignRepository campaignRepository) {
-        this.cashbackRuleRepository = cashbackRuleRepository;
-        this.cashbackRuleMapper = cashbackRuleMapper;
-        this.cardRepository = cardRepository;
-        this.campaignRepository = campaignRepository;
-    }
+    private final CampaignRepository campaignRepository;
 
     @PostMapping("/add")
     public ResponseEntity<CashbackRule> setCashback(@PathVariable long activityId, @PathVariable long campaignId, @RequestBody CashbackRequest request) {

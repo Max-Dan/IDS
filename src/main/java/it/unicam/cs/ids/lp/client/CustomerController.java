@@ -1,6 +1,7 @@
 package it.unicam.cs.ids.lp.client;
 
 import it.unicam.cs.ids.lp.client.registration.CustomerRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,18 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/customer")
 public class CustomerController {
 
     private final CustomerRepository customerRepository;
 
     private final CustomerService customerService;
-
-    public CustomerController(CustomerRepository customerRepository,
-                              CustomerService customerService) {
-        this.customerRepository = customerRepository;
-        this.customerService = customerService;
-    }
 
     @GetMapping("/getData/{customerId}")
     public ResponseEntity<?> getCustomerData(@PathVariable long customerId) {

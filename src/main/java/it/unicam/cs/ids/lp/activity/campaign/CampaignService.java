@@ -4,7 +4,7 @@ import it.unicam.cs.ids.lp.activity.campaign.rules.AbstractRuleRepository;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,16 +13,13 @@ import java.util.List;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class CampaignService {
 
-    @Autowired
-    private CardRepository cardRepository;
-    @Autowired
-    private CampaignMapper campaignMapper;
-    @Autowired
-    private CampaignRepository campaignRepository;
-    @Autowired
-    private AbstractRuleRepository<?> abstractRuleRepository;
+    private final CardRepository cardRepository;
+    private final CampaignMapper campaignMapper;
+    private final CampaignRepository campaignRepository;
+    private final AbstractRuleRepository<?> abstractRuleRepository;
 
     public Campaign createCampaign(long activityId, CampaignRequest campaignRequest) {
         Card card = cardRepository.findByActivities_Id(activityId).orElseThrow();

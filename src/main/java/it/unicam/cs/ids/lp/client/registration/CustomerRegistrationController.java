@@ -2,20 +2,21 @@ package it.unicam.cs.ids.lp.client.registration;
 
 import it.unicam.cs.ids.lp.client.Customer;
 import it.unicam.cs.ids.lp.client.CustomerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/customer")
 public class CustomerRegistrationController {
-    @Autowired
-    private CustomerRegistrationService customerRegistrationService;
-    @Autowired
-    private CustomerMapper customerMapper;
-    @Autowired
-    private CustomerRepository customerRepository;
+
+    private final CustomerRegistrationService customerRegistrationService;
+
+    private final CustomerMapper customerMapper;
+
+    private final CustomerRepository customerRepository;
 
     @PutMapping("/register")
     public ResponseEntity<?> registerCustomer(@RequestBody CustomerRequest customerRequest) {

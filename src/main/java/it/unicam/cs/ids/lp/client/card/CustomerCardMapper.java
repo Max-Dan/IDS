@@ -2,20 +2,19 @@ package it.unicam.cs.ids.lp.client.card;
 
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.client.CustomerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerCardMapper implements Function<CustomerCardRequest, CustomerCard> {
 
-    @Autowired
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
-    @Autowired
-    private CardRepository cardRepository;
+    private final CardRepository cardRepository;
 
     @Override
     public CustomerCard apply(CustomerCardRequest customerCardRequest) {
