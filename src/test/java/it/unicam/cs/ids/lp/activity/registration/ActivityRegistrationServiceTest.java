@@ -20,9 +20,9 @@ class ActivityRegistrationServiceTest {
     @Autowired
     private ActivityMapper activityMapper;
 
-    private Activity activity;
     @Autowired
     private ActivityRepository activityRepository;
+    private Activity activity;
 
     @BeforeEach
     void setUp() {
@@ -42,6 +42,7 @@ class ActivityRegistrationServiceTest {
                 () -> activityRegistrationService.register(null));
         Assertions.assertTrue(activityRegistrationService.register(activity));
         Assertions.assertTrue(activityRepository.existsById(activity.getId()));
+        activityRegistrationService.unregister(activity);
     }
 
     @Test
