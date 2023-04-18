@@ -5,19 +5,23 @@ import it.unicam.cs.ids.lp.activity.ActivityRepository;
 import it.unicam.cs.ids.lp.util.DataValidator;
 import it.unicam.cs.ids.lp.util.DataValidatorUtil;
 import it.unicam.cs.ids.lp.util.Registry;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
 @Service
-@RequiredArgsConstructor
 public class ActivityRegistrationService
         implements DataValidator<Activity>, Registry<Activity> {
 
     private final ActivityRepository activityRepository;
 
     private final DataValidatorUtil dataValidatorUtil;
+
+    public ActivityRegistrationService(ActivityRepository activityRepository, DataValidatorUtil dataValidatorUtil) {
+        this.activityRepository = activityRepository;
+        this.dataValidatorUtil = dataValidatorUtil;
+    }
+
 
     @Override
     public boolean areRegistrationValuesValid(Activity activity) {
