@@ -38,6 +38,7 @@ public class ActivityService {
 
         if (!dataValidator.areRegistrationValuesValid(activity))
             return Optional.empty();
+        activityRepository.save(activity);
         return Optional.of(activity);
     }
 }
