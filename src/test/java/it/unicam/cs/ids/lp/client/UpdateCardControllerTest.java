@@ -44,7 +44,7 @@ class UpdateCardControllerTest {
         ResponseEntity<?> response = updateCardController.modifyProgram(request);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        CustomerCard updatedCustomerCard = customerCardRepository.findById(customerCardId).orElse(null);
+        CustomerCard updatedCustomerCard = customerCardRepository.findById(customerCard.getId()).orElse(null);
         Assertions.assertNotNull(updatedCustomerCard);
         Assertions.assertEquals(CardProgram.CASHBACK, updatedCustomerCard.getProgram());
     }
@@ -68,7 +68,7 @@ class UpdateCardControllerTest {
         ResponseEntity<?> response = updateCardController.modifyAttributes(request);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        CustomerCard updatedCustomerCard = customerCardRepository.findById(customerCardId).orElse(null);
+        CustomerCard updatedCustomerCard = customerCardRepository.findById(customerCard.getId()).orElse(null);
         Assertions.assertNotNull(updatedCustomerCard);
         Assertions.assertEquals(100, updatedCustomerCard.getPoints());
         Assertions.assertEquals(2, updatedCustomerCard.getTier());
