@@ -17,7 +17,8 @@ public class ActivityRegistrationService
 
     private final DataValidatorUtil dataValidatorUtil;
 
-    public ActivityRegistrationService(ActivityRepository activityRepository, DataValidatorUtil dataValidatorUtil) {
+    public ActivityRegistrationService(ActivityRepository activityRepository,
+                                       DataValidatorUtil dataValidatorUtil) {
         this.activityRepository = activityRepository;
         this.dataValidatorUtil = dataValidatorUtil;
     }
@@ -26,17 +27,17 @@ public class ActivityRegistrationService
     @Override
     public boolean areRegistrationValuesValid(Activity activity) {
         return activity != null
-                && (!dataValidatorUtil.isNameValid(activity.getName())
-                || !dataValidatorUtil.isAddressValid(activity.getAddress())
-                || !dataValidatorUtil.isTelephoneNumberValid(activity.getTelephoneNumber())
-                || !dataValidatorUtil.isEmailValid(activity.getEmail())
-                || !dataValidatorUtil.isCategoryValid(activity.getCategory()));
+                && dataValidatorUtil.isNameValid(activity.getName())
+                && dataValidatorUtil.isAddressValid(activity.getAddress())
+                && dataValidatorUtil.isTelephoneNumberValid(activity.getTelephoneNumber())
+                && dataValidatorUtil.isEmailValid(activity.getEmail())
+                && dataValidatorUtil.isCategoryValid(activity.getCategory());
     }
 
     @Override
     public boolean register(Activity activity) {
         Objects.requireNonNull(activity);
-        if (areRegistrationValuesValid(activity))
+        if (!areRegistrationValuesValid(activity))
             return false;
         activityRepository.save(activity);
         return true;
