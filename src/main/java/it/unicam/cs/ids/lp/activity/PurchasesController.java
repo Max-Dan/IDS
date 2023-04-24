@@ -82,7 +82,7 @@ public class PurchasesController {
         List<String> list = customerCard.getCampaigns()
                 .stream()
                 .filter(campaign -> !campaign.isCurrentlyActive())
-                .map(campaign -> campaignService.applyRules(campaign.getId(), order))
+                .map(campaign -> campaignService.applyRules(campaign.getId(), activityId, order))
                 .flatMap(List::stream)
                 .toList();
         return ResponseEntity.ok(list);
