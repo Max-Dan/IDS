@@ -35,7 +35,8 @@ public class CampaignService {
         return campaign;
     }
 
-    public Campaign modifyCampaign(long campaignId, CampaignRequest campaignRequest) {
+    public Campaign modifyCampaign(long campaignId, long activityId, CampaignRequest campaignRequest) {
+        checkValidCampaignForActivity(activityId);
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
         if (campaignRequest.end() != null
                 && campaign.getEnd() != null
@@ -44,7 +45,8 @@ public class CampaignService {
         return campaign;
     }
 
-    public List<String> applyRules(long campaignId, CustomerOrder order) {
+    public List<String> applyRules(long campaignId, long activityId, CustomerOrder order) {
+        checkValidCampaignForActivity(activityId);
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
         return abstractRuleRepository.findAll()
                 .stream()
@@ -54,7 +56,8 @@ public class CampaignService {
                 .toList();
     }
 
-    public List<Campaign> getActiveCampaigns() {
+    public List<Campaign> getActiveCampaigns(long activityId) {
+        checkValidCampaignForActivity(activityId);
         return campaignRepository.findAll()
                 .stream()
                 .filter(campaign -> !campaign.isCurrentlyActive())
@@ -74,5 +77,10 @@ public class CampaignService {
                         .equals(campaign))
                 .map(rule -> rule.getClass().getSimpleName() + "   " + rule.seeBonus(order))
                 .toList();
+    }
+
+    private void checkValidCampaignForActivity(long activityId) {
+        if (!campaignRepository.existsByCard_Activities_Id(activityId))
+            throw new RuntimeException("Attività non autorizzata a eseguire operazioni sulla campagna");
     }
 }
