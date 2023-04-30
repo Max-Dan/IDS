@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.lp.rules;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import it.unicam.cs.ids.lp.rules.platform_rules.AbstractPlatformRule;
 import jakarta.persistence.*;
@@ -23,6 +24,7 @@ public abstract class Rule<R> {
 
     @ManyToOne
     @JoinColumn
+    @JsonIgnore
     private AbstractPlatformRule platformRule;
 
     public abstract R applyRule(CustomerOrder item);
