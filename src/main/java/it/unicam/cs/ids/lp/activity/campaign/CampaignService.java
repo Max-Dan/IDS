@@ -1,9 +1,11 @@
 package it.unicam.cs.ids.lp.activity.campaign;
 
-import it.unicam.cs.ids.lp.activity.campaign.rules.AbstractRuleRepository;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
+import it.unicam.cs.ids.lp.rules.RuleRepository;
+import it.unicam.cs.ids.lp.rules.platform_rules.campaign.CampaignRule;
+import it.unicam.cs.ids.lp.rules.platform_rules.campaign.CampaignRuleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +21,9 @@ public class CampaignService {
     private final CardRepository cardRepository;
     private final CampaignMapper campaignMapper;
     private final CampaignRepository campaignRepository;
-    private final AbstractRuleRepository<?> abstractRuleRepository;
+    private final CampaignRuleRepository campaignRuleRepository;
+    private final RuleRepository<?> ruleRepository;
+
 
     public Campaign createCampaign(long activityId, CampaignRequest campaignRequest) {
         Card card = cardRepository.findByActivities_Id(activityId).orElseThrow();
@@ -39,11 +43,11 @@ public class CampaignService {
 
     public List<String> applyRules(long campaignId, CustomerOrder order) {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
-        return abstractRuleRepository.findAll()
+        return ruleRepository.findAll()
                 .stream()
-                .filter(abstractRule -> abstractRule.getCampaign()
-                        .equals(campaign))
-                .map(rule -> rule.getClass().getSimpleName() + "   " + rule.apply(order))
+                .filter(rule -> rule.getPlatformRule() instanceof CampaignRule
+                        && ((CampaignRule) rule.getPlatformRule()).getCampaign().equals(campaign))
+                .map(rule -> rule.getClass().getSimpleName() + "   " + rule.applyRule(order))
                 .toList();
     }
 

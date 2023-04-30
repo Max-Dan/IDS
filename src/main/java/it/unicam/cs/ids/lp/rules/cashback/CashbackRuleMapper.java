@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.lp.activity.campaign.rules.cashback;
+package it.unicam.cs.ids.lp.rules.cashback;
 
 import it.unicam.cs.ids.lp.activity.campaign.Campaign;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,6 @@ public class CashbackRuleMapper implements BiFunction<Campaign, CashbackRequest,
     @Override
     public CashbackRule apply(Campaign campaign, CashbackRequest cashbackRequest) {
         CashbackRule cashbackRule = new CashbackRule();
-        cashbackRule.setCampaign(campaign);
         cashbackRule.setProducts(cashbackRequest.products());
         cashbackRule.setCashbackRate(cashbackRequest.cashbackRate());
         return cashbackRule;

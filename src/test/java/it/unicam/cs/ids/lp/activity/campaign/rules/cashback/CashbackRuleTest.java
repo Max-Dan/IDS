@@ -3,6 +3,7 @@ package it.unicam.cs.ids.lp.activity.campaign.rules.cashback;
 import it.unicam.cs.ids.lp.LoyaltyPlatformApplication;
 import it.unicam.cs.ids.lp.activity.product.Product;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
+import it.unicam.cs.ids.lp.rules.cashback.CashbackRule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ class CashbackRuleTest {
         p2.setPrice(600);
         order.setProducts(Set.of(p1, p2));
         cashbackRule.setProducts(Set.of(p1, p2));
-        int cashback = cashbackRule.apply(order);
+        int cashback = cashbackRule.applyRule(order);
         Assertions.assertEquals(200 / 100 * 5 + 600 / 100 * 5, cashback);
     }
 
@@ -55,7 +56,7 @@ class CashbackRuleTest {
         order.setProducts(Set.of(p1, p2, p3));
         cashbackRule.setCashbackRate(5);
         cashbackRule.setProducts(Set.of(p1, p2));
-        int cashback = cashbackRule.apply(order);
+        int cashback = cashbackRule.applyRule(order);
         Assertions.assertEquals(200 / 100 * 5 + 600 / 100 * 5, cashback);
     }
 }

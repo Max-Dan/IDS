@@ -1,7 +1,8 @@
 package it.unicam.cs.ids.lp.client.coupon;
 
-import it.unicam.cs.ids.lp.client.CustomerRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
+import it.unicam.cs.ids.lp.rules.RuleRepository;
+import it.unicam.cs.ids.lp.rules.platform_rules.coupon.CouponRule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +16,7 @@ import java.util.Set;
 public class CouponService {
 
     private final CouponRepository couponRepository;
-
-    private final CustomerRepository customerRepository;
+    private final RuleRepository<?> ruleRepository;
 
     public Optional<Coupon> getCoupon(long customerId, long couponId) {
         Coupon coupon = couponRepository.findById(couponId).orElseThrow();
@@ -25,7 +25,7 @@ public class CouponService {
     }
 
     public Set<Coupon> getCoupons(long customerId) {
-        return customerRepository.findById(customerId).orElseThrow().getCoupons();
+        return couponRepository.findByCustomer_Id(customerId);
     }
 
     public boolean isCouponValid(long couponId) {
@@ -35,12 +35,11 @@ public class CouponService {
     }
 
     public List<String> applyCoupons(Set<Long> couponsId, CustomerOrder order) {
-        // TODO fare che se un coupon non viene utilizzato non viene eliminato
-        List<String> coupons = couponRepository.findAllById(couponsId)
+        List<String> coupons = ruleRepository.findAll()
                 .stream()
-                .map(Coupon::getRules)
-                .flatMap(List::stream)
-                .map(customerOrderRule -> String.valueOf(customerOrderRule.apply(order)))
+                .filter(rule -> rule.getPlatformRule() instanceof CouponRule
+                        && couponsId.contains(((CouponRule) rule.getPlatformRule()).getCoupon().getId()))
+                .map(rule -> rule.getClass().getSimpleName() + "   " + rule.applyRule(order))
                 .toList();
         couponRepository.deleteAllById(couponsId);
         return coupons;

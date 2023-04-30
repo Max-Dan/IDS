@@ -1,7 +1,7 @@
-package it.unicam.cs.ids.lp.activity.campaign.rules;
+package it.unicam.cs.ids.lp.rules;
 
-import it.unicam.cs.ids.lp.activity.campaign.Campaign;
-import it.unicam.cs.ids.lp.activity.campaign.Rule;
+import it.unicam.cs.ids.lp.client.order.CustomerOrder;
+import it.unicam.cs.ids.lp.rules.platform_rules.AbstractPlatformRule;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,23 +15,24 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class AbstractRule<E> implements Rule<E> {
+public abstract class Rule<R> {
 
     @Id
     @GeneratedValue
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "campaign_id")
-    private Campaign campaign;
+    @JoinColumn
+    private AbstractPlatformRule platformRule;
+
+    public abstract R applyRule(CustomerOrder item);
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AbstractRule<?> that = (AbstractRule<?>) o;
-        return id == that.id;
+        Rule<?> rule = (Rule<?>) o;
+        return id == rule.id;
     }
 
     @Override

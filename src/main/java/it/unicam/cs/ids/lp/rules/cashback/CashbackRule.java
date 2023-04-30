@@ -1,8 +1,8 @@
-package it.unicam.cs.ids.lp.activity.campaign.rules.cashback;
+package it.unicam.cs.ids.lp.rules.cashback;
 
-import it.unicam.cs.ids.lp.activity.campaign.rules.AbstractRule;
 import it.unicam.cs.ids.lp.activity.product.Product;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
+import it.unicam.cs.ids.lp.rules.Rule;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
@@ -18,7 +18,7 @@ import java.util.Set;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class CashbackRule extends AbstractRule<Integer> {
+public class CashbackRule extends Rule<Integer> {
 
     /**
      * prodotti soggetti al cashback
@@ -34,7 +34,7 @@ public class CashbackRule extends AbstractRule<Integer> {
     private float cashbackRate;
 
     @Override
-    public Integer apply(CustomerOrder order) {
+    public Integer applyRule(CustomerOrder order) {
         return order.getProducts()
                 .parallelStream()
                 .filter(product -> this.getProducts()

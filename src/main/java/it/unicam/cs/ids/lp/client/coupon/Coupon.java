@@ -1,6 +1,5 @@
 package it.unicam.cs.ids.lp.client.coupon;
 
-import it.unicam.cs.ids.lp.activity.campaign.Rule;
 import it.unicam.cs.ids.lp.client.Customer;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,7 +8,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -20,14 +18,12 @@ import java.util.Objects;
 public class Coupon {
 
     @Id
+    @GeneratedValue
     private long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn
     private Customer customer;
-
-    @Transient
-    private List<Rule<?>> rules;
 
     private LocalDate end;
 
