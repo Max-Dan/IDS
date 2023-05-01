@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -43,5 +44,17 @@ public class CashbackRule extends Rule<Integer> {
                 .map(product -> (int) (product.getPrice() / 100 * this.getCashbackRate()))
                 .reduce(Integer::sum)
                 .orElse(0);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CashbackRule)) return false;
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode());
     }
 }

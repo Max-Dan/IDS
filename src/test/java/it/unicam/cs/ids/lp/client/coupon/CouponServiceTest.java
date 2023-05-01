@@ -1,19 +1,21 @@
 package it.unicam.cs.ids.lp.client.coupon;
 
 import it.unicam.cs.ids.lp.LoyaltyPlatformApplication;
+import it.unicam.cs.ids.lp.activity.Activity;
+import it.unicam.cs.ids.lp.activity.ContentCategory;
 import it.unicam.cs.ids.lp.activity.product.Product;
-import it.unicam.cs.ids.lp.activity.product.ProductRepository;
+import it.unicam.cs.ids.lp.activity.product.ProductRequest;
+import it.unicam.cs.ids.lp.activity.product.ProductService;
+import it.unicam.cs.ids.lp.activity.registration.ActivityMapper;
+import it.unicam.cs.ids.lp.activity.registration.ActivityRegistrationService;
+import it.unicam.cs.ids.lp.activity.registration.ActivityRequest;
 import it.unicam.cs.ids.lp.client.Customer;
 import it.unicam.cs.ids.lp.client.CustomerRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
-import it.unicam.cs.ids.lp.rules.Rule;
 import it.unicam.cs.ids.lp.rules.RulesEnum;
 import it.unicam.cs.ids.lp.rules.cashback.CashbackRequest;
 import it.unicam.cs.ids.lp.rules.cashback.CashbackRule;
-import it.unicam.cs.ids.lp.rules.cashback.CashbackRuleMapper;
-import it.unicam.cs.ids.lp.rules.cashback.CashbackRuleRepository;
-import it.unicam.cs.ids.lp.rules.platform_rules.coupon.CouponRule;
-import it.unicam.cs.ids.lp.rules.platform_rules.coupon.CouponRuleRepository;
+import it.unicam.cs.ids.lp.rules.cashback.CashbackRuleService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -37,19 +39,17 @@ import java.util.Set;
 class CouponServiceTest {
 
     @Autowired
-    private CouponRepository couponRepository;
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private CashbackRuleRepository cashbackRuleRepository;
-    @Autowired
     private CouponService couponService;
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
-    private CouponRuleRepository couponRuleRepository;
+    private CashbackRuleService cashbackRuleService;
     @Autowired
-    private CashbackRuleMapper cashbackRuleMapper;
+    private ProductService productService;
+    @Autowired
+    private ActivityRegistrationService activityRegistrationService;
+    @Autowired
+    private ActivityMapper activityMapper;
 
     @Test
     void applyCoupons() {
@@ -59,17 +59,20 @@ class CouponServiceTest {
         CouponRequest couponRequest = new CouponRequest(Set.of(RulesEnum.CASHBACK), null);
         Coupon coupon = couponService.createCoupon(customer.getId(), couponRequest);
 
-        Product product = new Product();
-        product.setPrice(100);
-        productRepository.save(product);
+        Activity activity = activityMapper.apply(new ActivityRequest(
+                "Apple",
+                "via california",
+                "445-678-9034",
+                "test@gmail.com",
+                ContentCategory.TECHNOLOGY,
+                "sonoLaApple"
+        ));
+        activityRegistrationService.register(activity);
+        ProductRequest productRequest = new ProductRequest(null, List.of(1L), 100);
+        Product product = productService.createProduct(productRequest);
 
         CashbackRequest cashbackRequest = new CashbackRequest(Set.of(product), 5);
-        CashbackRule cashbackRule = cashbackRuleMapper.apply(cashbackRequest);
-        CouponRule couponRule = new CouponRule();
-        couponRule.setCoupon(coupon);
-        couponRuleRepository.save(couponRule);
-        cashbackRule.setPlatformRule(couponRule);
-        cashbackRuleRepository.save(cashbackRule);
+        cashbackRuleService.setCouponCashback(coupon.getId(), cashbackRequest);
 
         CustomerOrder order = new CustomerOrder();
         order.setProducts(Set.of(product));
@@ -77,7 +80,8 @@ class CouponServiceTest {
         List<String> strings = couponService.applyCoupons(Set.of(coupon.getId()), order);
         Assertions.assertFalse(strings.isEmpty());
         Assertions.assertEquals("CashbackRule   5", strings.get(0));
-        Assertions.assertFalse(couponRepository.existsById(coupon.getId()));
+        Assertions.assertFalse(coupon.getCouponRules().isEmpty());
+        Assertions.assertTrue(coupon.getCouponRules().stream().toList().get(0).getRule() instanceof CashbackRule);
     }
 
     @Test
@@ -90,13 +94,7 @@ class CouponServiceTest {
 
         Assertions.assertNotNull(customer.getCoupons());
         Assertions.assertFalse(customer.getCoupons().isEmpty());
-        CouponRule couponRule = couponRuleRepository.findByCoupon(customer.getCoupons().stream().toList().get(0));
-        Assertions.assertNotNull(couponRule);
-        Assertions.assertTrue(cashbackRuleRepository.findAll()
-                .stream()
-                .map(Rule::getPlatformRule)
-                .anyMatch(abstractPlatformRule -> abstractPlatformRule.equals(couponRule)));
         Assertions.assertNotNull(customer.getCoupons().stream().toList().get(0).getCouponRules());
-        Assertions.assertFalse(customer.getCoupons().stream().toList().get(0).getCouponRules().isEmpty());
+        Assertions.assertTrue(customer.getCoupons().stream().toList().get(0).getCouponRules().isEmpty());
     }
 }

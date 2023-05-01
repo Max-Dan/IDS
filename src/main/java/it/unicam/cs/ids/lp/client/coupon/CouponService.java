@@ -3,11 +3,6 @@ package it.unicam.cs.ids.lp.client.coupon;
 import it.unicam.cs.ids.lp.client.Customer;
 import it.unicam.cs.ids.lp.client.CustomerRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
-import it.unicam.cs.ids.lp.rules.RuleRepository;
-import it.unicam.cs.ids.lp.rules.platform_rules.RuleMapper;
-import it.unicam.cs.ids.lp.rules.platform_rules.coupon.CouponRule;
-import it.unicam.cs.ids.lp.rules.platform_rules.coupon.CouponRuleMapper;
-import it.unicam.cs.ids.lp.rules.platform_rules.coupon.CouponRuleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +16,7 @@ import java.util.Set;
 public class CouponService {
 
     private final CouponRepository couponRepository;
-    private final RuleRepository<?> ruleRepository;
     private final CustomerRepository customerRepository;
-    private final RuleMapper ruleMapper;
-    private final CouponRuleRepository couponRuleRepository;
-    private final CouponRuleMapper couponRuleMapper;
 
     public Optional<Coupon> getCoupon(long customerId, long couponId) {
         Coupon coupon = couponRepository.findById(couponId).orElseThrow();
@@ -47,8 +38,7 @@ public class CouponService {
         List<String> coupons = couponRepository.findAllById(couponsId)
                 .stream()
                 .flatMap(coupon -> coupon.getCouponRules().stream())
-                .map(CouponRule::getRule)
-                .map(rule -> rule.getClass().getSimpleName() + "   " + rule.applyRule(order))
+                .map(rule -> rule.getRule().getClass().getSimpleName() + "   " + rule.getRule().applyRule(order))
                 .toList();
 
 //        ruleRepository.findAll()
@@ -70,14 +60,14 @@ public class CouponService {
         customer.getCoupons().add(coupon);
         customerRepository.save(customer);
 
-        couponRequest.rulesEnums()
-                .stream()
-                .map(rulesEnum -> couponRuleMapper.apply(rulesEnum, coupon))
-                .forEach(couponRule -> {
-                    couponRuleRepository.save(couponRule);
-                    coupon.getCouponRules().add(couponRule);
-                    couponRepository.save(coupon);
-                });
+//        couponRequest.rulesEnums()
+//                .stream()
+//                .map(rulesEnum -> couponRuleMapper.apply(rulesEnum, coupon))
+//                .forEach(couponRule -> {
+//                    couponRuleRepository.save(couponRule);
+//                    coupon.getCouponRules().add(couponRule);
+//                    couponRepository.save(coupon);
+//                });
         return coupon;
     }
 }
