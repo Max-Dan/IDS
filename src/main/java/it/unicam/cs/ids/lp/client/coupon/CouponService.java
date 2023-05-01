@@ -1,8 +1,11 @@
 package it.unicam.cs.ids.lp.client.coupon;
 
+import it.unicam.cs.ids.lp.client.CustomerRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import it.unicam.cs.ids.lp.rules.RuleRepository;
+import it.unicam.cs.ids.lp.rules.platform_rules.RuleMapper;
 import it.unicam.cs.ids.lp.rules.platform_rules.coupon.CouponRule;
+import it.unicam.cs.ids.lp.rules.platform_rules.coupon.CouponRuleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,9 @@ public class CouponService {
 
     private final CouponRepository couponRepository;
     private final RuleRepository<?> ruleRepository;
+    private final CustomerRepository customerRepository;
+    private final RuleMapper ruleMapper;
+    private final CouponRuleRepository couponRuleRepository;
 
     public Optional<Coupon> getCoupon(long customerId, long couponId) {
         Coupon coupon = couponRepository.findById(couponId).orElseThrow();
@@ -43,5 +49,17 @@ public class CouponService {
                 .toList();
         couponRepository.deleteAllById(couponsId);
         return coupons;
+    }
+
+    public void createCoupon(long customerId, CouponRequest couponRequest) {
+        Coupon coupon = new Coupon();
+        coupon.setCustomer(customerRepository.findById(customerId).orElseThrow());
+        coupon.setEnd(couponRequest.end());
+        couponRepository.save(coupon);
+        CouponRule couponRule = new CouponRule();
+        couponRule.setCoupon(coupon);
+        couponRuleRepository.save(couponRule);
+        couponRequest.rulesEnums()
+                .forEach(rulesEnum -> ruleMapper.apply(rulesEnum, couponRule));
     }
 }

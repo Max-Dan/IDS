@@ -1,19 +1,20 @@
 package it.unicam.cs.ids.lp.client.coupon;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unicam.cs.ids.lp.LoyaltyPlatformApplication;
 import it.unicam.cs.ids.lp.activity.product.Product;
 import it.unicam.cs.ids.lp.activity.product.ProductRepository;
 import it.unicam.cs.ids.lp.client.Customer;
 import it.unicam.cs.ids.lp.client.CustomerRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
+import it.unicam.cs.ids.lp.rules.Rule;
+import it.unicam.cs.ids.lp.rules.RulesEnum;
 import it.unicam.cs.ids.lp.rules.cashback.CashbackRequest;
 import it.unicam.cs.ids.lp.rules.cashback.CashbackRule;
 import it.unicam.cs.ids.lp.rules.cashback.CashbackRuleMapper;
 import it.unicam.cs.ids.lp.rules.cashback.CashbackRuleRepository;
 import it.unicam.cs.ids.lp.rules.platform_rules.coupon.CouponRule;
 import it.unicam.cs.ids.lp.rules.platform_rules.coupon.CouponRuleRepository;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.runner.RunWith;
@@ -21,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -49,24 +49,18 @@ class CouponServiceTest {
     @Autowired
     private CouponRuleRepository couponRuleRepository;
     @Autowired
-    private MockMvc mvc;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
     private CashbackRuleMapper cashbackRuleMapper;
-    private Coupon coupon;
-    private Product product;
 
-    @BeforeEach
-    void setUp() {
+    @Test
+    void applyCoupons() {
         Customer customer = new Customer();
         customerRepository.save(customer);
 
-        coupon = new Coupon();
+        Coupon coupon = new Coupon();
         coupon.setCustomer(customer);
         couponRepository.save(coupon);
 
-        product = new Product();
+        Product product = new Product();
         product.setPrice(100);
         productRepository.save(product);
 
@@ -77,14 +71,28 @@ class CouponServiceTest {
         couponRuleRepository.save(couponRule);
         cashbackRule.setPlatformRule(couponRule);
         cashbackRuleRepository.save(cashbackRule);
-    }
-
-    @Test
-    void applyCoupons() {
         CustomerOrder order = new CustomerOrder();
         order.setProducts(Set.of(product));
 
         List<String> strings = couponService.applyCoupons(Set.of(coupon.getId()), order);
-        strings.forEach(System.out::println);
+        Assertions.assertEquals("CashbackRule   5", strings.get(0));
+    }
+
+    @Test
+    void createCoupon() {
+        Customer customer = new Customer();
+        customerRepository.save(customer);
+
+        CouponRequest couponRequest = new CouponRequest(Set.of(RulesEnum.CASHBACK), null);
+        couponService.createCoupon(customer.getId(), couponRequest);
+        List<Coupon> customerCoupons = couponRepository.findByCustomer_Id(customer.getId()).stream().toList();
+        Assertions.assertNotNull(customerCoupons);
+        Assertions.assertFalse(customerCoupons.isEmpty());
+        CouponRule couponRule = couponRuleRepository.findByCoupon(customerCoupons.get(0));
+        Assertions.assertNotNull(couponRule);
+        Assertions.assertTrue(cashbackRuleRepository.findAll()
+                .stream()
+                .map(Rule::getPlatformRule)
+                .anyMatch(abstractPlatformRule -> abstractPlatformRule.equals(couponRule)));
     }
 }

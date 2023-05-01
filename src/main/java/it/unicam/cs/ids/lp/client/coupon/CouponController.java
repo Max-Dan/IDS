@@ -34,4 +34,11 @@ public class CouponController {
     public ResponseEntity<List<String>> applyCoupons(@RequestBody Set<Long> couponIds, CustomerOrder order) {
         return ResponseEntity.ok(couponService.applyCoupons(couponIds, order));
     }
+
+    @PutMapping("/{customerId}/giveCoupon")
+    public ResponseEntity<?> giveCoupon(@PathVariable long customerId, @RequestBody CouponRequest couponRequest) {
+        couponService.createCoupon(customerId, couponRequest);
+        return ResponseEntity.ok("");
+    }
+
 }

@@ -5,7 +5,6 @@ import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import it.unicam.cs.ids.lp.rules.RuleRepository;
 import it.unicam.cs.ids.lp.rules.platform_rules.campaign.CampaignRule;
-import it.unicam.cs.ids.lp.rules.platform_rules.campaign.CampaignRuleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +20,6 @@ public class CampaignService {
     private final CardRepository cardRepository;
     private final CampaignMapper campaignMapper;
     private final CampaignRepository campaignRepository;
-    private final CampaignRuleRepository campaignRuleRepository;
     private final RuleRepository<?> ruleRepository;
 
 
