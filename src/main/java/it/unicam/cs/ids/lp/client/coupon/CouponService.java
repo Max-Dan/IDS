@@ -1,10 +1,12 @@
 package it.unicam.cs.ids.lp.client.coupon;
 
+import it.unicam.cs.ids.lp.client.Customer;
 import it.unicam.cs.ids.lp.client.CustomerRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import it.unicam.cs.ids.lp.rules.RuleRepository;
 import it.unicam.cs.ids.lp.rules.platform_rules.RuleMapper;
 import it.unicam.cs.ids.lp.rules.platform_rules.coupon.CouponRule;
+import it.unicam.cs.ids.lp.rules.platform_rules.coupon.CouponRuleMapper;
 import it.unicam.cs.ids.lp.rules.platform_rules.coupon.CouponRuleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ public class CouponService {
     private final CustomerRepository customerRepository;
     private final RuleMapper ruleMapper;
     private final CouponRuleRepository couponRuleRepository;
+    private final CouponRuleMapper couponRuleMapper;
 
     public Optional<Coupon> getCoupon(long customerId, long couponId) {
         Coupon coupon = couponRepository.findById(couponId).orElseThrow();
@@ -41,25 +44,40 @@ public class CouponService {
     }
 
     public List<String> applyCoupons(Set<Long> couponsId, CustomerOrder order) {
-        List<String> coupons = ruleRepository.findAll()
+        List<String> coupons = couponRepository.findAllById(couponsId)
                 .stream()
-                .filter(rule -> rule.getPlatformRule() instanceof CouponRule
-                        && couponsId.contains(((CouponRule) rule.getPlatformRule()).getCoupon().getId()))
+                .flatMap(coupon -> coupon.getCouponRules().stream())
+                .map(CouponRule::getRule)
                 .map(rule -> rule.getClass().getSimpleName() + "   " + rule.applyRule(order))
                 .toList();
+
+//        ruleRepository.findAll()
+//                .stream()
+//                .filter(rule -> rule.getPlatformRule() instanceof CouponRule
+//                        && couponsId.contains(((CouponRule) rule.getPlatformRule()).getCoupon().getId()))
+//                .map(rule -> rule.getClass().getSimpleName() + "   " + rule.applyRule(order))
+//                .toList();
         couponRepository.deleteAllById(couponsId);
         return coupons;
     }
 
-    public void createCoupon(long customerId, CouponRequest couponRequest) {
+    public Coupon createCoupon(long customerId, CouponRequest couponRequest) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow();
         Coupon coupon = new Coupon();
-        coupon.setCustomer(customerRepository.findById(customerId).orElseThrow());
+        coupon.setCustomer(customer);
         coupon.setEnd(couponRequest.end());
         couponRepository.save(coupon);
-        CouponRule couponRule = new CouponRule();
-        couponRule.setCoupon(coupon);
-        couponRuleRepository.save(couponRule);
+        customer.getCoupons().add(coupon);
+        customerRepository.save(customer);
+
         couponRequest.rulesEnums()
-                .forEach(rulesEnum -> ruleMapper.apply(rulesEnum, couponRule));
+                .stream()
+                .map(rulesEnum -> couponRuleMapper.apply(rulesEnum, coupon))
+                .forEach(couponRule -> {
+                    couponRuleRepository.save(couponRule);
+                    coupon.getCouponRules().add(couponRule);
+                    couponRepository.save(coupon);
+                });
+        return coupon;
     }
 }

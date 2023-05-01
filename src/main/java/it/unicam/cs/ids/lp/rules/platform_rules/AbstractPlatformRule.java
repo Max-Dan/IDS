@@ -1,9 +1,7 @@
 package it.unicam.cs.ids.lp.rules.platform_rules;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import it.unicam.cs.ids.lp.rules.Rule;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -16,11 +14,16 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class AbstractPlatformRule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
+
+    @OneToOne
+    @JoinColumn
+    private Rule<?> rule;
 
     @Override
     public boolean equals(Object o) {

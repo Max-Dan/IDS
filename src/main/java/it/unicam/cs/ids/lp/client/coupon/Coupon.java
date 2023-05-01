@@ -1,6 +1,7 @@
 package it.unicam.cs.ids.lp.client.coupon;
 
 import it.unicam.cs.ids.lp.client.Customer;
+import it.unicam.cs.ids.lp.rules.platform_rules.coupon.CouponRule;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +9,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -21,9 +24,14 @@ public class Coupon {
     @GeneratedValue
     private long id;
 
+
     @ManyToOne
     @JoinColumn
     private Customer customer;
+
+    @OneToMany
+    @ToString.Exclude
+    private Set<CouponRule> couponRules = new HashSet<>();
 
     private LocalDate end;
 

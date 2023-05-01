@@ -56,9 +56,8 @@ class CouponServiceTest {
         Customer customer = new Customer();
         customerRepository.save(customer);
 
-        Coupon coupon = new Coupon();
-        coupon.setCustomer(customer);
-        couponRepository.save(coupon);
+        CouponRequest couponRequest = new CouponRequest(Set.of(RulesEnum.CASHBACK), null);
+        Coupon coupon = couponService.createCoupon(customer.getId(), couponRequest);
 
         Product product = new Product();
         product.setPrice(100);
@@ -71,11 +70,14 @@ class CouponServiceTest {
         couponRuleRepository.save(couponRule);
         cashbackRule.setPlatformRule(couponRule);
         cashbackRuleRepository.save(cashbackRule);
+
         CustomerOrder order = new CustomerOrder();
         order.setProducts(Set.of(product));
 
         List<String> strings = couponService.applyCoupons(Set.of(coupon.getId()), order);
+        Assertions.assertFalse(strings.isEmpty());
         Assertions.assertEquals("CashbackRule   5", strings.get(0));
+        Assertions.assertFalse(couponRepository.existsById(coupon.getId()));
     }
 
     @Test
@@ -85,14 +87,16 @@ class CouponServiceTest {
 
         CouponRequest couponRequest = new CouponRequest(Set.of(RulesEnum.CASHBACK), null);
         couponService.createCoupon(customer.getId(), couponRequest);
-        List<Coupon> customerCoupons = couponRepository.findByCustomer_Id(customer.getId()).stream().toList();
-        Assertions.assertNotNull(customerCoupons);
-        Assertions.assertFalse(customerCoupons.isEmpty());
-        CouponRule couponRule = couponRuleRepository.findByCoupon(customerCoupons.get(0));
+
+        Assertions.assertNotNull(customer.getCoupons());
+        Assertions.assertFalse(customer.getCoupons().isEmpty());
+        CouponRule couponRule = couponRuleRepository.findByCoupon(customer.getCoupons().stream().toList().get(0));
         Assertions.assertNotNull(couponRule);
         Assertions.assertTrue(cashbackRuleRepository.findAll()
                 .stream()
                 .map(Rule::getPlatformRule)
                 .anyMatch(abstractPlatformRule -> abstractPlatformRule.equals(couponRule)));
+        Assertions.assertNotNull(customer.getCoupons().stream().toList().get(0).getCouponRules());
+        Assertions.assertFalse(customer.getCoupons().stream().toList().get(0).getCouponRules().isEmpty());
     }
 }

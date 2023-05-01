@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -26,7 +27,7 @@ public class CashbackRule extends Rule<Integer> {
     @OneToMany(orphanRemoval = true)
     @JoinColumn
     @ToString.Exclude
-    private Set<Product> products;
+    private Set<Product> products = new HashSet<>();
 
     /**
      * percentuale di cashback per i prodotti
