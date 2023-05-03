@@ -16,16 +16,24 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 public class Activity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     long id;
+
     private String name;
+
     private String address;
+
     private String telephoneNumber;
+
     private String email;
+
     @JsonIgnore
     private String password;
+
     private LocalDate registrationDate;
+
     @Enumerated(EnumType.STRING)
     private ContentCategory category;
 

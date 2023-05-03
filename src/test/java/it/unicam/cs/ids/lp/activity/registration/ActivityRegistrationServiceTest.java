@@ -1,8 +1,10 @@
 package it.unicam.cs.ids.lp.activity.registration;
 
 import it.unicam.cs.ids.lp.activity.Activity;
+import it.unicam.cs.ids.lp.activity.ActivityRepository;
 import it.unicam.cs.ids.lp.activity.ContentCategory;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,14 +16,17 @@ class ActivityRegistrationServiceTest {
 
     @Autowired
     private ActivityRegistrationService activityRegistrationService;
+
     @Autowired
     private ActivityMapper activityMapper;
 
-    @Test
-    void registerActivity() {
-        assertThrows(NullPointerException.class,
-                () -> activityRegistrationService.registerActivity(null));
-        Activity activity = activityMapper.apply(new ActivityRequest(
+    @Autowired
+    private ActivityRepository activityRepository;
+    private Activity activity;
+
+    @BeforeEach
+    void setUp() {
+        activity = activityMapper.apply(new ActivityRequest(
                 "Apple",
                 "via california",
                 "445-678-9034",
@@ -29,6 +34,21 @@ class ActivityRegistrationServiceTest {
                 ContentCategory.TECHNOLOGY,
                 "sonoLaApple"
         ));
-        Assertions.assertTrue(activityRegistrationService.registerActivity(activity));
+    }
+
+    @Test
+    void registerActivityTest() {
+        assertThrows(NullPointerException.class,
+                () -> activityRegistrationService.register(null));
+        Assertions.assertTrue(activityRegistrationService.register(activity));
+        Assertions.assertTrue(activityRepository.existsById(activity.getId()));
+        activityRegistrationService.unregister(activity);
+    }
+
+    @Test
+    public void unregisterActivityTest() {
+        Assertions.assertTrue(activityRegistrationService.register(activity));
+        activityRegistrationService.unregister(activity);
+        Assertions.assertFalse(activityRepository.existsById(activity.getId()));
     }
 }

@@ -13,7 +13,7 @@ import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.activity.product.Product;
 import it.unicam.cs.ids.lp.activity.product.ProductRepository;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.runner.RunWith;
@@ -43,57 +43,60 @@ public class CashbackRuleControllerTest {
 
     @Autowired
     private MockMvc mvc;
+
     @Autowired
     private ObjectMapper objectMapper;
+
     @Autowired
     private ActivityRepository activityRepository;
+
     @Autowired
     private CampaignRepository campaignRepository;
+
     @Autowired
     private CardRepository cardRepository;
+
     @Autowired
     private CampaignMapper campaignMapper;
-    private final String activityName = this.getClass().getName();
+
     @Autowired
     private CashbackRuleRepository cashbackRuleRepository;
+
     @Autowired
     private ProductRepository productRepository;
+
     private Activity activity;
+
     private Campaign campaign;
 
-    @BeforeAll
+    @BeforeEach
     public void setUp() {
-        Activity activity1 = activityRepository.findByName(activityName);
-        if (activity1 != null) {
-            activity = activity1;
-            campaign = campaignRepository.findByCard_Activities_Id(activity.getId());
-            return;
-        }
-        activity1 = new Activity();
-        activity1.setName(activityName);
-        activity = activityRepository.save(activity1);
+        activity = new Activity();
+        activity = activityRepository.save(activity);
 
         Card card = new Card();
         card.setActivities(List.of(activity));
         cardRepository.save(card);
 
-        Campaign campaign = campaignMapper.apply(
-                new CampaignRequest("test cash", null), card);
+        Campaign campaign = campaignMapper.apply(new CampaignRequest("", null), card);
         this.campaign = campaignRepository.save(campaign);
 
+        // TODO da eliminare quando sono disponibili api per creare i prodotti
         Product p1 = new Product();
         p1.setPrice(200);
-        productRepository.save(p1);
+        p1.setActivities(List.of(activity));
         Product p2 = new Product();
         p2.setPrice(600);
-        productRepository.save(p2);
+        p2.setActivities(List.of(activity));
+        productRepository.saveAll(List.of(p1, p2));
     }
 
     @Test
     public void setCashback() throws Exception {
-        CashbackRequest cashbackRequest = new CashbackRequest(products(), 5);
-        String ruleJson = mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/" +
-                                campaign.getId() + "/cashback/add")
+        Set<Product> products = new HashSet<>(productRepository.findByActivities_Id(activity.getId()));
+        CashbackRequest cashbackRequest = new CashbackRequest(products, 5);
+        String ruleJson = mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId()
+                                + "/campaign/" + campaign.getId() + "/cashback/add")
                         .content(objectMapper.writeValueAsString(cashbackRequest))
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isOk())
@@ -103,10 +106,5 @@ public class CashbackRuleControllerTest {
         CashbackRule cashbackRule = objectMapper.readValue(ruleJson, CashbackRule.class);
         Assertions.assertNotNull(cashbackRule);
         Assertions.assertTrue(cashbackRuleRepository.existsById(cashbackRule.getId()));
-        System.out.println(cashbackRuleRepository.findById(cashbackRule.getId()).orElseThrow());
-    }
-
-    private Set<Product> products() {
-        return new HashSet<>(productRepository.findAll());
     }
 }

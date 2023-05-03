@@ -1,17 +1,15 @@
 package it.unicam.cs.ids.lp.activity.card;
 
 import it.unicam.cs.ids.lp.activity.Activity;
-import it.unicam.cs.ids.lp.activity.campaign.Campaign;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -19,20 +17,20 @@ import java.util.Set;
 @ToString
 @RequiredArgsConstructor
 public class Card {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
     private Long id;
+
     private String name;
+
     @OneToMany(orphanRemoval = true, cascade = CascadeType.MERGE)
     @ToString.Exclude
-    private List<Activity> activities;
+    private List<Activity> activities = new LinkedList<>();
+
     @Enumerated(EnumType.STRING)
     private CardProgram program;
-
-    @OneToMany(mappedBy = "card")
-    @ToString.Exclude
-    private Set<Campaign> campaigns = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

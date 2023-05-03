@@ -1,7 +1,7 @@
 package it.unicam.cs.ids.lp.client.registration;
 
 import it.unicam.cs.ids.lp.client.Customer;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -9,9 +9,10 @@ import java.time.LocalDate;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerMapper implements Function<CustomerRequest, Customer> {
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Customer apply(CustomerRequest customerRequest) {

@@ -1,16 +1,16 @@
 package it.unicam.cs.ids.lp.activity.product;
 
 import it.unicam.cs.ids.lp.activity.ActivityRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class ProductMapper implements Function<ProductRequest, Product> {
 
-    @Autowired
-    private ActivityRepository activityRepository;
+    private final ActivityRepository activityRepository;
 
     @Override
     public Product apply(ProductRequest productRequest) {

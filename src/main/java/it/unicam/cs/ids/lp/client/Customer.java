@@ -1,19 +1,17 @@
 package it.unicam.cs.ids.lp.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.unicam.cs.ids.lp.activity.campaign.Campaign;
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -22,49 +20,33 @@ import java.util.Set;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class Customer implements Serializable, UserDetails {
+public class Customer implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
     private String name;
+
     private String surname;
+
     private String telephoneNumber;
+
     private String email;
+
     @JsonIgnore
     private String password;
+
     private LocalDate registrationDate;
+
     @OneToMany
-    private Set<CustomerCard> cards;
+    @ToString.Exclude
+    private Set<CustomerCard> cards = new HashSet<>();
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    @OneToMany(orphanRemoval = true)
+    @JoinColumn
+    @ToString.Exclude
+    private Set<Campaign> currentlySubscribedCampaigns = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

@@ -8,6 +8,7 @@ import it.unicam.cs.ids.lp.activity.campaign.rules.cashback.CashbackRequest;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.activity.product.Product;
+import it.unicam.cs.ids.lp.activity.product.ProductRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,6 +25,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -50,6 +52,8 @@ class CampaignControllerTest {
     private CampaignRepository campaignRepository;
     @Autowired
     private CardRepository cardRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @BeforeAll
     public void setUp() {
@@ -66,6 +70,15 @@ class CampaignControllerTest {
         Card card = new Card();
         card.setActivities(List.of(activity1));
         cardRepository.save(card);
+
+        // TODO da eliminare quando sono disponibili api per creare i prodotti
+        Product p1 = new Product();
+        p1.setPrice(200);
+        p1.setActivities(List.of(activity1));
+        Product p2 = new Product();
+        p2.setPrice(600);
+        p2.setActivities(List.of(activity1));
+        productRepository.saveAll(List.of(p1, p2));
     }
 
     @Test
@@ -99,16 +112,6 @@ class CampaignControllerTest {
         ).andExpect(status().isOk());
     }
 
-    private Set<Product> products() {
-        Product p1 = new Product();
-        p1.setId(1L);
-        p1.setPrice(200);
-        Product p2 = new Product();
-        p2.setId(2L);
-        p2.setPrice(600);
-        return Set.of(p1, p2);
-    }
-
     @Test
     public void applyRules() throws Exception {
         CampaignRequest campaignRequest = new CampaignRequest("", null);
@@ -119,7 +122,8 @@ class CampaignControllerTest {
                 .andReturn().getResponse().getContentAsString();
         Campaign campaign = objectMapper.readValue(campaignJson, Campaign.class);
 
-        CashbackRequest cashbackRequest = new CashbackRequest(products(), 5);
+        Set<Product> products = new HashSet<>(productRepository.findByActivities_Id(activity.getId()));
+        CashbackRequest cashbackRequest = new CashbackRequest(products, 5);
         mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/" +
                         campaign.getId() + "/cashback/add")
                 .content(objectMapper.writeValueAsString(cashbackRequest))
@@ -127,7 +131,7 @@ class CampaignControllerTest {
         ).andExpect(status().isOk());
 
         CustomerOrder order = new CustomerOrder();
-        order.setProducts(products());
+        order.setProducts(products);
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId()
                                 + "/campaign/" + campaign.getId() + "/applyRules")
@@ -135,7 +139,6 @@ class CampaignControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isOk())
                 .andReturn();
-        System.out.println("AAAAAAAAAAAAA" + mvcResult.getResponse().getContentAsString());
         Assertions.assertTrue(mvcResult.getResponse().getContentAsString().length() > 2); // non deve essere "[]"
     }
 }

@@ -1,8 +1,6 @@
-package it.unicam.cs.ids.lp.client;
+package it.unicam.cs.ids.lp.client.card;
 
-import it.unicam.cs.ids.lp.client.card.CustomerCard;
-import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/customerCard")
 public class UpdateCardController {
 
-    @Autowired
-    private CustomerCardRepository customerCardRepository;
+    private final CustomerCardRepository customerCardRepository;
 
     @PutMapping("/modifyProgram")
     public ResponseEntity<?> modifyProgram(@RequestBody CustomerCardUpdateRequest request) {

@@ -10,6 +10,4 @@ public interface CustomerCardRepository
         extends JpaRepository<CustomerCard, CustomerCardCompositeId> {
 
     Optional<CustomerCard> findByReferralCode(String referralCode);
-
-    boolean existsByReferralCode(String referralCode);
 }

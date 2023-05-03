@@ -1,23 +1,27 @@
 package it.unicam.cs.ids.lp.client.registration;
 
 import it.unicam.cs.ids.lp.client.Customer;
-import org.springframework.beans.factory.annotation.Autowired;
+import it.unicam.cs.ids.lp.client.CustomerRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/customer")
 public class CustomerRegistrationController {
-    @Autowired
-    private CustomerRegistrationService customerRegistrationService;
-    @Autowired
-    private CustomerMapper customerMapper;
+
+    private final CustomerRegistrationService customerRegistrationService;
+
+    private final CustomerMapper customerMapper;
+
+    private final CustomerRepository customerRepository;
 
     @PutMapping("/register")
     public ResponseEntity<?> registerCustomer(@RequestBody CustomerRequest customerRequest) {
         Customer customer = customerMapper.apply(customerRequest);
-        boolean registered = customerRegistrationService.registerCustomer(customer);
+        boolean registered = customerRegistrationService.register(customer);
         if (!registered)
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -25,7 +29,7 @@ public class CustomerRegistrationController {
 
     @DeleteMapping("/unregister/{customerId}")
     public ResponseEntity<?> unregisterCustomer(@PathVariable long customerId) {
-        customerRegistrationService.unregisterCustomer(customerId);
+        customerRegistrationService.unregister(customerRepository.findById(customerId).orElseThrow());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
