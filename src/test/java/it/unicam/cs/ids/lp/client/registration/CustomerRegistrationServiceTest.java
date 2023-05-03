@@ -1,10 +1,15 @@
 package it.unicam.cs.ids.lp.client.registration;
 
 import it.unicam.cs.ids.lp.client.Customer;
+import it.unicam.cs.ids.lp.client.CustomerRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -15,8 +20,16 @@ class CustomerRegistrationServiceTest {
     private CustomerRegistrationService customerRegistrationService;
     @Autowired
     private CustomerMapper customerMapper;
+    private final List<Customer> customers = new ArrayList<>();
+    @Autowired
+    private CustomerRepository customerRepository;
 
-    //to adjust
+    @AfterEach
+    public void tearDown() {
+        customers.forEach(customerRepository::delete);
+        customers.clear();
+    }
+
     @Test
     void registerCustomer() {
         assertThrows(NullPointerException.class,
@@ -26,11 +39,14 @@ class CustomerRegistrationServiceTest {
         Customer customer = customerMapper.apply(customerRequest);
         Assertions.assertTrue(customerRegistrationService.register(customer));
         Assertions.assertFalse(customerRegistrationService.register(customer));
+        customers.add(customer);
 
         CustomerRequest anotherCustomerRequest =
                 new CustomerRequest("Tim", "Cook", "123-456-7890", "TimCook@gmail.com", "iLoveAppleToo456");
         Customer anotherCustomer = customerMapper.apply(anotherCustomerRequest);
         Assertions.assertTrue(customerRegistrationService.register(anotherCustomer));
+        customers.add(anotherCustomer);
     }
 }
+
 
