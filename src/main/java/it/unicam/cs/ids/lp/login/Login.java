@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Optional;
+
 @Controller
 public class Login {
 
@@ -26,14 +28,17 @@ public class Login {
 
     @PostMapping("/login")
     public String loginUser(@RequestParam String email, @RequestParam String password, Model model) {
-        Object user = userService.findByEmail(email);
-        if (user instanceof Admin admin) {
-            if (passwordEncoder.matches(password, admin.getPassword())) {
-                return "redirect:/admin/home";
-            }
-        } else if (user instanceof Customer customer) {
-            if (passwordEncoder.matches(password, customer.getPassword())) {
-                return "redirect:/customer/home";
+        Optional<Object> userOptional = userService.findByEmail(email);
+        if (userOptional.isPresent()) {
+            Object user = userOptional.get();
+            if (user instanceof Admin admin) {
+                if (passwordEncoder.matches(password, admin.getPassword())) {
+                    return "redirect:/admin/home";
+                }
+            } else if (user instanceof Customer customer) {
+                if (passwordEncoder.matches(password, customer.getPassword())) {
+                    return "redirect:/customer/home";
+                }
             }
         }
         model.addAttribute("error", "Invalid email or password");
@@ -41,4 +46,3 @@ public class Login {
     }
 
 }
-
