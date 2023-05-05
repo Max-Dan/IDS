@@ -13,8 +13,16 @@ import java.time.LocalDate;
  */
 public abstract class AbstractStatisticFactory<E extends AbstractStatistic<P>, P> {
 
+
     abstract public E createStatistic(StatisticType type, P item);
 
+    /**
+     * Applica la statistica
+     *
+     * @param type il tipo della statistica
+     * @param item parametro della statistica
+     * @return la statistica applicata
+     */
     public E applyStatistic(StatisticType type, P item) {
         E statistic = createStatistic(type, item);
         statistic.setValue(statistic.getResult(item));

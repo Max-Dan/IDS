@@ -5,20 +5,17 @@ import it.unicam.cs.ids.lp.activity.statistics.card.CardStatistic;
 import it.unicam.cs.ids.lp.activity.statistics.card.CardStatisticRepository;
 import it.unicam.cs.ids.lp.activity.statistics.factory.CardStatisticFactory;
 import it.unicam.cs.ids.lp.client.CustomerRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class StatisticsCalculatorService implements StatisticAnalyzer<Card> {
 
     private final CustomerRepository customerRepository;
     private final CardStatisticRepository cardStatisticRepository;
-
-    public StatisticsCalculatorService(CustomerRepository customerRepository, CardStatisticRepository cardStatisticRepository) {
-        this.customerRepository = customerRepository;
-        this.cardStatisticRepository = cardStatisticRepository;
-    }
 
     @Override
     public List<CardStatistic> analyzeData(List<StatisticType> statisticTypes, Card card) {
@@ -27,6 +24,13 @@ public class StatisticsCalculatorService implements StatisticAnalyzer<Card> {
                 .toList();
     }
 
+    /**
+     * Calcola e salva nel database la statistica
+     *
+     * @param type il tipo di statistica
+     * @param card la card per applicare la statistica
+     * @return la statistica calcolata
+     */
     private CardStatistic calculateAndSaveCardStatistic(StatisticType type, Card card) {
         CardStatistic statistic = new CardStatisticFactory(customerRepository).applyStatistic(type, card);
         cardStatisticRepository.save(statistic);

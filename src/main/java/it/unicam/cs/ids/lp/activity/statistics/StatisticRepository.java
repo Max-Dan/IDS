@@ -1,9 +1,9 @@
 package it.unicam.cs.ids.lp.activity.statistics;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.NoRepositoryBean;
 
-@Repository
-public interface StatisticRepository
-        extends JpaRepository<AbstractStatistic<?>, Long> {
+@NoRepositoryBean
+public interface StatisticRepository<T extends AbstractStatistic<?>>
+        extends JpaRepository<T, Long> {
 }
