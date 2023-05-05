@@ -30,9 +30,9 @@ public class Campaign {
     @JsonIgnore
     private Card card;
 
-    private LocalDate start;
+    private LocalDate startDate;
 
-    private LocalDate end;
+    private LocalDate endDate;
 
     @Override
     public boolean equals(Object o) {

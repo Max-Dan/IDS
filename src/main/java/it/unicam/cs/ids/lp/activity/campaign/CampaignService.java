@@ -45,9 +45,9 @@ public class CampaignService {
     public Campaign modifyCampaign(long campaignId, CampaignRequest campaignRequest) {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
         if (campaignRequest.end() != null
-                && campaign.getEnd() != null
-                && campaignRequest.end().isAfter(campaign.getEnd()))
-            campaign.setEnd(campaignRequest.end());
+                && campaign.getEndDate() != null
+                && campaignRequest.end().isAfter(campaign.getEndDate()))
+            campaign.setEndDate(campaignRequest.end());
         return campaign;
     }
 
@@ -81,8 +81,8 @@ public class CampaignService {
                         .getActivities()
                         .stream()
                         .anyMatch(activity -> activity.getId() == activityId))
-                .filter(campaign -> campaign.getStart().isBefore(LocalDate.now())
-                        && campaign.getEnd().isAfter(LocalDate.now()))
+                .filter(campaign -> campaign.getStartDate().isBefore(LocalDate.now())
+                        && campaign.getEndDate().isAfter(LocalDate.now()))
                 .toList();
     }
 }
