@@ -35,7 +35,7 @@ public class CampaignController {
     }
 
     @GetMapping("/getCampaigns")
-    public ResponseEntity<?> getActiveCampaigns() {
-        return ResponseEntity.ok(campaignService.getActiveCampaigns());
+    public ResponseEntity<?> getActiveCampaigns(@PathVariable long activityId) {
+        return ResponseEntity.ok(campaignService.getActiveCampaigns(activityId));
     }
 }
