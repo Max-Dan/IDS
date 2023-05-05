@@ -1,6 +1,9 @@
 package it.unicam.cs.ids.lp.activity.statistics.card;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import it.unicam.cs.ids.lp.activity.statistics.StatisticRepository;
+import org.springframework.stereotype.Repository;
 
-public interface CardStatisticRepository extends JpaRepository<CardStatistic, Long> {
+@Repository
+public interface CardStatisticRepository
+        extends StatisticRepository<CardStatistic> {
 }

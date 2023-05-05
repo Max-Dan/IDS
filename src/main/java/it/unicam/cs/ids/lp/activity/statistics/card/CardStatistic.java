@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 @Setter
 @ToString
 @RequiredArgsConstructor
-//@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class CardStatistic extends AbstractStatistic<Card> {
 
     @OneToOne(orphanRemoval = true)
