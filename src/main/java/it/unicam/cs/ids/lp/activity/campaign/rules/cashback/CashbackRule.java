@@ -33,8 +33,20 @@ public class CashbackRule extends AbstractRule<Integer> {
      */
     private float cashbackRate;
 
+    // TODO fare in modo che le regole vengano applicate
     @Override
     public Integer apply(CustomerOrder order) {
+        return order.getProducts()
+                .parallelStream()
+                .filter(product -> this.getProducts()
+                        .contains(product))
+                .map(product -> (int) (product.getPrice() / 100 * this.getCashbackRate()))
+                .reduce(Integer::sum)
+                .orElse(0);
+    }
+
+    @Override
+    public Integer seeBonus(CustomerOrder order) {
         return order.getProducts()
                 .parallelStream()
                 .filter(product -> this.getProducts()

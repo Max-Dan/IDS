@@ -18,6 +18,7 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 public class Campaign {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -33,6 +34,11 @@ public class Campaign {
     private LocalDate startDate;
 
     private LocalDate endDate;
+
+    public boolean isCurrentlyActive() {
+        return startDate.isBefore(LocalDate.now())
+                && endDate.isAfter(LocalDate.now());
+    }
 
     @Override
     public boolean equals(Object o) {

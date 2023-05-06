@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -42,7 +41,8 @@ public class CampaignService {
      * @param campaignRequest dati aggiornati della campagna
      * @return la campagna con i dati aggiornati
      */
-    public Campaign modifyCampaign(long campaignId, CampaignRequest campaignRequest) {
+    public Campaign modifyCampaign(long campaignId, long activityId, CampaignRequest campaignRequest) {
+        checkValidCampaignForActivity(campaignId, activityId);
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
         if (campaignRequest.end() != null
                 && campaign.getEndDate() != null
@@ -58,7 +58,8 @@ public class CampaignService {
      * @param order      ordine del cliente
      * @return lista di resoconti dell'applicazione delle regole
      */
-    public List<String> applyRules(long campaignId, CustomerOrder order) {
+    public List<String> applyRules(long campaignId, long activityId, CustomerOrder order) {
+        checkValidCampaignForActivity(campaignId, activityId);
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
         return abstractRuleRepository.findAll()
                 .stream()
@@ -75,14 +76,37 @@ public class CampaignService {
      * @return la lista delle campagne attive
      */
     public List<Campaign> getActiveCampaigns(long activityId) {
-        return campaignRepository.findAll()
+        return campaignRepository.findByCard_Activities_Id(activityId)
                 .stream()
-                .filter(campaign -> campaign.getCard()
-                        .getActivities()
-                        .stream()
-                        .anyMatch(activity -> activity.getId() == activityId))
-                .filter(campaign -> campaign.getStartDate().isBefore(LocalDate.now())
-                        && campaign.getEndDate().isAfter(LocalDate.now()))
+                .filter(campaign -> !campaign.isCurrentlyActive())
                 .toList();
+    }
+
+    /**
+     * Mostra i vantaggi che può portare un ordine senza applicarli
+     *
+     * @return la lista di vantaggi che può portare
+     */
+    public List<String> seeBonuses(long campaignId, CustomerOrder order) {
+        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
+        return abstractRuleRepository.findAll()
+                .stream()
+                .filter(abstractRule -> abstractRule.getCampaign()
+                        .equals(campaign))
+                .map(rule -> rule.getClass().getSimpleName() + "   " + rule.seeBonus(order))
+                .toList();
+    }
+
+    /**
+     * Verifica se l'attività ha il permesso di accedere alla campagna
+     *
+     * @param campaignId id della campagna
+     * @param activityId id dell'attività
+     */
+    private void checkValidCampaignForActivity(long campaignId, long activityId) {
+        if (campaignRepository.findByCard_Activities_Id(activityId)
+                .stream()
+                .anyMatch(campaign -> campaign.getId() != campaignId))
+            throw new RuntimeException("Attività non autorizzata a eseguire operazioni sulla campagna");
     }
 }

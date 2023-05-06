@@ -20,7 +20,6 @@ import java.util.Objects;
 @Setter
 @ToString
 @NoArgsConstructor
-@IdClass(CustomerCardCompositeId.class)
 public class CustomerCard {
 
     @Id
@@ -28,12 +27,10 @@ public class CustomerCard {
     @Column(nullable = false)
     private long id;
 
-    @Id
     @ManyToOne
     @JoinColumn
     private Customer customer;
 
-    @Id
     @ManyToOne
     @JoinColumn
     private Card card;

@@ -53,7 +53,7 @@ public class CustomerCardController {
     }
 
     @DeleteMapping("/{customerCardId}")
-    public ResponseEntity<?> deleteCard(@PathVariable CustomerCardCompositeId customerCardId) {
+    public ResponseEntity<?> deleteCard(@PathVariable long customerCardId) {
         repository.deleteById(customerCardId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
