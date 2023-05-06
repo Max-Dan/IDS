@@ -40,6 +40,11 @@ public class Campaign {
                 && end.isAfter(LocalDate.now());
     }
 
+    public boolean isCurrentlyActive() {
+        return start.isBefore(LocalDate.now())
+                && end.isAfter(LocalDate.now());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
