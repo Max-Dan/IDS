@@ -10,7 +10,8 @@ import java.util.Optional;
 public interface CustomerRepository
         extends JpaRepository<Customer, Long> {
     long countByCards_Card(Card card);
-
     boolean existsByEmail(String email);
+
+    Optional<Customer> findByEmail(String email);
 }
 
