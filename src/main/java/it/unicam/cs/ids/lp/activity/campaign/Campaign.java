@@ -36,13 +36,8 @@ public class Campaign {
     private LocalDate endDate;
 
     public boolean isCurrentlyActive() {
-        return start.isBefore(LocalDate.now())
-                && end.isAfter(LocalDate.now());
-    }
-
-    public boolean isCurrentlyActive() {
-        return start.isBefore(LocalDate.now())
-                && end.isAfter(LocalDate.now());
+        return startDate.isBefore(LocalDate.now())
+                && endDate.isAfter(LocalDate.now());
     }
 
     @Override

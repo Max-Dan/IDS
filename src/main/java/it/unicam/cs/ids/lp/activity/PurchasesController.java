@@ -6,6 +6,7 @@ import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import it.unicam.cs.ids.lp.client.order.CustomerOrderMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/activity/{activityId}")
 public class PurchasesController {
 
@@ -25,16 +27,6 @@ public class PurchasesController {
     private final CustomerOrderMapper customerOrderMapper;
 
     private final ProductRepository productRepository;
-
-    public PurchasesController(CustomerCardRepository customerCardRepository,
-                               CampaignService campaignService,
-                               CustomerOrderMapper customerOrderMapper,
-                               ProductRepository productRepository) {
-        this.customerCardRepository = customerCardRepository;
-        this.campaignService = campaignService;
-        this.customerOrderMapper = customerOrderMapper;
-        this.productRepository = productRepository;
-    }
 
     @GetMapping("/checkBonus/{customerCardId}")
     public ResponseEntity<?> checkBonusFromCard(@PathVariable long activityId,
