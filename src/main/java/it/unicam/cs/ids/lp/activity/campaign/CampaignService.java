@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -35,6 +36,19 @@ public class CampaignService {
     }
 
     /**
+     * Termina la validità della campagna
+     *
+     * @param campaignId id della campagna
+     * @param activityId id dell'attività
+     */
+    public void terminateCampaign(long campaignId, long activityId) {
+        checkValidCampaignForActivity(campaignId, activityId);
+        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
+        campaign.setEndDate(LocalDate.now());
+        campaignRepository.save(campaign);
+    }
+
+    /**
      * Modifica i dati di una campagna esistente
      *
      * @param campaignId      id della campagna da modificare
@@ -44,10 +58,13 @@ public class CampaignService {
     public Campaign modifyCampaign(long campaignId, long activityId, CampaignRequest campaignRequest) {
         checkValidCampaignForActivity(campaignId, activityId);
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
+        if (campaignRequest.name() != null)
+            campaign.setName(campaignRequest.name());
         if (campaignRequest.end() != null
                 && campaign.getEndDate() != null
                 && campaignRequest.end().isAfter(campaign.getEndDate()))
             campaign.setEndDate(campaignRequest.end());
+        campaignRepository.save(campaign);
         return campaign;
     }
 
@@ -79,6 +96,19 @@ public class CampaignService {
         return campaignRepository.findByCard_Activities_Id(activityId)
                 .stream()
                 .filter(campaign -> !campaign.isCurrentlyActive())
+                .toList();
+    }
+
+    /**
+     * Restituisce le campagne attive e non
+     *
+     * @param activityId id dell'attività
+     * @return lista delle campagne
+     */
+    public List<Campaign> getAllCampaigns(long activityId) {
+        return campaignRepository.findByCard_Activities_Id(activityId)
+                .stream()
+                .sorted((o1, o2) -> Boolean.compare(o1.isCurrentlyActive(), o2.isCurrentlyActive()))
                 .toList();
     }
 

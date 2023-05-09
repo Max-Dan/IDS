@@ -76,7 +76,7 @@ public class CashbackRuleControllerTest {
     @Test
     public void setCashback() throws Exception {
         Set<Product> products = new HashSet<>(productRepository.findByActivities_Id(activity.getId()));
-        CashbackRequest cashbackRequest = new CashbackRequest(products, 5);
+        CashbackRuleRequest cashbackRequest = new CashbackRuleRequest(products, 5);
         String ruleJson = mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId()
                                 + "/campaign/" + campaign.getId() + "/cashback/add")
                         .content(objectMapper.writeValueAsString(cashbackRequest))

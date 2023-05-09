@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service;
 import java.util.function.BiFunction;
 
 @Service
-public class CashbackRuleMapper implements BiFunction<Campaign, CashbackRequest, CashbackRule> {
+public class CashbackRuleMapper implements BiFunction<Campaign, CashbackRuleRequest, CashbackRule> {
 
     @Override
-    public CashbackRule apply(Campaign campaign, CashbackRequest cashbackRequest) {
+    public CashbackRule apply(Campaign campaign, CashbackRuleRequest cashbackRequest) {
         CashbackRule cashbackRule = new CashbackRule();
         cashbackRule.setCampaign(campaign);
         cashbackRule.setProducts(cashbackRequest.products());
