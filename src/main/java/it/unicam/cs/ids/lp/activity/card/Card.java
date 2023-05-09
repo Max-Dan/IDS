@@ -25,7 +25,7 @@ public class Card {
 
     private String name;
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.MERGE)
+    @OneToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     private List<Activity> activities = new LinkedList<>();
 
