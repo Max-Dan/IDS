@@ -95,7 +95,7 @@ public class CampaignService {
     public List<Campaign> getActiveCampaigns(long activityId) {
         return campaignRepository.findByCard_Activities_Id(activityId)
                 .stream()
-                .filter(campaign -> !campaign.isCurrentlyActive())
+                .filter(Campaign::isCurrentlyActive)
                 .toList();
     }
 
@@ -136,7 +136,7 @@ public class CampaignService {
     private void checkValidCampaignForActivity(long campaignId, long activityId) {
         if (campaignRepository.findByCard_Activities_Id(activityId)
                 .stream()
-                .anyMatch(campaign -> campaign.getId() != campaignId))
+                .noneMatch(campaign -> campaign.getId() == campaignId))
             throw new RuntimeException("Attività non autorizzata a eseguire operazioni sulla campagna");
     }
 }
