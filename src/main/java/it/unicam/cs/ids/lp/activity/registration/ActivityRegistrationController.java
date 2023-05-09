@@ -21,9 +21,9 @@ public class ActivityRegistrationController {
     @PutMapping("/register")
     public ResponseEntity<?> registerActivity(@RequestBody ActivityRequest activityRequest) {
         Activity activity = activityMapper.apply(activityRequest);
-        boolean registered = activityRegistrationService.register(activity);
-        if (registered) return new ResponseEntity<>(HttpStatus.CREATED);
-        else return new ResponseEntity<>(HttpStatus.CONFLICT);
+        return activityRegistrationService.register(activity)
+                .map(activity1 -> new ResponseEntity<>(HttpStatus.CREATED))
+                .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     @DeleteMapping("/unregister/{activityId}")

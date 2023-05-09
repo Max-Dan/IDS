@@ -40,14 +40,14 @@ class ActivityRegistrationServiceTest {
     void registerActivityTest() {
         assertThrows(NullPointerException.class,
                 () -> activityRegistrationService.register(null));
-        Assertions.assertTrue(activityRegistrationService.register(activity));
+        Assertions.assertTrue(activityRegistrationService.register(activity).isPresent());
         Assertions.assertTrue(activityRepository.existsById(activity.getId()));
         activityRegistrationService.unregister(activity);
     }
 
     @Test
     public void unregisterActivityTest() {
-        Assertions.assertTrue(activityRegistrationService.register(activity));
+        activityRegistrationService.register(activity);
         activityRegistrationService.unregister(activity);
         Assertions.assertFalse(activityRepository.existsById(activity.getId()));
     }

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,12 +30,12 @@ public class ActivityRegistrationService
     }
 
     @Override
-    public boolean register(Activity activity) {
+    public Optional<Activity> register(Activity activity) {
         Objects.requireNonNull(activity);
         if (!areRegistrationValuesValid(activity))
-            return false;
+            return Optional.empty();
         activityRepository.save(activity);
-        return true;
+        return Optional.of(activity);
     }
 
     @Override

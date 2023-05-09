@@ -1,6 +1,7 @@
 package it.unicam.cs.ids.lp.activity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.unicam.cs.ids.lp.activity.card.Card;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,10 @@ public class Activity {
 
     @Enumerated(EnumType.STRING)
     private ContentCategory category;
+
+    @ManyToOne
+    @JoinColumn
+    private Card card;
 
     @Override
     public boolean equals(Object o) {
