@@ -3,12 +3,15 @@ package it.unicam.cs.ids.lp.activity.campaign;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unicam.cs.ids.lp.LoyaltyPlatformApplication;
 import it.unicam.cs.ids.lp.activity.Activity;
-import it.unicam.cs.ids.lp.activity.ActivityRepository;
+import it.unicam.cs.ids.lp.activity.ContentCategory;
 import it.unicam.cs.ids.lp.activity.campaign.rules.cashback.CashbackRequest;
-import it.unicam.cs.ids.lp.activity.card.Card;
-import it.unicam.cs.ids.lp.activity.card.CardRepository;
+import it.unicam.cs.ids.lp.activity.card.CardRequest;
+import it.unicam.cs.ids.lp.activity.card.CardService;
 import it.unicam.cs.ids.lp.activity.product.Product;
 import it.unicam.cs.ids.lp.activity.product.ProductRepository;
+import it.unicam.cs.ids.lp.activity.product.ProductRequest;
+import it.unicam.cs.ids.lp.activity.product.ProductService;
+import it.unicam.cs.ids.lp.activity.registration.ActivityRegistrationService;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,7 +29,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,45 +42,31 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 class CampaignControllerTest {
 
-    private final String activityName = this.getClass().getName();
     @Autowired
     private MockMvc mvc;
     @Autowired
     private ObjectMapper objectMapper;
     private Activity activity;
     @Autowired
-    private ActivityRepository activityRepository;
-    @Autowired
     private CampaignRepository campaignRepository;
     @Autowired
-    private CardRepository cardRepository;
-    @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private ActivityRegistrationService activityRegistrationService;
+    @Autowired
+    private CardService cardService;
+    @Autowired
+    private ProductService productService;
 
     @BeforeAll
     public void setUp() {
-        Activity activity1 = activityRepository.findByName(activityName);
-        if (activity1 != null) {
-            activity = activity1;
-            return;
-        }
-        activity1 = new Activity();
-        activity1.setName(activityName);
-        activity = activityRepository.save(activity1);
+        Activity activity1 = new Activity();
+        activity1.setCategory(ContentCategory.TECHNOLOGY);
+        activity = activityRegistrationService.register(activity1).orElseThrow();
+        cardService.createCard(activity.getId(), new CardRequest(""));
 
-        activity1 = activityRepository.findById(activity.getId()).orElseThrow();
-        Card card = new Card();
-        card.setActivities(List.of(activity1));
-        cardRepository.save(card);
-
-        // TODO da eliminare quando sono disponibili api per creare i prodotti
-        Product p1 = new Product();
-        p1.setPrice(200);
-        p1.setActivities(List.of(activity1));
-        Product p2 = new Product();
-        p2.setPrice(600);
-        p2.setActivities(List.of(activity1));
-        productRepository.saveAll(List.of(p1, p2));
+        productService.createProduct(activity.getId(), new ProductRequest("", 200));
+        productService.createProduct(activity.getId(), new ProductRequest("", 600));
     }
 
     @Test

@@ -26,7 +26,7 @@ class CustomerRegistrationServiceTest {
 
     @AfterEach
     public void tearDown() {
-        customers.forEach(customerRepository::delete);
+        customerRepository.deleteAll(customers);
         customers.clear();
     }
 
@@ -37,14 +37,14 @@ class CustomerRegistrationServiceTest {
         CustomerRequest customerRequest =
                 new CustomerRequest("Steve", "Jobs", "132-456-7890", "SteveJobs@gmail.com", "iLoveApple123");
         Customer customer = customerMapper.apply(customerRequest);
-        Assertions.assertTrue(customerRegistrationService.register(customer));
-        Assertions.assertFalse(customerRegistrationService.register(customer));
+        Assertions.assertTrue(customerRegistrationService.register(customer).isPresent());
+        Assertions.assertFalse(customerRegistrationService.register(customer).isPresent());
         customers.add(customer);
 
         CustomerRequest anotherCustomerRequest =
                 new CustomerRequest("Tim", "Cook", "123-456-7890", "TimCook@gmail.com", "iLoveAppleToo456");
         Customer anotherCustomer = customerMapper.apply(anotherCustomerRequest);
-        Assertions.assertTrue(customerRegistrationService.register(anotherCustomer));
+        Assertions.assertTrue(customerRegistrationService.register(anotherCustomer).isPresent());
         customers.add(anotherCustomer);
     }
 }
