@@ -18,6 +18,8 @@ public class ActivityRegistrationService
 
     private final ActivityRepository activityRepository;
     private final DataValidatorUtil dataValidatorUtil;
+    private final ActivityMapper activityMapper;
+
 
     @Override
     public boolean areRegistrationValuesValid(Activity activity) {
@@ -36,6 +38,11 @@ public class ActivityRegistrationService
             return Optional.empty();
         activityRepository.save(activity);
         return Optional.of(activity);
+    }
+
+    public Optional<Activity> register(ActivityRequest activityRequest) {
+        Activity activity = activityMapper.apply(activityRequest);
+        return register(activity);
     }
 
     @Override

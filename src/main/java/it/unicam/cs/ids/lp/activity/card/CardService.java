@@ -56,8 +56,10 @@ public class CardService {
         Activity activity = activityRepository.findById(activityId).orElseThrow();
         if (activity.getCard() == null)
             throw new RuntimeException();
-        cardRepository.deleteById(activity.getCard().getId());
+        Card card = activity.getCard();
         activity.setCard(null);
         activityRepository.save(activity);
+        if (card.getActivities().size() == 1)
+            cardRepository.deleteById(card.getId());
     }
 }

@@ -4,9 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unicam.cs.ids.lp.LoyaltyPlatformApplication;
 import it.unicam.cs.ids.lp.activity.Activity;
-import it.unicam.cs.ids.lp.activity.ActivityRepository;
+import it.unicam.cs.ids.lp.activity.ContentCategory;
 import it.unicam.cs.ids.lp.activity.card.Card;
-import it.unicam.cs.ids.lp.activity.card.CardRepository;
+import it.unicam.cs.ids.lp.activity.card.CardRequest;
+import it.unicam.cs.ids.lp.activity.card.CardService;
+import it.unicam.cs.ids.lp.activity.registration.ActivityRegistrationService;
 import it.unicam.cs.ids.lp.activity.statistics.card.CardStatistic;
 import it.unicam.cs.ids.lp.activity.statistics.card.CardStatisticRepository;
 import it.unicam.cs.ids.lp.client.Customer;
@@ -40,13 +42,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Transactional
 class StatisticsControllerTest {
 
-    private final String activityName = this.getClass().getSimpleName();
     @Autowired
     private MockMvc mvc;
-    @Autowired
-    private ActivityRepository activityRepository;
-    @Autowired
-    private CardRepository cardRepository;
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
@@ -55,23 +52,20 @@ class StatisticsControllerTest {
     private CardStatisticRepository cardStatisticRepository;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private ActivityRegistrationService activityRegistrationService;
+    @Autowired
+    private CardService cardService;
     private Activity activity;
 
     @BeforeAll
     void setUp() {
-        Activity activity1 = activityRepository.findByName(activityName);
-        if (activity1 != null) {
-            activity = activity1;
-            return;
-        }
-        activity1 = new Activity();
-        activity1.setName(activityName);
-        activity = activityRepository.save(activity1);
+        Activity activity1 = new Activity();
+        activity1.setCategory(ContentCategory.TECHNOLOGY);
+        activity = activityRegistrationService.register(activity1).orElseThrow();
 
-        activity1 = activityRepository.findById(activity.getId()).orElseThrow();
-        Card card = new Card();
-        card.setActivities(List.of(activity1));
-        cardRepository.save(card);
+        Card card = cardService.createCard(activity.getId(), new CardRequest(""));
+
 
         for (int i = 0; i < 5; i++) {
             Customer customer = new Customer();
