@@ -61,7 +61,9 @@ class CustomerCardControllerTest {
         Assertions.assertEquals(customerCard.getProgram(), response.getBody().getProgram());
     }
 
-
+    //@AfterEach
+    //void tearDown() {customerCardRepository.deleteAll();
+    //}
     @Test
     void deleteCard() {
 

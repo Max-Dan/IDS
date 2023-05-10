@@ -19,7 +19,7 @@ public class UpdateCardController {
 
     @PutMapping("/modifyProgram")
     public ResponseEntity<?> modifyProgram(@RequestBody CustomerCardUpdateRequest request) {
-        Optional<CustomerCard> optionalCard = customerCardRepository.findById(request.getCustomerCardId().getId());
+        Optional<CustomerCard> optionalCard = customerCardRepository.findById(request.getCustomerCardId());
 
         if (optionalCard.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -35,7 +35,7 @@ public class UpdateCardController {
 
     @PutMapping("/modifyAttributes")
     public ResponseEntity<?> modifyAttributes(@RequestBody CustomerCardUpdateRequest request) {
-        Optional<CustomerCard> optionalCard = customerCardRepository.findById(request.getCustomerCardId().getId());
+        Optional<CustomerCard> optionalCard = customerCardRepository.findById(request.getCustomerCardId());
 
         if (optionalCard.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -53,3 +53,4 @@ public class UpdateCardController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
+

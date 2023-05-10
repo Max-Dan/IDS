@@ -3,7 +3,10 @@ package it.unicam.cs.ids.lp.client;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardProgram;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
-import it.unicam.cs.ids.lp.client.card.*;
+import it.unicam.cs.ids.lp.client.card.CustomerCard;
+import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
+import it.unicam.cs.ids.lp.client.card.CustomerCardUpdateRequest;
+import it.unicam.cs.ids.lp.client.card.UpdateCardController;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,13 +35,9 @@ class UpdateCardControllerTest {
     @Test
     void modifyProgram() {
         CustomerCard customerCard = createTestCustomerCard();
-        CustomerCardCompositeId customerCardId = new CustomerCardCompositeId();
-        customerCardId.setId(customerCard.getId());
-        customerCardId.setCustomer(customerCard.getCustomer());
-        customerCardId.setCard(customerCard.getCard());
 
         CustomerCardUpdateRequest request = new CustomerCardUpdateRequest();
-        request.setCustomerCardId(customerCardId);
+        request.setCustomerCardId(customerCard.getId());
         request.setNewProgram(CardProgram.CASHBACK);
 
         ResponseEntity<?> response = updateCardController.modifyProgram(request);
@@ -52,13 +51,9 @@ class UpdateCardControllerTest {
     @Test
     void modifyAttributes() {
         CustomerCard customerCard = createTestCustomerCard();
-        CustomerCardCompositeId customerCardId = new CustomerCardCompositeId();
-        customerCardId.setId(customerCard.getId());
-        customerCardId.setCustomer(customerCard.getCustomer());
-        customerCardId.setCard(customerCard.getCard());
 
         CustomerCardUpdateRequest request = new CustomerCardUpdateRequest();
-        request.setCustomerCardId(customerCardId);
+        request.setCustomerCardId(customerCard.getId());
         request.setPoints(100);
         request.setTier(2);
         request.setRemainingCashback(50);
@@ -99,4 +94,3 @@ class UpdateCardControllerTest {
         return testCustomerCard;
     }
 }
-
