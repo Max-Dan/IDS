@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -108,7 +109,7 @@ public class CampaignService {
     public List<Campaign> getAllCampaigns(long activityId) {
         return campaignRepository.findByCard_Activities_Id(activityId)
                 .stream()
-                .sorted((o1, o2) -> Boolean.compare(o1.isCurrentlyActive(), o2.isCurrentlyActive()))
+                .sorted(Comparator.comparing(Campaign::isCurrentlyActive))
                 .toList();
     }
 
