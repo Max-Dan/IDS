@@ -84,7 +84,7 @@ class StatisticsControllerTest {
 
     @Test
     void getCardStatistics() throws Exception {
-        String string = mvc.perform(get("/activity/" + activity.getId() + "/cardStats"))
+        String string = mvc.perform(get("/statistics/" + activity.getId() + "/computeCardStats"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
