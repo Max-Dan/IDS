@@ -16,11 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 class CustomerRegistrationServiceTest {
 
+    private final List<Customer> customers = new ArrayList<>();
     @Autowired
     private CustomerRegistrationService customerRegistrationService;
     @Autowired
     private CustomerMapper customerMapper;
-    private final List<Customer> customers = new ArrayList<>();
     @Autowired
     private CustomerRepository customerRepository;
 

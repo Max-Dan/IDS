@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.lp.activity.campaign.rules.cashback;
+package it.unicam.cs.ids.lp.rules.cashback;
 
 import it.unicam.cs.ids.lp.activity.product.Product;
 
