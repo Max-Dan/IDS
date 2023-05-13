@@ -60,9 +60,8 @@ class CampaignServiceTest {
         activity1.setCategory(ContentCategory.TECHNOLOGY);
         activity = activityRegistrationService.register(activity1).orElseThrow();
         cardService.createCard(activity.getId(), new CardRequest(""));
-
-        productService.createProduct(new ProductRequest("", 200));
-        productService.createProduct(new ProductRequest("", 600));
+        productService.createProduct(activity.getId(), new ProductRequest("", 200));
+        productService.createProduct(activity.getId(), new ProductRequest("", 600));
     }
 
     @Test
@@ -82,12 +81,12 @@ class CampaignServiceTest {
     }
 
     @Test
-    public void applyRules() {
+    void applyRules() {
         CampaignRequest campaignRequest = new CampaignRequest("", null);
         Campaign campaign = campaignService.createCampaign(activity.getId(), campaignRequest);
         Set<Product> products = new HashSet<>(productRepository.findByActivities_Id(activity.getId()));
         CashbackRuleRequest cashbackRequest = new CashbackRuleRequest(products, 5);
-        cashbackRuleService.setCashbackToCampaign(activity.getId(), campaign.getId(), cashbackRequest);
+        cashbackRuleService.setCampaignCashback(activity.getId(), campaign.getId(), cashbackRequest);
         CustomerOrder order = new CustomerOrder();
         order.setProducts(products);
         List<String> strings = campaignService.applyRules(campaign.getId(), activity.getId(), order);

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class CashbackRuleService {
+
     private final CouponRepository couponRepository;
     private final CashbackRuleRepository cashbackRuleRepository;
     private final CardRepository cardRepository;
@@ -22,14 +23,6 @@ public class CashbackRuleService {
     private final CampaignRepository campaignRepository;
     private final CouponRuleRepository couponRuleRepository;
     private final CampaignRuleRepository campaignRuleRepository;
-
-    public CashbackRule setCashbackToCampaign(long activityId, long campaignId, CashbackRuleRequest request) {
-        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
-        if (!campaign.getCard().equals(cardRepository.findByActivities_Id(activityId).orElseThrow()))
-            throw new RuntimeException("Attività non autorizzata a modificare la campagna");
-        CashbackRule cashbackRule = cashbackRuleMapper.apply(request);
-        return cashbackRuleRepository.save(cashbackRule);
-    }
 
     public CashbackRule setCouponCashback(long couponId, CashbackRuleRequest request) {
         Coupon coupon = couponRepository.findById(couponId).orElseThrow();

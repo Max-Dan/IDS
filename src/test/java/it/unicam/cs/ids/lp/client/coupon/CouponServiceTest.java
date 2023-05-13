@@ -70,7 +70,7 @@ class CouponServiceTest {
         ));
         activityRegistrationService.register(activity);
         ProductRequest productRequest = new ProductRequest("", 100);
-        Product product = productService.createProduct(productRequest);
+        Product product = productService.createProduct(activity.getId(), productRequest);
 
         CashbackRuleRequest cashbackRequest = new CashbackRuleRequest(Set.of(product), 5);
         cashbackRuleService.setCouponCashback(coupon.getId(), cashbackRequest);

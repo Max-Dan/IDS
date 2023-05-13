@@ -72,8 +72,8 @@ public class CashbackRuleControllerTest {
         cardService.createCard(activity.getId(), new CardRequest(""));
         campaign = campaignService.createCampaign(activity.getId(), new CampaignRequest("", null));
 
-        productService.createProduct(new ProductRequest("", 200));
-        productService.createProduct(new ProductRequest("", 600));
+        productService.createProduct(activity.getId(), new ProductRequest("", 200));
+        productService.createProduct(activity.getId(), new ProductRequest("", 600));
     }
 
     @Test
