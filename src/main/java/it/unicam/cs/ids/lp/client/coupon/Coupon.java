@@ -1,6 +1,6 @@
 package it.unicam.cs.ids.lp.client.coupon;
 
-import it.unicam.cs.ids.lp.client.Customer;
+import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import it.unicam.cs.ids.lp.rules.platform_rules.coupon.CouponRule;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -27,7 +27,7 @@ public class Coupon {
 
     @ManyToOne
     @JoinColumn
-    private Customer customer;
+    private CustomerCard customerCard;
 
     @OneToMany
     @ToString.Exclude

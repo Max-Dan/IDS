@@ -8,5 +8,8 @@ import java.util.Set;
 @Repository
 public interface CouponRepository
         extends JpaRepository<Coupon, Long> {
-    Set<Coupon> findByCustomer_Id(long id);
+    Set<Coupon> findByCustomerCard_Customer_Id(long id);
+
+    Set<Coupon> findByCustomerCard_Id(long id);
+
 }

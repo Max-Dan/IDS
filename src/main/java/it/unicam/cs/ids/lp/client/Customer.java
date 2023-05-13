@@ -3,7 +3,6 @@ package it.unicam.cs.ids.lp.client;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.unicam.cs.ids.lp.activity.campaign.Campaign;
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
-import it.unicam.cs.ids.lp.client.coupon.Coupon;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -40,11 +39,6 @@ public class Customer implements Serializable {
     @JoinColumn
     @ToString.Exclude
     private Set<Campaign> currentlySubscribedCampaigns = new HashSet<>();
-
-    @OneToMany(orphanRemoval = true)
-    @JoinColumn
-    @ToString.Exclude
-    private Set<Coupon> coupons = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

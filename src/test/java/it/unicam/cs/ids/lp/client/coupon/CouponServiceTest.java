@@ -11,6 +11,8 @@ import it.unicam.cs.ids.lp.activity.registration.ActivityRegistrationService;
 import it.unicam.cs.ids.lp.activity.registration.ActivityRequest;
 import it.unicam.cs.ids.lp.client.Customer;
 import it.unicam.cs.ids.lp.client.CustomerRepository;
+import it.unicam.cs.ids.lp.client.card.CustomerCard;
+import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import it.unicam.cs.ids.lp.rules.RulesEnum;
 import it.unicam.cs.ids.lp.rules.cashback.CashbackRule;
@@ -51,14 +53,17 @@ class CouponServiceTest {
     private ActivityRegistrationService activityRegistrationService;
     @Autowired
     private ActivityMapper activityMapper;
+    @Autowired
+    private CustomerCardRepository customerCardRepository;
 
     @Test
     void applyCoupons() {
         Customer customer = new Customer();
         customerRepository.save(customer);
+        CustomerCard card = customerCardRepository.save(new CustomerCard());
 
         CouponRequest couponRequest = new CouponRequest(Set.of(RulesEnum.CASHBACK), LocalDate.EPOCH);
-        Coupon coupon = couponService.createCoupon(customer.getId(), couponRequest);
+        Coupon coupon = couponService.createCoupon(card.getId(), couponRequest);
 
         Activity activity = activityMapper.apply(new ActivityRequest(
                 "Apple",
@@ -89,13 +94,13 @@ class CouponServiceTest {
     void createCoupon() {
         Customer customer = new Customer();
         customerRepository.save(customer);
+        CustomerCard customerCard = new CustomerCard();
+        customerCard.setCustomer(customer);
+        CustomerCard card = customerCardRepository.save(customerCard);
 
         CouponRequest couponRequest = new CouponRequest(Set.of(RulesEnum.CASHBACK), null);
-        couponService.createCoupon(customer.getId(), couponRequest);
+        Coupon coupon = couponService.createCoupon(card.getId(), couponRequest);
+        Assertions.assertTrue(coupon.getId() != 0);
 
-        Assertions.assertNotNull(customer.getCoupons());
-        Assertions.assertFalse(customer.getCoupons().isEmpty());
-        Assertions.assertNotNull(customer.getCoupons().stream().toList().get(0).getCouponRules());
-        Assertions.assertTrue(customer.getCoupons().stream().toList().get(0).getCouponRules().isEmpty());
     }
 }

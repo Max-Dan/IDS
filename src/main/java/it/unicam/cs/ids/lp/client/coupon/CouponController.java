@@ -25,6 +25,11 @@ public class CouponController {
         return ResponseEntity.ok(couponService.getCoupons(customerId));
     }
 
+    @GetMapping("/{customerCardId}/getCardCoupons")
+    public ResponseEntity<Set<Coupon>> getCardCoupons(@PathVariable long customerCardId) {
+        return ResponseEntity.ok(couponService.getCardCoupons(customerCardId));
+    }
+
     @GetMapping("/isCouponValid/{couponId}")
     public ResponseEntity<Boolean> isCouponValid(@PathVariable long couponId) {
         return ResponseEntity.ok(couponService.isCouponValid(couponId));

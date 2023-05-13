@@ -1,7 +1,7 @@
 package it.unicam.cs.ids.lp.client.coupon;
 
-import it.unicam.cs.ids.lp.client.Customer;
-import it.unicam.cs.ids.lp.client.CustomerRepository;
+import it.unicam.cs.ids.lp.client.card.CustomerCard;
+import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,8 @@ import java.util.Set;
 public class CouponService {
 
     private final CouponRepository couponRepository;
-    private final CustomerRepository customerRepository;
+    private final CustomerCardRepository customerCardRepository;
+    private final CouponMapper couponMapper;
 
     /**
      * Restituisce il coupon posseduto da un cliente
@@ -27,7 +28,7 @@ public class CouponService {
      */
     public Optional<Coupon> getCoupon(long customerId, long couponId) {
         Coupon coupon = couponRepository.findById(couponId).orElseThrow();
-        return coupon.getCustomer().getId() != customerId ? Optional.empty()
+        return coupon.getCustomerCard().getCustomer().getId() != customerId ? Optional.empty()
                 : Optional.of(coupon);
     }
 
@@ -38,7 +39,17 @@ public class CouponService {
      * @return tutti i coupon posseduti da un cliente
      */
     public Set<Coupon> getCoupons(long customerId) {
-        return couponRepository.findByCustomer_Id(customerId);
+        return couponRepository.findByCustomerCard_Customer_Id(customerId);
+    }
+
+    /**
+     * Restituisce i coupon della carta del cliente
+     *
+     * @param customerCardId id della carta del cliente
+     * @return la lista di coupon
+     */
+    public Set<Coupon> getCardCoupons(long customerCardId) {
+        return couponRepository.findByCustomerCard_Id(customerCardId);
     }
 
     /**
@@ -74,18 +85,14 @@ public class CouponService {
     /**
      * Crea un coupon a un cliente
      *
-     * @param customerId    id del cliente
-     * @param couponRequest dati del coupon
+     * @param customerCardId id della carta del cliente
+     * @param couponRequest  dati del coupon
      * @return il coupon creato
      */
-    public Coupon createCoupon(long customerId, CouponRequest couponRequest) {
-        Customer customer = customerRepository.findById(customerId).orElseThrow();
-        Coupon coupon = new Coupon();
-        coupon.setCustomer(customer);
-        coupon.setEnd(couponRequest.end());
+    public Coupon createCoupon(long customerCardId, CouponRequest couponRequest) {
+        CustomerCard customerCard = customerCardRepository.findById(customerCardId).orElseThrow();
+        Coupon coupon = couponMapper.mapCoupon(couponRequest, customerCard);
         couponRepository.save(coupon);
-        customer.getCoupons().add(coupon);
-        customerRepository.save(customer);
         return coupon;
     }
 }
