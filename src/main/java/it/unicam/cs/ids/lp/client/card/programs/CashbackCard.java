@@ -13,11 +13,6 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @NoArgsConstructor
 public class CashbackCard extends CustomerCard {
-
-    private String cashbackReferred;
-
-    private String cashbackReferralCode;
-
     private int remainingCashback;
 }
 

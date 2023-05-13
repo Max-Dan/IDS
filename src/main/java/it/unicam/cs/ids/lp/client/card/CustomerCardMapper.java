@@ -14,8 +14,8 @@ import java.util.function.Function;
 public class CustomerCardMapper implements Function<CustomerCardRequest, CustomerCard> {
 
     private final CustomerRepository customerRepository;
-
     private final CardRepository cardRepository;
+    private final CustomerCardRepository customerCardRepository;
 
     @Override
     public CustomerCard apply(CustomerCardRequest customerCardRequest) {
@@ -25,11 +25,22 @@ public class CustomerCardMapper implements Function<CustomerCardRequest, Custome
             case MEMBERSHIP -> customerCard = new MembershipCard();
             default -> throw new IllegalStateException("Invalid CardProgram");
         }
+
         customerCard.setCustomer(customerRepository.findById(customerCardRequest.customerId()).orElseThrow());
         customerCard.setCard(cardRepository.findById(customerCardRequest.cardId()).orElseThrow());
         customerCard.setFamily(customerCardRequest.family());
+
+        // Set the referral code and referredBy fields
+        String referralCode = customerCardRequest.referredCode();
+        if (referralCode != null) {
+            CustomerCard referredBy = customerCardRepository.findByReferralCode(referralCode)
+                    .orElseThrow(() -> new IllegalStateException("Invalid referral code"));
+            customerCard.setReferredBy(referredBy);
+        }
+
         return customerCard;
     }
 }
+
 
 

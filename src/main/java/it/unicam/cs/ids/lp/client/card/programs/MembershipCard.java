@@ -17,11 +17,6 @@ import java.util.Objects;
 @NoArgsConstructor
 public class MembershipCard extends CustomerCard {
 
-
-    private String membershipReferred;
-
-    private String membershipReferralCode;
-
     private LocalDate membership;
 
     public void extendMembership(int weeks) {

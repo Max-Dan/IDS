@@ -14,6 +14,9 @@ public class CustomerCardUpdateRequest {
     private LocalDate membership;
     private boolean family;
     private CardProgram newProgram;
+    private String referralCode;
+    private String referredCode;
 }
+
 
 

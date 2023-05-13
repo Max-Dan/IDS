@@ -27,6 +27,7 @@ public class UpdateCardController {
 
         CustomerCard customerCard = optionalCard.get();
         customerCard.setProgram(request.getNewProgram());
+
         customerCardRepository.save(customerCard);
 
         System.out.println("Card program modified: " + customerCard);
@@ -42,15 +43,11 @@ public class UpdateCardController {
         }
 
         CustomerCard customerCard = optionalCard.get();
-        customerCard.setPoints(request.getPoints());
-        customerCard.setTier(request.getTier());
-        customerCard.setRemainingCashback(request.getRemainingCashback());
-        customerCard.setMembership(request.getMembership());
         customerCard.setFamily(request.isFamily());
+
         customerCardRepository.save(customerCard);
 
         System.out.println("Card attributes modified: " + customerCard);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
-

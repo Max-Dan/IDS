@@ -38,6 +38,12 @@ public class CustomerCard {
     @ToString.Exclude
     private List<Campaign> campaigns = new LinkedList<>();
 
+    private String referralCode;
+
+    @ManyToOne
+    @JoinColumn
+    private CustomerCard referredBy;
+
     private CardProgram program;
 
     private boolean family = false;

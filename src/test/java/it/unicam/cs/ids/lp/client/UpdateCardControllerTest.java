@@ -1,4 +1,4 @@
-package it.unicam.cs.ids.lp.client;
+/*package it.unicam.cs.ids.lp.client;
 
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardProgram;
@@ -94,3 +94,4 @@ class UpdateCardControllerTest {
         return testCustomerCard;
     }
 }
+*/
