@@ -2,27 +2,35 @@ package it.unicam.cs.ids.lp.activity;
 
 import it.unicam.cs.ids.lp.activity.registration.ActivityRequest;
 import it.unicam.cs.ids.lp.util.DataValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ActivityService {
-    private final ActivityRepository activityRepository;
 
+    private final ActivityRepository activityRepository;
     private final DataValidator<Activity> dataValidator;
 
-    public ActivityService(ActivityRepository activityRepository,
-                           DataValidator<Activity> dataValidator) {
-        this.activityRepository = activityRepository;
-        this.dataValidator = dataValidator;
-    }
-
-
+    /**
+     * Restituisce i dati dell'attività con id corrispondente
+     *
+     * @param activityId id dell'attività
+     * @return i dati dell'attività con id corrispondente se esiste
+     */
     public Optional<Activity> getActivityData(long activityId) {
         return activityRepository.findById(activityId);
     }
 
+    /**
+     * Modifica i dati di un'attività
+     *
+     * @param activityId id dell'attività
+     * @param request    dati aggiornati dell'attività
+     * @return l'attività con i dati aggiornati
+     */
     public Optional<Activity> modifyActivityData(long activityId, ActivityRequest request) {
         Activity activity = activityRepository.findById(activityId).orElseThrow();
         if (request.name() != null)

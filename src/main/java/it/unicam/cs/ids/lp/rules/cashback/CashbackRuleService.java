@@ -17,13 +17,21 @@ import org.springframework.stereotype.Service;
 public class CashbackRuleService {
     private final CouponRepository couponRepository;
     private final CashbackRuleRepository cashbackRuleRepository;
-    private final CouponRuleRepository couponRuleRepository;
+    private final CardRepository cardRepository;
     private final CashbackRuleMapper cashbackRuleMapper;
     private final CampaignRepository campaignRepository;
+    private final CouponRuleRepository couponRuleRepository;
     private final CampaignRuleRepository campaignRuleRepository;
-    private final CardRepository cardRepository;
 
-    public CashbackRule setCouponCashback(long couponId, CashbackRequest request) {
+    public CashbackRule setCashbackToCampaign(long activityId, long campaignId, CashbackRuleRequest request) {
+        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
+        if (!campaign.getCard().equals(cardRepository.findByActivities_Id(activityId).orElseThrow()))
+            throw new RuntimeException("Attività non autorizzata a modificare la campagna");
+        CashbackRule cashbackRule = cashbackRuleMapper.apply(request);
+        return cashbackRuleRepository.save(cashbackRule);
+    }
+
+    public CashbackRule setCouponCashback(long couponId, CashbackRuleRequest request) {
         Coupon coupon = couponRepository.findById(couponId).orElseThrow();
         CashbackRule cashbackRule = cashbackRuleMapper.apply(request);
         CouponRule couponRule = new CouponRule();
@@ -38,7 +46,7 @@ public class CashbackRuleService {
         return cashbackRule;
     }
 
-    public CashbackRule setCampaignCashback(long activityId, long campaignId, CashbackRequest request) {
+    public CashbackRule setCampaignCashback(long activityId, long campaignId, CashbackRuleRequest request) {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
         if (!campaign.getCard().equals(cardRepository.findByActivities_Id(activityId).orElseThrow()))
             throw new RuntimeException("Attività non autorizzata a modificare la campagna");

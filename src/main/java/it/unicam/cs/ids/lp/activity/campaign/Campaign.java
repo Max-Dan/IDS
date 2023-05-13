@@ -18,6 +18,7 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 public class Campaign {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -30,9 +31,17 @@ public class Campaign {
     @JsonIgnore
     private Card card;
 
-    private LocalDate start;
+    private LocalDate startDate;
 
-    private LocalDate end;
+    private LocalDate endDate;
+
+    public boolean isCurrentlyActive() {
+        return endDate == null
+                || (startDate.isEqual(LocalDate.now())
+                || endDate.isEqual(LocalDate.now()))
+                || (startDate.isBefore(LocalDate.now())
+                && endDate.isAfter(LocalDate.now()));
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,6 +1,7 @@
 package it.unicam.cs.ids.lp.client.order;
 
 import it.unicam.cs.ids.lp.activity.product.Product;
+import it.unicam.cs.ids.lp.client.Customer;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,11 @@ public class CustomerOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
-    private Long id;
+    private long id;
+
+    @ManyToOne
+    @JoinColumn
+    private Customer customer;
 
     @ManyToMany
     @JoinTable

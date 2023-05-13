@@ -1,5 +1,7 @@
 package it.unicam.cs.ids.lp.util;
 
+import java.util.Optional;
+
 /**
  * Permette ad un entità di iscriversi e disiscriversi dal sistema
  */
@@ -9,9 +11,9 @@ public interface Registry<T> {
      * Registra un entità nel database
      *
      * @param entity l'entità
-     * @return true se registrato con successo, false altrimenti
+     * @return l'attività salvata
      */
-    boolean register(T entity);
+    Optional<T> register(T entity);
 
     /**
      * Disiscrive un entità nel database

@@ -4,6 +4,6 @@ import it.unicam.cs.ids.lp.activity.product.Product;
 
 import java.util.Set;
 
-public record CashbackRequest(Set<Product> products,
-                              float cashbackRate) {
+public record CashbackRuleRequest(Set<Product> products,
+                                  float cashbackRate) {
 }

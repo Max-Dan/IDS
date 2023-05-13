@@ -42,4 +42,6 @@ public abstract class Rule<R> {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public abstract Integer seeBonus(CustomerOrder order);
 }

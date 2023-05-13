@@ -9,7 +9,7 @@ import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.activity.product.Product;
 import it.unicam.cs.ids.lp.activity.product.ProductRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
-import it.unicam.cs.ids.lp.rules.cashback.CashbackRequest;
+import it.unicam.cs.ids.lp.rules.cashback.CashbackRuleRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -74,10 +74,10 @@ class CampaignControllerTest {
         // TODO da eliminare quando sono disponibili api per creare i prodotti
         Product p1 = new Product();
         p1.setPrice(200);
-        p1.setActivities(List.of(activity1));
+        p1.setActivities(Set.of(activity1));
         Product p2 = new Product();
         p2.setPrice(600);
-        p2.setActivities(List.of(activity1));
+        p2.setActivities(Set.of(activity1));
         productRepository.saveAll(List.of(p1, p2));
     }
 
@@ -123,7 +123,7 @@ class CampaignControllerTest {
         Campaign campaign = objectMapper.readValue(campaignJson, Campaign.class);
 
         Set<Product> products = new HashSet<>(productRepository.findByActivities_Id(activity.getId()));
-        CashbackRequest cashbackRequest = new CashbackRequest(products, 5);
+        CashbackRuleRequest cashbackRequest = new CashbackRuleRequest(products, 5);
         mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId() + "/campaign/" +
                         campaign.getId() + "/cashback/add")
                 .content(objectMapper.writeValueAsString(cashbackRequest))

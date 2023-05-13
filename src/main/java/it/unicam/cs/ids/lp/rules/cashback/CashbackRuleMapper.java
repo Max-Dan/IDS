@@ -5,10 +5,10 @@ import org.springframework.stereotype.Service;
 import java.util.function.Function;
 
 @Service
-public class CashbackRuleMapper implements Function<CashbackRequest, CashbackRule> {
+public class CashbackRuleMapper implements Function<CashbackRuleRequest, CashbackRule> {
 
     @Override
-    public CashbackRule apply(CashbackRequest cashbackRequest) {
+    public CashbackRule apply(CashbackRuleRequest cashbackRequest) {
         CashbackRule cashbackRule = new CashbackRule();
         cashbackRule.setProducts(cashbackRequest.products());
         cashbackRule.setCashbackRate(cashbackRequest.cashbackRate());

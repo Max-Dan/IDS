@@ -8,8 +8,9 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -26,7 +27,7 @@ public class Product {
     @ManyToMany
     @JoinTable
     @ToString.Exclude
-    private List<Activity> activities;
+    private Set<Activity> activities = new HashSet<>();
     private int price;
 
     @Override

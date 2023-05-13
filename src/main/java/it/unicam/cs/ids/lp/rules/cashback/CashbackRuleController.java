@@ -12,14 +12,14 @@ public class CashbackRuleController {
     private final CashbackRuleService cashbackRuleService;
 
     @PostMapping("/campaign/{campaignId}/cashback/add")
-    public ResponseEntity<CashbackRule> setCampaignCashback(@PathVariable long activityId, @PathVariable long campaignId, @RequestBody CashbackRequest request) {
+    public ResponseEntity<CashbackRule> setCampaignCashback(@PathVariable long activityId, @PathVariable long campaignId, @RequestBody CashbackRuleRequest request) {
         CashbackRule cashbackRule = cashbackRuleService.setCampaignCashback(activityId, campaignId, request);
         return ResponseEntity.ok(cashbackRule);
     }
 
     @PostMapping("/coupon/{couponId}/cashback/add")
     public ResponseEntity<CashbackRule> setCouponCashback(@PathVariable long activityId, @PathVariable long couponId,
-                                                          @RequestBody CashbackRequest request) {
+                                                          @RequestBody CashbackRuleRequest request) {
         CashbackRule cashbackRule = cashbackRuleService.setCouponCashback(couponId, request);
         return ResponseEntity.ok(cashbackRule);
     }

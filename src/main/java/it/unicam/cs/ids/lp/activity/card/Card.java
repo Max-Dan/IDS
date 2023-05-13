@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.lp.activity.card;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.unicam.cs.ids.lp.activity.Activity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -25,8 +26,9 @@ public class Card {
 
     private String name;
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.MERGE)
+    @OneToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
+    @JsonIgnore
     private List<Activity> activities = new LinkedList<>();
 
     @Enumerated(EnumType.STRING)

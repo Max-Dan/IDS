@@ -13,8 +13,8 @@ public class CampaignMapper implements BiFunction<CampaignRequest, Card, Campaig
     public Campaign apply(CampaignRequest campaignRequest, Card card) {
         Campaign campaign = new Campaign();
         campaign.setName(campaignRequest.name());
-        campaign.setStart(LocalDate.now());
-        campaign.setEnd(campaignRequest.end());
+        campaign.setStartDate(LocalDate.now());
+        campaign.setEndDate(campaignRequest.end());
         campaign.setCard(card);
         return campaign;
     }

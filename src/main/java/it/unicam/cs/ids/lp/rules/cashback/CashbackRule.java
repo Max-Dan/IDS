@@ -57,4 +57,15 @@ public class CashbackRule extends Rule<Integer> {
     public int hashCode() {
         return Objects.hash(super.hashCode());
     }
+
+    @Override
+    public Integer seeBonus(CustomerOrder order) {
+        return order.getProducts()
+                .parallelStream()
+                .filter(product -> this.getProducts()
+                        .contains(product))
+                .map(product -> (int) (product.getPrice() / 100 * this.getCashbackRate()))
+                .reduce(Integer::sum)
+                .orElse(0);
+    }
 }

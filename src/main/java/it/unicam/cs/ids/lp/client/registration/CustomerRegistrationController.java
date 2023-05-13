@@ -21,10 +21,9 @@ public class CustomerRegistrationController {
     @PutMapping("/register")
     public ResponseEntity<?> registerCustomer(@RequestBody CustomerRequest customerRequest) {
         Customer customer = customerMapper.apply(customerRequest);
-        boolean registered = customerRegistrationService.register(customer);
-        if (!registered)
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return customerRegistrationService.register(customer)
+                .map(customer1 -> new ResponseEntity<>(HttpStatus.CREATED))
+                .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     @DeleteMapping("/unregister/{customerId}")

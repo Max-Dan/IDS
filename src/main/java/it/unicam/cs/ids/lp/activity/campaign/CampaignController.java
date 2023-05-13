@@ -22,20 +22,31 @@ public class CampaignController {
                 : ResponseEntity.badRequest().body(null);
     }
 
+    @GetMapping("/{campaignId}/terminate")
+    public ResponseEntity<?> terminateCampaign(@PathVariable long campaignId, @PathVariable long activityId) {
+        campaignService.terminateCampaign(campaignId, activityId);
+        return ResponseEntity.ok("");
+    }
+
     @PostMapping("/{campaignId}/modifyData")
-    public ResponseEntity<?> modifyCampaign(@PathVariable long campaignId, @RequestBody CampaignRequest campaignRequest) {
-        Campaign campaign = campaignService.modifyCampaign(campaignId, campaignRequest);
+    public ResponseEntity<?> modifyCampaign(@PathVariable long campaignId, @RequestBody CampaignRequest campaignRequest, @PathVariable long activityId) {
+        Campaign campaign = campaignService.modifyCampaign(campaignId, activityId, campaignRequest);
         return ResponseEntity.ok(campaign);
     }
 
     @PostMapping("/{campaignId}/applyRules")
-    public ResponseEntity<List<String>> applyRules(@PathVariable long campaignId, @RequestBody CustomerOrder order) {
-        List<String> strings = campaignService.applyRules(campaignId, order);
+    public ResponseEntity<List<String>> applyRules(@PathVariable long campaignId, @RequestBody CustomerOrder order, @PathVariable long activityId) {
+        List<String> strings = campaignService.applyRules(campaignId, activityId, order);
         return ResponseEntity.ok().body(strings);
     }
 
+    @GetMapping("/getAllCampaigns")
+    public ResponseEntity<?> getAllCampaigns(@PathVariable long activityId) {
+        return ResponseEntity.ok(campaignService.getAllCampaigns(activityId));
+    }
+
     @GetMapping("/getCampaigns")
-    public ResponseEntity<?> getActiveCampaigns() {
-        return ResponseEntity.ok(campaignService.getActiveCampaigns());
+    public ResponseEntity<?> getActiveCampaigns(@PathVariable long activityId) {
+        return ResponseEntity.ok(campaignService.getActiveCampaigns(activityId));
     }
 }

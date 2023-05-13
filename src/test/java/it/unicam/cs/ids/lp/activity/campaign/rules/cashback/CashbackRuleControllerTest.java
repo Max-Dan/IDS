@@ -3,18 +3,20 @@ package it.unicam.cs.ids.lp.activity.campaign.rules.cashback;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unicam.cs.ids.lp.LoyaltyPlatformApplication;
 import it.unicam.cs.ids.lp.activity.Activity;
-import it.unicam.cs.ids.lp.activity.ActivityRepository;
+import it.unicam.cs.ids.lp.activity.ContentCategory;
 import it.unicam.cs.ids.lp.activity.campaign.Campaign;
-import it.unicam.cs.ids.lp.activity.campaign.CampaignMapper;
-import it.unicam.cs.ids.lp.activity.campaign.CampaignRepository;
 import it.unicam.cs.ids.lp.activity.campaign.CampaignRequest;
-import it.unicam.cs.ids.lp.activity.card.Card;
-import it.unicam.cs.ids.lp.activity.card.CardRepository;
+import it.unicam.cs.ids.lp.activity.campaign.CampaignService;
+import it.unicam.cs.ids.lp.activity.card.CardRequest;
+import it.unicam.cs.ids.lp.activity.card.CardService;
 import it.unicam.cs.ids.lp.activity.product.Product;
 import it.unicam.cs.ids.lp.activity.product.ProductRepository;
-import it.unicam.cs.ids.lp.rules.cashback.CashbackRequest;
+import it.unicam.cs.ids.lp.activity.product.ProductRequest;
+import it.unicam.cs.ids.lp.activity.product.ProductService;
+import it.unicam.cs.ids.lp.activity.registration.ActivityRegistrationService;
 import it.unicam.cs.ids.lp.rules.cashback.CashbackRule;
 import it.unicam.cs.ids.lp.rules.cashback.CashbackRuleRepository;
+import it.unicam.cs.ids.lp.rules.cashback.CashbackRuleRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +32,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,58 +47,39 @@ public class CashbackRuleControllerTest {
 
     @Autowired
     private MockMvc mvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private ActivityRepository activityRepository;
-
-    @Autowired
-    private CampaignRepository campaignRepository;
-
-    @Autowired
-    private CardRepository cardRepository;
-
-    @Autowired
-    private CampaignMapper campaignMapper;
-
     @Autowired
     private CashbackRuleRepository cashbackRuleRepository;
-
     @Autowired
     private ProductRepository productRepository;
-
+    @Autowired
+    private ActivityRegistrationService activityRegistrationService;
+    @Autowired
+    private CardService cardService;
+    @Autowired
+    private CampaignService campaignService;
+    @Autowired
+    private ProductService productService;
     private Activity activity;
-
     private Campaign campaign;
 
     @BeforeEach
     public void setUp() {
-        activity = new Activity();
-        activity = activityRepository.save(activity);
+        Activity activity1 = new Activity();
+        activity1.setCategory(ContentCategory.TECHNOLOGY);
+        activity = activityRegistrationService.register(activity1).orElseThrow();
+        cardService.createCard(activity.getId(), new CardRequest(""));
+        campaign = campaignService.createCampaign(activity.getId(), new CampaignRequest("", null));
 
-        Card card = new Card();
-        card.setActivities(List.of(activity));
-        cardRepository.save(card);
-
-        Campaign campaign = campaignMapper.apply(new CampaignRequest("", null), card);
-        this.campaign = campaignRepository.save(campaign);
-
-        // TODO da eliminare quando sono disponibili api per creare i prodotti
-        Product p1 = new Product();
-        p1.setPrice(200);
-        p1.setActivities(List.of(activity));
-        Product p2 = new Product();
-        p2.setPrice(600);
-        p2.setActivities(List.of(activity));
-        productRepository.saveAll(List.of(p1, p2));
+        productService.createProduct(new ProductRequest("", 200));
+        productService.createProduct(new ProductRequest("", 600));
     }
 
     @Test
     public void setCashback() throws Exception {
         Set<Product> products = new HashSet<>(productRepository.findByActivities_Id(activity.getId()));
-        CashbackRequest cashbackRequest = new CashbackRequest(products, 5);
+        CashbackRuleRequest cashbackRequest = new CashbackRuleRequest(products, 5);
         String ruleJson = mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId()
                                 + "/campaign/" + campaign.getId() + "/cashback/add")
                         .content(objectMapper.writeValueAsString(cashbackRequest))

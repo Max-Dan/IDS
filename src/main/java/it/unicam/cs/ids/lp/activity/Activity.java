@@ -1,6 +1,8 @@
 package it.unicam.cs.ids.lp.activity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.unicam.cs.ids.lp.activity.card.Card;
+import it.unicam.cs.ids.lp.activity.product.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +10,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -36,6 +40,16 @@ public class Activity {
 
     @Enumerated(EnumType.STRING)
     private ContentCategory category;
+
+    @ManyToOne
+    @JoinColumn
+    private Card card;
+
+    @ManyToMany
+    @JoinTable
+    @ToString.Exclude
+    @JsonIgnore
+    private Set<Product> products = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

@@ -5,23 +5,20 @@ import it.unicam.cs.ids.lp.activity.ActivityRepository;
 import it.unicam.cs.ids.lp.util.DataValidator;
 import it.unicam.cs.ids.lp.util.DataValidatorUtil;
 import it.unicam.cs.ids.lp.util.Registry;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ActivityRegistrationService
         implements DataValidator<Activity>, Registry<Activity> {
 
     private final ActivityRepository activityRepository;
-
     private final DataValidatorUtil dataValidatorUtil;
-
-    public ActivityRegistrationService(ActivityRepository activityRepository,
-                                       DataValidatorUtil dataValidatorUtil) {
-        this.activityRepository = activityRepository;
-        this.dataValidatorUtil = dataValidatorUtil;
-    }
+    private final ActivityMapper activityMapper;
 
 
     @Override
@@ -35,12 +32,17 @@ public class ActivityRegistrationService
     }
 
     @Override
-    public boolean register(Activity activity) {
+    public Optional<Activity> register(Activity activity) {
         Objects.requireNonNull(activity);
         if (!areRegistrationValuesValid(activity))
-            return false;
+            return Optional.empty();
         activityRepository.save(activity);
-        return true;
+        return Optional.of(activity);
+    }
+
+    public Optional<Activity> register(ActivityRequest activityRequest) {
+        Activity activity = activityMapper.apply(activityRequest);
+        return register(activity);
     }
 
     @Override

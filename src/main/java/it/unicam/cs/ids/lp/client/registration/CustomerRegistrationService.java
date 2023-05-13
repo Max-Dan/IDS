@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,13 +28,13 @@ public class CustomerRegistrationService
     }
 
     @Override
-    public boolean register(Customer customer) {
+    public Optional<Customer> register(Customer customer) {
         Objects.requireNonNull(customer);
         if (customerRepository.existsByEmail(customer.getEmail())
                 || areRegistrationValuesValid(customer))
-            return false;
+            return Optional.empty();
         customerRepository.save(customer);
-        return true;
+        return Optional.of(customer);
     }
 
     @Override

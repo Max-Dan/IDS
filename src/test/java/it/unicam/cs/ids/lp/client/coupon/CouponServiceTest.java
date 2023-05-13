@@ -13,8 +13,8 @@ import it.unicam.cs.ids.lp.client.Customer;
 import it.unicam.cs.ids.lp.client.CustomerRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import it.unicam.cs.ids.lp.rules.RulesEnum;
-import it.unicam.cs.ids.lp.rules.cashback.CashbackRequest;
 import it.unicam.cs.ids.lp.rules.cashback.CashbackRule;
+import it.unicam.cs.ids.lp.rules.cashback.CashbackRuleRequest;
 import it.unicam.cs.ids.lp.rules.cashback.CashbackRuleService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -69,10 +69,10 @@ class CouponServiceTest {
                 "sonoLaApple"
         ));
         activityRegistrationService.register(activity);
-        ProductRequest productRequest = new ProductRequest(null, List.of(1L), 100);
+        ProductRequest productRequest = new ProductRequest("", 100);
         Product product = productService.createProduct(productRequest);
 
-        CashbackRequest cashbackRequest = new CashbackRequest(Set.of(product), 5);
+        CashbackRuleRequest cashbackRequest = new CashbackRuleRequest(Set.of(product), 5);
         cashbackRuleService.setCouponCashback(coupon.getId(), cashbackRequest);
 
         CustomerOrder order = new CustomerOrder();
