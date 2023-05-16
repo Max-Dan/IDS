@@ -10,4 +10,5 @@ public interface CustomerCardRepository
         extends JpaRepository<CustomerCard, Long> {
 
     Optional<CustomerCard> findByReferralCode(String referralCode);
+
 }

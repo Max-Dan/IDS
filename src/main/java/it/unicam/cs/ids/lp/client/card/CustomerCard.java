@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -39,26 +38,14 @@ public class CustomerCard {
     @ToString.Exclude
     private List<Campaign> campaigns = new LinkedList<>();
 
-    private int points = 0;
-
-    private int tier = 1;
-
-    private int remainingCashback;
-
-    private LocalDate membership;
-
-    private String referred;
-
     private String referralCode;
+
+    @ManyToOne
+    private CustomerCard referredBy;
 
     private CardProgram program;
 
     private boolean family = false;
-
-    public void extendMembership(int weeks) {
-        membership = Objects.requireNonNullElseGet(membership, LocalDate::now)
-                .plusWeeks(weeks);
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -73,4 +60,6 @@ public class CustomerCard {
         return Objects.hash(id, customer, card);
     }
 
+    public void applyBonus() {
+    }
 }

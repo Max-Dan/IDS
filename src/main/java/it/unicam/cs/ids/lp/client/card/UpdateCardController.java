@@ -1,5 +1,8 @@
 package it.unicam.cs.ids.lp.client.card;
 
+import it.unicam.cs.ids.lp.activity.card.CardProgram;
+import it.unicam.cs.ids.lp.client.card.programs.CashbackCard;
+import it.unicam.cs.ids.lp.client.card.programs.MembershipCard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,17 +20,26 @@ public class UpdateCardController {
 
     private final CustomerCardRepository customerCardRepository;
 
+    private final CustomerCardController customerCardController;
     @PutMapping("/modifyProgram")
     public ResponseEntity<?> modifyProgram(@RequestBody CustomerCardUpdateRequest request) {
-        Optional<CustomerCard> optionalCard = customerCardRepository.findById(request.getCustomerCardId().getId());
+        Optional<CustomerCard> optionalCard = customerCardRepository.findById(request.getCustomerCardId());
 
         if (optionalCard.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         CustomerCard customerCard = optionalCard.get();
-        customerCard.setProgram(request.getNewProgram());
-        customerCardRepository.save(customerCard);
+        customerCardController.deleteCard(customerCard.getId());
+        CustomerCardRequest customerCardRequest =
+                new CustomerCardRequest(
+                        customerCard.getCustomer().getId(),
+                        customerCard.getCard().getId(),
+                        request.getNewProgram(),
+                        false,
+                        null
+                );
+        customerCardController.createCustomerCard(customerCardRequest);
 
         System.out.println("Card program modified: " + customerCard);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -35,20 +47,20 @@ public class UpdateCardController {
 
     @PutMapping("/modifyAttributes")
     public ResponseEntity<?> modifyAttributes(@RequestBody CustomerCardUpdateRequest request) {
-        Optional<CustomerCard> optionalCard = customerCardRepository.findById(request.getCustomerCardId().getId());
+        Optional<CustomerCard> optionalCard = customerCardRepository.findById(request.getCustomerCardId());
 
         if (optionalCard.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
         CustomerCard customerCard = optionalCard.get();
-        customerCard.setPoints(request.getPoints());
-        customerCard.setTier(request.getTier());
-        customerCard.setRemainingCashback(request.getRemainingCashback());
-        customerCard.setMembership(request.getMembership());
-        customerCard.setFamily(request.isFamily());
-        customerCardRepository.save(customerCard);
 
+        customerCard.setFamily(request.isFamily());
+        if (customerCard.getProgram() == CardProgram.CASHBACK) {
+            ((CashbackCard) customerCard).setRemainingCashback(request.getRemainingCashback());
+        } else if (customerCard.getProgram() == CardProgram.MEMBERSHIP) {
+            ((MembershipCard) customerCard).setMembership(request.getMembership());
+        }
+        customerCardRepository.save(customerCard);
         System.out.println("Card attributes modified: " + customerCard);
         return new ResponseEntity<>(HttpStatus.OK);
     }

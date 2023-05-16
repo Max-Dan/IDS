@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Data
 public class CustomerCardUpdateRequest {
-    private CustomerCardCompositeId customerCardId;
+    private long customerCardId;
     private int points;
     private int tier;
     private int remainingCashback;
@@ -15,5 +15,6 @@ public class CustomerCardUpdateRequest {
     private boolean family;
     private CardProgram newProgram;
 }
+
 
 
