@@ -93,6 +93,7 @@ class UpdateCardControllerTest {
         CashbackCard testCustomerCard = new CashbackCard();
         testCustomerCard.setCustomer(testCustomer);
         testCustomerCard.setCard(testCard);
+        testCustomerCard.setProgram(CardProgram.CASHBACK);
         testCustomerCard.setRemainingCashback(0);
 
         return customerCardRepository.save(testCustomerCard);
@@ -109,6 +110,7 @@ class UpdateCardControllerTest {
         MembershipCard testCustomerCard = new MembershipCard();
         testCustomerCard.setCustomer(testCustomer);
         testCustomerCard.setCard(testCard);
+        testCustomerCard.setProgram(CardProgram.MEMBERSHIP);
         testCustomerCard.setMembership(LocalDate.now());
 
         return customerCardRepository.save(testCustomerCard);
