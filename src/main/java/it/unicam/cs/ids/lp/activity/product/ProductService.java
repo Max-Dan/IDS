@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ProductService {
 
-    private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final ProductRepository productRepository;
     private final ActivityRepository activityRepository;
 
     public Product createProduct(long activityId, ProductRequest productRequest) {

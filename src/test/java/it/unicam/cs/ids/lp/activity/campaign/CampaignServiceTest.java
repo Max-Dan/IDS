@@ -3,8 +3,6 @@ package it.unicam.cs.ids.lp.activity.campaign;
 import it.unicam.cs.ids.lp.LoyaltyPlatformApplication;
 import it.unicam.cs.ids.lp.activity.Activity;
 import it.unicam.cs.ids.lp.activity.ContentCategory;
-import it.unicam.cs.ids.lp.activity.campaign.rules.cashback.CashbackRuleRequest;
-import it.unicam.cs.ids.lp.activity.campaign.rules.cashback.CashbackRuleService;
 import it.unicam.cs.ids.lp.activity.card.CardRequest;
 import it.unicam.cs.ids.lp.activity.card.CardService;
 import it.unicam.cs.ids.lp.activity.product.Product;
@@ -13,6 +11,8 @@ import it.unicam.cs.ids.lp.activity.product.ProductRequest;
 import it.unicam.cs.ids.lp.activity.product.ProductService;
 import it.unicam.cs.ids.lp.activity.registration.ActivityRegistrationService;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
+import it.unicam.cs.ids.lp.rules.cashback.CashbackRuleRequest;
+import it.unicam.cs.ids.lp.rules.cashback.CashbackRuleService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -60,7 +60,6 @@ class CampaignServiceTest {
         activity1.setCategory(ContentCategory.TECHNOLOGY);
         activity = activityRegistrationService.register(activity1).orElseThrow();
         cardService.createCard(activity.getId(), new CardRequest(""));
-
         productService.createProduct(activity.getId(), new ProductRequest("", 200));
         productService.createProduct(activity.getId(), new ProductRequest("", 600));
     }
@@ -82,12 +81,12 @@ class CampaignServiceTest {
     }
 
     @Test
-    public void applyRules() {
+    void applyRules() {
         CampaignRequest campaignRequest = new CampaignRequest("", null);
         Campaign campaign = campaignService.createCampaign(activity.getId(), campaignRequest);
         Set<Product> products = new HashSet<>(productRepository.findByActivities_Id(activity.getId()));
         CashbackRuleRequest cashbackRequest = new CashbackRuleRequest(products, 5);
-        cashbackRuleService.setCashbackToCampaign(activity.getId(), campaign.getId(), cashbackRequest);
+        cashbackRuleService.setCampaignCashback(activity.getId(), campaign.getId(), cashbackRequest);
         CustomerOrder order = new CustomerOrder();
         order.setProducts(products);
         List<String> strings = campaignService.applyRules(campaign.getId(), activity.getId(), order);

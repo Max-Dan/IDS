@@ -19,8 +19,6 @@ public class LoginTest {
     @Autowired
     private Login login;
 
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private AdminRepository adminRepository;

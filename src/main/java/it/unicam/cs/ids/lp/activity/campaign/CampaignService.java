@@ -1,26 +1,25 @@
 package it.unicam.cs.ids.lp.activity.campaign;
 
-import it.unicam.cs.ids.lp.activity.campaign.rules.AbstractRuleRepository;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
+import it.unicam.cs.ids.lp.rules.platform_rules.campaign.CampaignRuleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class CampaignService {
 
     private final CardRepository cardRepository;
     private final CampaignMapper campaignMapper;
     private final CampaignRepository campaignRepository;
-    private final AbstractRuleRepository<?> abstractRuleRepository;
+    private final CampaignRuleRepository campaignRuleRepository;
+
 
     /**
      * Crea una campagna associata alla carta dell'attività
@@ -78,12 +77,9 @@ public class CampaignService {
      */
     public List<String> applyRules(long campaignId, long activityId, CustomerOrder order) {
         checkValidCampaignForActivity(campaignId, activityId);
-        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
-        return abstractRuleRepository.findAll()
+        return campaignRuleRepository.findByCampaign_Id(campaignId)
                 .stream()
-                .filter(abstractRule -> abstractRule.getCampaign()
-                        .equals(campaign))
-                .map(rule -> rule.getClass().getSimpleName() + "   " + rule.apply(order))
+                .map(rule -> rule.getClass().getSimpleName() + "   " + rule.getRule().applyRule(order))
                 .toList();
     }
 
@@ -120,11 +116,11 @@ public class CampaignService {
      */
     public List<String> seeBonuses(long campaignId, CustomerOrder order) {
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
-        return abstractRuleRepository.findAll()
+        return campaignRuleRepository.findAll()
                 .stream()
                 .filter(abstractRule -> abstractRule.getCampaign()
                         .equals(campaign))
-                .map(rule -> rule.getClass().getSimpleName() + "   " + rule.seeBonus(order))
+                .map(rule -> rule.getClass().getSimpleName() + "   " + rule.getRule().seeBonus(order))
                 .toList();
     }
 

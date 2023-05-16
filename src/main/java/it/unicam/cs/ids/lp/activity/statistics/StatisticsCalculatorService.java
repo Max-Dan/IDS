@@ -1,6 +1,7 @@
 package it.unicam.cs.ids.lp.activity.statistics;
 
 import it.unicam.cs.ids.lp.activity.card.Card;
+import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.activity.statistics.card.CardStatistic;
 import it.unicam.cs.ids.lp.activity.statistics.card.CardStatisticRepository;
 import it.unicam.cs.ids.lp.activity.statistics.factory.CardStatisticFactory;
@@ -16,6 +17,12 @@ public class StatisticsCalculatorService implements StatisticAnalyzer<Card> {
 
     private final CustomerRepository customerRepository;
     private final CardStatisticRepository cardStatisticRepository;
+    private final CardRepository cardRepository;
+
+
+    public List<CardStatistic> analyzeData(List<StatisticType> statisticTypes, long activityId) {
+        return analyzeData(statisticTypes, cardRepository.findByActivities_Id(activityId).orElseThrow());
+    }
 
     @Override
     public List<CardStatistic> analyzeData(List<StatisticType> statisticTypes, Card card) {

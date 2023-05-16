@@ -1,37 +1,46 @@
-package it.unicam.cs.ids.lp.activity.campaign.rules;
+package it.unicam.cs.ids.lp.client.coupon;
 
-import it.unicam.cs.ids.lp.activity.campaign.Campaign;
-import it.unicam.cs.ids.lp.activity.campaign.Rule;
+import it.unicam.cs.ids.lp.client.card.CustomerCard;
+import it.unicam.cs.ids.lp.rules.platform_rules.coupon.CouponRule;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class AbstractRule<E> implements Rule<E> {
+public class Coupon {
 
     @Id
     @GeneratedValue
     private long id;
 
+
     @ManyToOne
-    @JoinColumn(name = "campaign_id")
-    private Campaign campaign;
+    @JoinColumn
+    private CustomerCard customerCard;
+
+    @OneToMany
+    @ToString.Exclude
+    private Set<CouponRule> couponRules = new HashSet<>();
+
+    private LocalDate end;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AbstractRule<?> that = (AbstractRule<?>) o;
-        return id == that.id;
+        Coupon coupon = (Coupon) o;
+        return id == coupon.id;
     }
 
     @Override
