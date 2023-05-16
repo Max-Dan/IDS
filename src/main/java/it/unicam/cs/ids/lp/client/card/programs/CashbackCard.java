@@ -13,6 +13,13 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @NoArgsConstructor
 public class CashbackCard extends CustomerCard {
+
     private int remainingCashback;
+
+    @Override
+    public void applyBonus() {
+        remainingCashback += 50;
+    }
+
 }
 

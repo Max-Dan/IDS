@@ -1,4 +1,4 @@
-/*package it.unicam.cs.ids.lp.client;
+package it.unicam.cs.ids.lp.client;
 
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardProgram;
@@ -7,6 +7,8 @@ import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
 import it.unicam.cs.ids.lp.client.card.CustomerCardUpdateRequest;
 import it.unicam.cs.ids.lp.client.card.UpdateCardController;
+import it.unicam.cs.ids.lp.client.card.programs.CashbackCard;
+import it.unicam.cs.ids.lp.client.card.programs.MembershipCard;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @SpringBootTest
 class UpdateCardControllerTest {
@@ -34,7 +37,7 @@ class UpdateCardControllerTest {
 
     @Test
     void modifyProgram() {
-        CustomerCard customerCard = createTestCustomerCard();
+        CustomerCard customerCard = createTestCashbackCard();
 
         CustomerCardUpdateRequest request = new CustomerCardUpdateRequest();
         request.setCustomerCardId(customerCard.getId());
@@ -43,55 +46,72 @@ class UpdateCardControllerTest {
         ResponseEntity<?> response = updateCardController.modifyProgram(request);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        CustomerCard updatedCustomerCard = customerCardRepository.findById(customerCard.getId()).orElse(null);
-        Assertions.assertNotNull(updatedCustomerCard);
-        Assertions.assertEquals(CardProgram.CASHBACK, updatedCustomerCard.getProgram());
+        Optional<CustomerCard> updatedCard = customerCardRepository.findByReferralCode(customerCard.getCustomer().getId()
+                + "-" + customerCard.getCard().getId()
+                + "-" + CardProgram.CASHBACK);
+        Assertions.assertTrue(updatedCard.isPresent());
+        Assertions.assertEquals(CardProgram.CASHBACK, updatedCard.get().getProgram());
     }
 
     @Test
     void modifyAttributes() {
-        CustomerCard customerCard = createTestCustomerCard();
+        CashbackCard customerCard = createTestCashbackCard();
 
         CustomerCardUpdateRequest request = new CustomerCardUpdateRequest();
         request.setCustomerCardId(customerCard.getId());
-        request.setPoints(100);
-        request.setTier(2);
-        request.setRemainingCashback(50);
-        request.setMembership(LocalDate.now().plusMonths(1));
         request.setFamily(true);
+        request.setRemainingCashback(50);
 
         ResponseEntity<?> response = updateCardController.modifyAttributes(request);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        CustomerCard updatedCustomerCard = customerCardRepository.findById(customerCard.getId()).orElse(null);
-        Assertions.assertNotNull(updatedCustomerCard);
-        Assertions.assertEquals(100, updatedCustomerCard.getPoints());
-        Assertions.assertEquals(2, updatedCustomerCard.getTier());
-        Assertions.assertEquals(50, updatedCustomerCard.getRemainingCashback());
-        Assertions.assertEquals(LocalDate.now().plusMonths(1), updatedCustomerCard.getMembership());
-        Assertions.assertTrue(updatedCustomerCard.isFamily());
+        Optional<CustomerCard> updatedCard = customerCardRepository.findById(customerCard.getId());
+        Assertions.assertTrue(updatedCard.isPresent());
+        Assertions.assertTrue(updatedCard.get().isFamily());
+        Assertions.assertEquals(50, ((CashbackCard) updatedCard.get()).getRemainingCashback());
+
+        MembershipCard membershipCard = createTestMembershipCard();
+        request.setCustomerCardId(membershipCard.getId());
+        request.setMembership(LocalDate.now().plusMonths(1));
+
+        response = updateCardController.modifyAttributes(request);
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        updatedCard = customerCardRepository.findById(membershipCard.getId());
+        Assertions.assertTrue(updatedCard.isPresent());
+        Assertions.assertEquals(LocalDate.now().plusMonths(1), ((MembershipCard) updatedCard.get()).getMembership());
     }
 
-    // Helper method to create a test CustomerCard instance
-    private CustomerCard createTestCustomerCard() {
-        // Create and save a test Customer
+    private CashbackCard createTestCashbackCard() {
         Customer testCustomer = new Customer();
         testCustomer = customerRepository.save(testCustomer);
 
-        // Create and save a test Card with CardProgram.POINTS
         Card testCard = new Card();
-        testCard.setProgram(CardProgram.POINTS);
+        testCard.setProgram(CardProgram.CASHBACK);
         testCard = cardRepository.save(testCard);
 
-        // Create and save a test CustomerCard
-        CustomerCard testCustomerCard = new CustomerCard();
-        testCustomerCard.setProgram(CardProgram.POINTS);
+        CashbackCard testCustomerCard = new CashbackCard();
+        testCustomerCard.setCustomer(testCustomer);
+        testCustomerCard.setCard(testCard);
+        testCustomerCard.setRemainingCashback(0);
+
+        return customerCardRepository.save(testCustomerCard);
+    }
+
+    private MembershipCard createTestMembershipCard() {
+        Customer testCustomer = new Customer();
+        testCustomer = customerRepository.save(testCustomer);
+
+        Card testCard = new Card();
+        testCard.setProgram(CardProgram.MEMBERSHIP);
+        testCard = cardRepository.save(testCard);
+
+        MembershipCard testCustomerCard = new MembershipCard();
         testCustomerCard.setCustomer(testCustomer);
         testCustomerCard.setCard(testCard);
         testCustomerCard.setMembership(LocalDate.now());
-        testCustomerCard = customerCardRepository.save(testCustomerCard);
 
-        return testCustomerCard;
+        return customerCardRepository.save(testCustomerCard);
     }
+
 }
-*/

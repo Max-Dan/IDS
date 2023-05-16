@@ -23,4 +23,10 @@ public class MembershipCard extends CustomerCard {
         membership = Objects.requireNonNullElseGet(membership, LocalDate::now)
                 .plusWeeks(weeks);
     }
+
+    @Override
+    public void applyBonus() {
+        extendMembership(2);
+    }
+
 }

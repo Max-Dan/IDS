@@ -25,19 +25,18 @@ public class CustomerCardMapper implements Function<CustomerCardRequest, Custome
             case MEMBERSHIP -> customerCard = new MembershipCard();
             default -> throw new IllegalStateException("Invalid CardProgram");
         }
-
         customerCard.setCustomer(customerRepository.findById(customerCardRequest.customerId()).orElseThrow());
         customerCard.setCard(cardRepository.findById(customerCardRequest.cardId()).orElseThrow());
+        customerCard.setProgram(customerCardRequest.program());
         customerCard.setFamily(customerCardRequest.family());
-
-        // Set the referral code and referredBy fields
+        customerCard.setReferralCode(customerCardRequest.customerId() + "-" + customerCardRequest.cardId() + "-" + customerCardRequest.program());
         String referralCode = customerCardRequest.referredCode();
         if (referralCode != null) {
             CustomerCard referredBy = customerCardRepository.findByReferralCode(referralCode)
                     .orElseThrow(() -> new IllegalStateException("Invalid referral code"));
             customerCard.setReferredBy(referredBy);
+            customerCard.applyBonus();
         }
-
         return customerCard;
     }
 }

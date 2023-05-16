@@ -41,7 +41,6 @@ public class CustomerCard {
     private String referralCode;
 
     @ManyToOne
-    @JoinColumn
     private CustomerCard referredBy;
 
     private CardProgram program;
@@ -61,4 +60,6 @@ public class CustomerCard {
         return Objects.hash(id, customer, card);
     }
 
+    public void applyBonus() {
+    }
 }
