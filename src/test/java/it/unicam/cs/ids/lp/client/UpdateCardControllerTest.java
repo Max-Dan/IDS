@@ -38,14 +38,12 @@ class UpdateCardControllerTest {
 
         CustomerCardUpdateRequest request = new CustomerCardUpdateRequest();
         request.setCustomerCardId(customerCard.getId());
-        request.setNewProgram(CardProgram.CASHBACK);
 
         ResponseEntity<?> response = updateCardController.modifyProgram(request);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 
         Optional<CustomerCard> updatedCard = customerCardRepository.findByReferralCode(customerCard.getCustomer().getId()
-                + "-" + customerCard.getCard().getId()
-                + "-" + CardProgram.CASHBACK);
+                + "-" + customerCard.getCard().getId()             );
         Assertions.assertTrue(updatedCard.isPresent());
         Assertions.assertEquals(CardProgram.CASHBACK, updatedCard.get().getProgram());
     }

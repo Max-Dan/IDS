@@ -15,5 +15,5 @@ public class CashbackData extends ProgramData {
 
     private int remainingCashback;
 
-}
 
+}

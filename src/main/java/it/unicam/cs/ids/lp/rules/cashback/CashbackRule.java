@@ -38,6 +38,8 @@ public class CashbackRule extends ReferralRule<Integer> {
      */
     private float cashbackRate;
 
+    private int referralCashback;
+
     @Override
     public Integer applyRule(CustomerOrder order) {
         return order.getProducts()
@@ -50,6 +52,33 @@ public class CashbackRule extends ReferralRule<Integer> {
     }
 
     @Override
+    public Integer seeBonus(CustomerOrder order) {
+        return order.getProducts()
+                .parallelStream()
+                .filter(product -> this.getProducts()
+                        .contains(product))
+                .map(product -> (int) (product.getPrice() / 100 * this.getCashbackRate()))
+                .reduce(Integer::sum)
+                .orElse(0);
+    }
+
+    @Override
+    public void applyReferral(CustomerCard customerCard) {
+        customerCard.getProgramsData()
+                .stream()
+                .filter(programData -> programData.getRule().equals(this))
+                .forEach(programData -> {
+                    int value = ((CashbackData) programData).getRemainingCashback() + referralCashback;
+                    ((CashbackData) programData).setRemainingCashback(value);
+                });
+    }
+
+    @Override
+    public ProgramData createProgramData() {
+        return new CashbackData();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof CashbackRule)) return false;
@@ -59,16 +88,5 @@ public class CashbackRule extends ReferralRule<Integer> {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode());
-    }
-
-    @Override
-    public Integer seeBonus(CustomerOrder order) {
-        return order.getProducts()
-                .parallelStream()
-                .filter(product -> this.getProducts()
-                        .contains(product))
-                .map(product -> (int) (product.getPrice() / 100 * this.getCashbackRate()))
-                .reduce(Integer::sum)
-                .orElse(0);
     }
 }

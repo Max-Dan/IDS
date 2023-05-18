@@ -13,16 +13,10 @@ public class CustomerCardMapper implements Function<CustomerCardRequest, Custome
 
     private final CustomerRepository customerRepository;
     private final CardRepository cardRepository;
-    private final CustomerCardRepository customerCardRepository;
 
     @Override
     public CustomerCard apply(CustomerCardRequest customerCardRequest) {
-        CustomerCard customerCard;
-        switch (customerCardRequest.program()) {
-            case CASHBACK -> customerCard = new CashbackCard();
-            case MEMBERSHIP -> customerCard = new MembershipCard();
-            default -> throw new IllegalStateException("Invalid CardProgram");
-        }
+        CustomerCard customerCard = new CustomerCard();
         customerCard.setCustomer(customerRepository.findById(customerCardRequest.customerId()).orElseThrow());
         customerCard.setCard(cardRepository.findById(customerCardRequest.cardId()).orElseThrow());
         customerCard.setFamily(customerCardRequest.family());

@@ -10,21 +10,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/customerCard")
 public class CustomerCardController {
 
-    private final CustomerCardRepository repository;
-
-    private final CustomerCardMapper customerCardMapper;
+    private final CustomerCardService customerCardService;
 
     @PostMapping("/createCard")
     public ResponseEntity<CustomerCard> createCustomerCard(@RequestBody CustomerCardRequest request) {
-        CustomerCard customerCard = customerCardMapper.apply(request);
-
-        repository.save(customerCard);
+        CustomerCard customerCard = customerCardService.createCustomerCard(request);
         return new ResponseEntity<>(customerCard, HttpStatus.CREATED);
     }
 
+
     @DeleteMapping("/{customerCardId}")
     public ResponseEntity<?> deleteCard(@PathVariable long customerCardId) {
-        repository.deleteById(customerCardId);
+        customerCardService.deleteCustomerCard(customerCardId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

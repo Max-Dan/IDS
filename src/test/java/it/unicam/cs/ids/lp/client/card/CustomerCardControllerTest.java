@@ -48,7 +48,6 @@ class CustomerCardControllerTest {
         testCustomer = customerRepository.save(testCustomer);
 
         Card testCard = new Card();
-        testCard.setProgram(CardProgram.CASHBACK);
         testCard = cardRepository.save(testCard);
 
         CustomerCard referredCustomerCard = new CustomerCard();
@@ -61,7 +60,6 @@ class CustomerCardControllerTest {
                 new CustomerCardRequest(
                         testCustomer.getId(),
                         testCard.getId(),
-                        CardProgram.CASHBACK,
                         false,
                         referredCustomerCard.getReferralCode()
                 );
@@ -72,7 +70,7 @@ class CustomerCardControllerTest {
         Assertions.assertEquals(testCustomer, response.getBody().getCustomer());
         Assertions.assertEquals(testCard, response.getBody().getCard());
 
-        Assertions.assertEquals(referredCustomerCard, response.getBody().getReferredBy());
+        Assertions.assertEquals(referredCustomerCard, response.getBody());
     }
 
     @Test
@@ -82,7 +80,6 @@ class CustomerCardControllerTest {
         testCustomer = customerRepository.save(testCustomer);
 
         Card testCard = new Card();
-        testCard.setProgram(CardProgram.CASHBACK);
         testCard = cardRepository.save(testCard);
 
         CustomerCard testCustomerCard = new CustomerCard();
