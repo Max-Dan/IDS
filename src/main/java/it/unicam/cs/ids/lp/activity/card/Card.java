@@ -2,6 +2,7 @@ package it.unicam.cs.ids.lp.activity.card;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.unicam.cs.ids.lp.activity.Activity;
+import it.unicam.cs.ids.lp.rules.ReferralRule;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +32,10 @@ public class Card {
     @JsonIgnore
     private List<Activity> activities = new LinkedList<>();
 
-    @Enumerated(EnumType.STRING)
-    private CardProgram program;
+    @OneToMany
+    @ToString.Exclude
+    @JsonIgnore
+    private List<ReferralRule<?>> referralRules = new LinkedList<>();
 
     @Override
     public boolean equals(Object o) {

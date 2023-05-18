@@ -1,8 +1,11 @@
 package it.unicam.cs.ids.lp.rules.cashback;
 
 import it.unicam.cs.ids.lp.activity.product.Product;
+import it.unicam.cs.ids.lp.client.card.CustomerCard;
+import it.unicam.cs.ids.lp.client.card.programs.CashbackData;
+import it.unicam.cs.ids.lp.client.card.programs.ProgramData;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
-import it.unicam.cs.ids.lp.rules.Rule;
+import it.unicam.cs.ids.lp.rules.ReferralRule;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
@@ -20,7 +23,7 @@ import java.util.Set;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class CashbackRule extends Rule<Integer> {
+public class CashbackRule extends ReferralRule<Integer> {
 
     /**
      * prodotti soggetti al cashback

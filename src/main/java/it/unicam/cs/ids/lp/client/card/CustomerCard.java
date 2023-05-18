@@ -2,8 +2,8 @@ package it.unicam.cs.ids.lp.client.card;
 
 import it.unicam.cs.ids.lp.activity.campaign.Campaign;
 import it.unicam.cs.ids.lp.activity.card.Card;
-import it.unicam.cs.ids.lp.activity.card.CardProgram;
 import it.unicam.cs.ids.lp.client.Customer;
+import it.unicam.cs.ids.lp.client.card.programs.ProgramData;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,12 +38,12 @@ public class CustomerCard {
     @ToString.Exclude
     private List<Campaign> campaigns = new LinkedList<>();
 
+    @OneToMany
+    @JoinColumn
+    @ToString.Exclude
+    private List<ProgramData> programsData = new LinkedList<>();
+
     private String referralCode;
-
-    @ManyToOne
-    private CustomerCard referredBy;
-
-    private CardProgram program;
 
     private boolean family = false;
 
@@ -60,6 +60,4 @@ public class CustomerCard {
         return Objects.hash(id, customer, card);
     }
 
-    public void applyBonus() {
-    }
 }
