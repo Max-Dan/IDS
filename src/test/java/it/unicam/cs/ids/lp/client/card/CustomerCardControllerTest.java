@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -86,10 +87,10 @@ class CustomerCardControllerTest {
         CustomerCard referredCustomerCard = new CustomerCard();
         referredCustomerCard.setCustomer(testCustomer);
         referredCustomerCard.setCard(testCard);
-        referredCustomerCard.setReferralCode("sampleReferralCode");
+        referredCustomerCard.setReferralCode(UUID.randomUUID().toString());
         cardRepository.save(testCard);
-
         cashbackRuleService.setReferralCashback(activity.getId(), new CashbackReferralRequest(5));
+        customerCardRepository.save(referredCustomerCard);
 
         CustomerCardRequest customerCardRequest =
                 new CustomerCardRequest(

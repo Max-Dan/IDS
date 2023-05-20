@@ -8,6 +8,7 @@ import it.unicam.cs.ids.lp.client.card.programs.ProgramDataRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import it.unicam.cs.ids.lp.rules.ReferralRule;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
@@ -29,7 +30,7 @@ public class CashbackRule extends ReferralRule<Integer> {
     /**
      * Prodotti soggetti al cashback
      */
-    @OneToMany(orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn
     @ToString.Exclude
     private Set<Product> products = new HashSet<>();
