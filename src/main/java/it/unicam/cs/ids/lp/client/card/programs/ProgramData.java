@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Objects;
+
 @Entity
 @Getter
 @Setter
@@ -21,10 +23,22 @@ public abstract class ProgramData {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "rule_id")
+    @JoinColumn
     private Rule<?> rule;
 
     @ManyToOne
-    @JoinColumn(name = "customer_card_id")
+    @JoinColumn
     private CustomerCard customerCard;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ProgramData that)) return false;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

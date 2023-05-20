@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -36,8 +35,9 @@ public class CouponController {
     }
 
     @GetMapping("/applyCoupons")
-    public ResponseEntity<List<String>> applyCoupons(@RequestBody Set<Long> couponIds, CustomerOrder order) {
-        return ResponseEntity.ok(couponService.applyCoupons(couponIds, order));
+    public ResponseEntity<String> applyCoupons(@RequestBody Set<Long> couponIds, CustomerOrder order) {
+        couponService.applyCoupons(couponIds, order);
+        return ResponseEntity.ok("");
     }
 
     @PutMapping("/{customerId}/giveCoupon")

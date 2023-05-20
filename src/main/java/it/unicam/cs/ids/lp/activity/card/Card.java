@@ -32,7 +32,7 @@ public class Card {
     @JsonIgnore
     private List<Activity> activities = new LinkedList<>();
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     @JsonIgnore
     private List<ReferralRule<?>> referralRules = new LinkedList<>();

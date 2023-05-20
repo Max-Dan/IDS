@@ -2,7 +2,9 @@ package it.unicam.cs.ids.lp.rules.cashback;
 
 import it.unicam.cs.ids.lp.activity.campaign.Campaign;
 import it.unicam.cs.ids.lp.activity.campaign.CampaignRepository;
+import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
+import it.unicam.cs.ids.lp.client.card.programs.CashbackDataRepository;
 import it.unicam.cs.ids.lp.client.coupon.Coupon;
 import it.unicam.cs.ids.lp.client.coupon.CouponRepository;
 import it.unicam.cs.ids.lp.rules.platform_rules.campaign.CampaignRule;
@@ -23,6 +25,12 @@ public class CashbackRuleService {
     private final CampaignRepository campaignRepository;
     private final CouponRuleRepository couponRuleRepository;
     private final CampaignRuleRepository campaignRuleRepository;
+    private final CashbackDataRepository cashbackDataRepository;
+
+//    public void applyRule(CashbackRule cashbackRule, CustomerOrder order){
+//        CashbackData cashbackData = cashbackRule.applyRule(order);
+//        cashbackDataRepository.save(cashbackData);
+//    }
 
     public CashbackRule setCouponCashback(long couponId, CashbackRuleRequest request) {
         Coupon coupon = couponRepository.findById(couponId).orElseThrow();
@@ -52,5 +60,32 @@ public class CashbackRuleService {
         campaignRule.setRule(cashbackRule);
         campaignRuleRepository.save(campaignRule);
         return cashbackRule;
+    }
+
+    public CashbackRule setReferralCashback(long activityId, CashbackReferralRequest request) {
+        Card card = cardRepository.findByActivities_Id(activityId)
+                .orElseThrow(() -> new RuntimeException("Attività non ha una carta"));
+        CashbackRule rule = new CashbackRule();
+        rule.setReferralCashback(request.referralCashback());
+        cashbackRuleRepository.save(rule);
+        card.getReferralRules().add(rule);
+        cardRepository.save(card);
+        return rule;
+    }
+
+    public void deleteReferralCashback(long activityId, long referralId) {
+        Card card = cardRepository.findByActivities_Id(activityId)
+                .orElseThrow(() -> new RuntimeException("Attività non ha una carta"));
+        card.getReferralRules().removeIf(referralRule -> referralRule.getId() == referralId);
+        cardRepository.save(card);
+        cashbackRuleRepository.deleteById(referralId);
+    }
+
+    public CashbackRule deleteCampaignCashback(long activityId, long campaignId, CashbackRuleRequest request) {
+        return null;
+    }
+
+    public CashbackRule deleteCouponCashback(long couponId, CashbackRuleRequest request) {
+        return null;
     }
 }

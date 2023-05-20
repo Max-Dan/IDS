@@ -2,7 +2,11 @@ package it.unicam.cs.ids.lp.activity.campaign;
 
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
+import it.unicam.cs.ids.lp.client.card.CustomerCard;
+import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
+import it.unicam.cs.ids.lp.client.card.programs.ProgramDataRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
+import it.unicam.cs.ids.lp.rules.RuleRepository;
 import it.unicam.cs.ids.lp.rules.platform_rules.campaign.CampaignRuleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +23,9 @@ public class CampaignService {
     private final CampaignMapper campaignMapper;
     private final CampaignRepository campaignRepository;
     private final CampaignRuleRepository campaignRuleRepository;
+    private final ProgramDataRepository programDataRepository;
+    private final CustomerCardRepository customerCardRepository;
+    private final RuleRepository<?> ruleRepository;
 
 
     /**
@@ -72,15 +79,19 @@ public class CampaignService {
      * Applica le regole definite nella campagna
      *
      * @param campaignId id della campagna
+     * @param activityId id dell'attività
      * @param order      ordine del cliente
-     * @return lista di resoconti dell'applicazione delle regole
      */
-    public List<String> applyRules(long campaignId, long activityId, CustomerOrder order) {
+    public void applyRules(long campaignId, long activityId, CustomerOrder order) {
         checkValidCampaignForActivity(campaignId, activityId);
-        return campaignRuleRepository.findByCampaign_Id(campaignId)
+
+        CustomerCard customerCard = customerCardRepository.findByCampaigns_Id(campaignId);
+
+        customerCard.getProgramsData()
                 .stream()
-                .map(rule -> rule.getClass().getSimpleName() + "   " + rule.getRule().applyRule(order))
-                .toList();
+                .filter(programData -> campaignRuleRepository.findByCampaign_Id(campaignId)
+                        .contains(programData.getRule()))
+                .forEach(programData -> programData.getRule().applyRule(order, programDataRepository));
     }
 
     /**

@@ -5,8 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/activity/{activityId}/campaign")
 @RequiredArgsConstructor
@@ -35,9 +33,9 @@ public class CampaignController {
     }
 
     @PostMapping("/{campaignId}/applyRules")
-    public ResponseEntity<List<String>> applyRules(@PathVariable long campaignId, @RequestBody CustomerOrder order, @PathVariable long activityId) {
-        List<String> strings = campaignService.applyRules(campaignId, activityId, order);
-        return ResponseEntity.ok().body(strings);
+    public ResponseEntity<String> applyRules(@PathVariable long campaignId, @RequestBody CustomerOrder order, @PathVariable long activityId) {
+        campaignService.applyRules(campaignId, activityId, order);
+        return ResponseEntity.ok().body("");
     }
 
     @GetMapping("/getAllCampaigns")

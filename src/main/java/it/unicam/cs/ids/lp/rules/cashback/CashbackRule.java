@@ -4,6 +4,7 @@ import it.unicam.cs.ids.lp.activity.product.Product;
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import it.unicam.cs.ids.lp.client.card.programs.CashbackData;
 import it.unicam.cs.ids.lp.client.card.programs.ProgramData;
+import it.unicam.cs.ids.lp.client.card.programs.ProgramDataRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import it.unicam.cs.ids.lp.rules.ReferralRule;
 import jakarta.persistence.Entity;
@@ -26,7 +27,7 @@ import java.util.Set;
 public class CashbackRule extends ReferralRule<Integer> {
 
     /**
-     * prodotti soggetti al cashback
+     * Prodotti soggetti al cashback
      */
     @OneToMany(orphanRemoval = true)
     @JoinColumn
@@ -34,21 +35,18 @@ public class CashbackRule extends ReferralRule<Integer> {
     private Set<Product> products = new HashSet<>();
 
     /**
-     * percentuale di cashback per i prodotti
+     * Percentuale di cashback per i prodotti
      */
     private float cashbackRate;
 
     private int referralCashback;
 
-    @Override
-    public Integer applyRule(CustomerOrder order) {
-        return order.getProducts()
-                .parallelStream()
-                .filter(product -> this.getProducts()
-                        .contains(product))
-                .map(product -> (int) (product.getPrice() / 100 * this.getCashbackRate()))
-                .reduce(Integer::sum)
-                .orElse(0);
+
+    public ProgramData applyRule(CustomerOrder order, ProgramDataRepository programDataRepository) {
+        CashbackData cashbackData = (CashbackData) programDataRepository.findByRule(this);
+        int value = seeBonus(order);
+        cashbackData.setRemainingCashback(cashbackData.getRemainingCashback() + value);
+        return cashbackData;
     }
 
     @Override

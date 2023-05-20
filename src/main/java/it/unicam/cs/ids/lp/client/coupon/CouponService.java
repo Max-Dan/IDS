@@ -2,12 +2,12 @@ package it.unicam.cs.ids.lp.client.coupon;
 
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
+import it.unicam.cs.ids.lp.client.card.programs.ProgramDataRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -18,6 +18,7 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final CustomerCardRepository customerCardRepository;
     private final CouponMapper couponMapper;
+    private final ProgramDataRepository programDataRepository;
 
     /**
      * Restituisce il coupon posseduto da un cliente
@@ -69,17 +70,14 @@ public class CouponService {
      *
      * @param couponsId id dei coupon da applicare
      * @param order     ordine del cliente
-     * @return lista delle regole applicate e il loro risultato
      */
-    public List<String> applyCoupons(Set<Long> couponsId, CustomerOrder order) {
-        List<String> coupons = couponRepository.findAllById(couponsId)
+    public void applyCoupons(Set<Long> couponsId, CustomerOrder order) {
+        couponRepository.findAllById(couponsId)
                 .stream()
                 .filter(coupon -> isCouponValid(coupon.getId()))
                 .flatMap(coupon -> coupon.getCouponRules().stream())
-                .map(rule -> rule.getRule().getClass().getSimpleName() + "   " + rule.getRule().applyRule(order))
-                .toList();
+                .forEach(rule -> rule.getRule().applyRule(order, programDataRepository));
         couponRepository.deleteAllById(couponsId);
-        return coupons;
     }
 
     /**

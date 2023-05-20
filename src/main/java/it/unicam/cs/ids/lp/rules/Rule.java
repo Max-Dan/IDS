@@ -2,6 +2,7 @@ package it.unicam.cs.ids.lp.rules;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.unicam.cs.ids.lp.client.card.programs.ProgramData;
+import it.unicam.cs.ids.lp.client.card.programs.ProgramDataRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import it.unicam.cs.ids.lp.rules.platform_rules.AbstractPlatformRule;
 import jakarta.persistence.*;
@@ -29,7 +30,9 @@ public abstract class Rule<R> {
     @JsonIgnore
     private AbstractPlatformRule platformRule;
 
-    public abstract R applyRule(CustomerOrder item);
+    public abstract ProgramData applyRule(CustomerOrder item, ProgramDataRepository programDataRepository);
+
+    public abstract R seeBonus(CustomerOrder order);
 
     public abstract ProgramData createProgramData();
 
@@ -45,6 +48,4 @@ public abstract class Rule<R> {
     public int hashCode() {
         return Objects.hash(id);
     }
-
-    public abstract Integer seeBonus(CustomerOrder order);
 }

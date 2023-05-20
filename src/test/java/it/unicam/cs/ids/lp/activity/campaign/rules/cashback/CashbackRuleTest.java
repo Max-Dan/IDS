@@ -26,7 +26,7 @@ class CashbackRuleTest {
     }
 
     @Test
-    void applyTest() {
+    void seeBonusTest() {
         cashbackRule.setCashbackRate(5);
         CustomerOrder order = new CustomerOrder();
         Product p1 = new Product();
@@ -37,12 +37,12 @@ class CashbackRuleTest {
         p2.setPrice(600);
         order.setProducts(Set.of(p1, p2));
         cashbackRule.setProducts(Set.of(p1, p2));
-        int cashback = cashbackRule.applyRule(order);
+        int cashback = cashbackRule.seeBonus(order);
         Assertions.assertEquals(200 / 100 * 5 + 600 / 100 * 5, cashback);
     }
 
     @Test
-    void applyTestProductNotCounted() {
+    void seeBonusTestProductNotCounted() {
         CustomerOrder order = new CustomerOrder();
         Product p1 = new Product();
         p1.setId(1L);
@@ -56,7 +56,7 @@ class CashbackRuleTest {
         order.setProducts(Set.of(p1, p2, p3));
         cashbackRule.setCashbackRate(5);
         cashbackRule.setProducts(Set.of(p1, p2));
-        int cashback = cashbackRule.applyRule(order);
+        int cashback = cashbackRule.seeBonus(order);
         Assertions.assertEquals(200 / 100 * 5 + 600 / 100 * 5, cashback);
     }
 }
