@@ -2,12 +2,14 @@ package it.unicam.cs.ids.lp.client.coupon;
 
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
+import it.unicam.cs.ids.lp.client.card.programs.ProgramDataMapper;
 import it.unicam.cs.ids.lp.client.card.programs.ProgramDataRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -19,28 +21,19 @@ public class CouponService {
     private final CustomerCardRepository customerCardRepository;
     private final CouponMapper couponMapper;
     private final ProgramDataRepository programDataRepository;
+    private final ProgramDataMapper programDataMapper;
 
     /**
      * Restituisce il coupon posseduto da un cliente
      *
-     * @param customerId id del cliente
-     * @param couponId   id del coupon
+     * @param customerCardId id della carta del cliente
+     * @param couponId       id del coupon
      * @return il coupon posseduto da un cliente
      */
-    public Optional<Coupon> getCoupon(long customerId, long couponId) {
+    public Optional<Coupon> getCoupon(long customerCardId, long couponId) {
         Coupon coupon = couponRepository.findById(couponId).orElseThrow();
-        return coupon.getCustomerCard().getCustomer().getId() != customerId ? Optional.empty()
-                : Optional.of(coupon);
-    }
-
-    /**
-     * Restituisce tutti i coupon posseduti da un cliente
-     *
-     * @param customerId id del cliente
-     * @return tutti i coupon posseduti da un cliente
-     */
-    public Set<Coupon> getCoupons(long customerId) {
-        return couponRepository.findByCustomerCard_Customer_Id(customerId);
+        return coupon.getCustomerCard().getId() == customerCardId ? Optional.of(coupon)
+                : Optional.empty();
     }
 
     /**
@@ -72,8 +65,15 @@ public class CouponService {
      * @param order     ordine del cliente
      */
     public void applyCoupons(Set<Long> couponsId, CustomerOrder order) {
-        couponRepository.findAllById(couponsId)
-                .stream()
+        CustomerCard customerCard = couponRepository.findById(couponsId.stream().toList().get(0)).orElseThrow().getCustomerCard();
+        List<Coupon> coupons = couponRepository.findAllById(couponsId);
+        coupons.stream()
+                .filter(coupon -> isCouponValid(coupon.getId()))
+                .flatMap(coupon -> coupon.getCouponRules().stream())
+                .map(campaignRule -> programDataMapper.map(campaignRule.getRule(), customerCard))
+                .peek(programData -> customerCard.getProgramsData().add(programData))
+                .forEach(programDataRepository::save);
+        coupons.stream()
                 .filter(coupon -> isCouponValid(coupon.getId()))
                 .flatMap(coupon -> coupon.getCouponRules().stream())
                 .forEach(rule -> rule.getRule().applyRule(order, programDataRepository));

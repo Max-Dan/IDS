@@ -3,7 +3,6 @@ package it.unicam.cs.ids.lp.activity.campaign.rules.cashback;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unicam.cs.ids.lp.LoyaltyPlatformApplication;
 import it.unicam.cs.ids.lp.activity.Activity;
-import it.unicam.cs.ids.lp.activity.ContentCategory;
 import it.unicam.cs.ids.lp.activity.campaign.Campaign;
 import it.unicam.cs.ids.lp.activity.campaign.CampaignRequest;
 import it.unicam.cs.ids.lp.activity.campaign.CampaignService;
@@ -66,9 +65,7 @@ public class CashbackRuleControllerTest {
 
     @BeforeEach
     public void setUp() {
-        Activity activity1 = new Activity();
-        activity1.setCategory(ContentCategory.TECHNOLOGY);
-        activity = activityRegistrationService.register(activity1).orElseThrow();
+        activity = activityRegistrationService.register(new Activity()).orElseThrow();
         cardService.createCard(activity.getId(), new CardRequest(""));
         campaign = campaignService.createCampaign(activity.getId(), new CampaignRequest("", null));
 

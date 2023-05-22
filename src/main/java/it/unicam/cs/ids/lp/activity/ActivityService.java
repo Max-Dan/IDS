@@ -41,8 +41,6 @@ public class ActivityService {
             activity.setTelephoneNumber(request.telephoneNumber());
         if (request.email() != null)
             activity.setEmail(request.email());
-        if (request.category() != null)
-            activity.setCategory(request.category());
 
         if (!dataValidator.areRegistrationValuesValid(activity))
             return Optional.empty();

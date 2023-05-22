@@ -14,17 +14,12 @@ public class CouponController {
 
     private final CouponService couponService;
 
-    @GetMapping("/{customerId}/getCoupon/{couponId}")
-    public ResponseEntity<Coupon> getCoupon(@PathVariable long couponId, @PathVariable long customerId) {
-        return ResponseEntity.ok(couponService.getCoupon(customerId, couponId).orElseThrow());
+    @GetMapping("/{customerCardId}/getCoupon/{couponId}")
+    public ResponseEntity<Coupon> getCoupon(@PathVariable long couponId, @PathVariable long customerCardId) {
+        return ResponseEntity.ok(couponService.getCoupon(customerCardId, couponId).orElseThrow());
     }
 
-    @GetMapping("/{customerId}/getCoupons")
-    public ResponseEntity<Set<Coupon>> getCoupons(@PathVariable long customerId) {
-        return ResponseEntity.ok(couponService.getCoupons(customerId));
-    }
-
-    @GetMapping("/{customerCardId}/getCardCoupons")
+    @GetMapping("/{customerCardId}/getCoupons")
     public ResponseEntity<Set<Coupon>> getCardCoupons(@PathVariable long customerCardId) {
         return ResponseEntity.ok(couponService.getCardCoupons(customerCardId));
     }
@@ -40,9 +35,9 @@ public class CouponController {
         return ResponseEntity.ok("");
     }
 
-    @PutMapping("/{customerId}/giveCoupon")
-    public ResponseEntity<?> giveCoupon(@PathVariable long customerId, @RequestBody CouponRequest couponRequest) {
-        couponService.createCoupon(customerId, couponRequest);
+    @PutMapping("/{customerCardId}/giveCoupon")
+    public ResponseEntity<?> giveCoupon(@PathVariable long customerCardId, @RequestBody CouponRequest couponRequest) {
+        couponService.createCoupon(customerCardId, couponRequest);
         return ResponseEntity.ok("");
     }
 

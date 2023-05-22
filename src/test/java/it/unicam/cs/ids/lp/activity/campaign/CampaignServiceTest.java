@@ -2,7 +2,7 @@ package it.unicam.cs.ids.lp.activity.campaign;
 
 import it.unicam.cs.ids.lp.LoyaltyPlatformApplication;
 import it.unicam.cs.ids.lp.activity.Activity;
-import it.unicam.cs.ids.lp.activity.ContentCategory;
+import it.unicam.cs.ids.lp.activity.ActivityRepository;
 import it.unicam.cs.ids.lp.activity.card.CardRequest;
 import it.unicam.cs.ids.lp.activity.card.CardService;
 import it.unicam.cs.ids.lp.activity.product.Product;
@@ -10,7 +10,16 @@ import it.unicam.cs.ids.lp.activity.product.ProductRepository;
 import it.unicam.cs.ids.lp.activity.product.ProductRequest;
 import it.unicam.cs.ids.lp.activity.product.ProductService;
 import it.unicam.cs.ids.lp.activity.registration.ActivityRegistrationService;
+import it.unicam.cs.ids.lp.client.Customer;
+import it.unicam.cs.ids.lp.client.CustomerRepository;
+import it.unicam.cs.ids.lp.client.CustomerService;
+import it.unicam.cs.ids.lp.client.card.CustomerCardRequest;
+import it.unicam.cs.ids.lp.client.card.CustomerCardService;
+import it.unicam.cs.ids.lp.client.card.programs.CashbackData;
+import it.unicam.cs.ids.lp.client.card.programs.ProgramData;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
+import it.unicam.cs.ids.lp.client.order.CustomerOrderMapper;
+import it.unicam.cs.ids.lp.client.order.CustomerOrderRepository;
 import it.unicam.cs.ids.lp.rules.cashback.CashbackRuleRequest;
 import it.unicam.cs.ids.lp.rules.cashback.CashbackRuleService;
 import org.junit.jupiter.api.Assertions;
@@ -53,15 +62,26 @@ class CampaignServiceTest {
     private CampaignService campaignService;
     @Autowired
     private CashbackRuleService cashbackRuleService;
+    @Autowired
+    private CustomerRepository customerRepository;
+    @Autowired
+    private CustomerOrderMapper customerOrderMapper;
+    @Autowired
+    private CustomerOrderRepository customerOrderRepository;
+    @Autowired
+    private CustomerCardService customerCardService;
+    @Autowired
+    private ActivityRepository activityRepository;
+    @Autowired
+    private CustomerService customerService;
 
     @BeforeAll
     public void setUp() {
-        Activity activity1 = new Activity();
-        activity1.setCategory(ContentCategory.TECHNOLOGY);
-        activity = activityRegistrationService.register(activity1).orElseThrow();
+        activity = activityRegistrationService.register(new Activity()).orElseThrow();
         cardService.createCard(activity.getId(), new CardRequest(""));
         productService.createProduct(activity.getId(), new ProductRequest("", 200));
         productService.createProduct(activity.getId(), new ProductRequest("", 600));
+        activity = activityRepository.findById(activity.getId()).orElseThrow();
     }
 
     @Test
@@ -87,11 +107,24 @@ class CampaignServiceTest {
         Set<Product> products = new HashSet<>(productRepository.findByActivities_Id(activity.getId()));
         CashbackRuleRequest cashbackRequest = new CashbackRuleRequest(products, 5);
         cashbackRuleService.setCampaignCashback(activity.getId(), campaign.getId(), cashbackRequest);
-        CustomerOrder order = new CustomerOrder();
-        order.setProducts(products);
+
+        Customer customer = customerRepository.save(new Customer());
+        CustomerOrder order =
+                customerOrderMapper.apply(products, customer);
+        customerOrderRepository.save(order);
+        customerCardService.createCustomerCard(new CustomerCardRequest(customer.getId(), activity.getCard().getId(), false, ""));
+        customerService.subscribeToCampaign(customer.getId(), campaign.getId());
         campaignService.applyRules(campaign.getId(), activity.getId(), order);
-        //TODO da completare
-        //Assertions.assertEquals(1, strings.size()); // non deve essere "[]"
+
+        List<ProgramData> dataList = customerRepository.findById(customer.getId()).orElseThrow()
+                .getCards()
+                .stream()
+                .flatMap(customerCard -> customerCard.getProgramsData().stream())
+                .toList();
+
+        Assertions.assertEquals(1, dataList.size());
+        CashbackData cashbackData = (CashbackData) dataList.get(0);
+        Assertions.assertEquals((600 + 200) / 100 * 5, cashbackData.getRemainingCashback());
     }
 
     @Test

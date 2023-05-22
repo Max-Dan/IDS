@@ -23,7 +23,6 @@ public class ActivityMapper implements Function<ActivityRequest, Activity> {
         activity.setEmail(activityRequest.email());
         activity.setPassword(passwordEncoder.encode(activityRequest.password()));
         activity.setRegistrationDate(LocalDate.now());
-        activity.setCategory(activityRequest.category());
         return activity;
     }
 }

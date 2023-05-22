@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unicam.cs.ids.lp.LoyaltyPlatformApplication;
 import it.unicam.cs.ids.lp.activity.Activity;
-import it.unicam.cs.ids.lp.activity.ContentCategory;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRequest;
 import it.unicam.cs.ids.lp.activity.card.CardService;
@@ -60,9 +59,7 @@ class StatisticsControllerTest {
 
     @BeforeAll
     void setUp() {
-        Activity activity1 = new Activity();
-        activity1.setCategory(ContentCategory.TECHNOLOGY);
-        activity = activityRegistrationService.register(activity1).orElseThrow();
+        activity = activityRegistrationService.register(new Activity()).orElseThrow();
 
         Card card = cardService.createCard(activity.getId(), new CardRequest(""));
 
