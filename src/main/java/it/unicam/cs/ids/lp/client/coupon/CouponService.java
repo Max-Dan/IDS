@@ -80,6 +80,14 @@ public class CouponService {
         couponRepository.deleteAllById(couponsId);
     }
 
+    public void seeBonus(Set<Long> couponsId, CustomerOrder order) {
+        List<Coupon> coupons = couponRepository.findAllById(couponsId);
+        coupons.stream()
+                .filter(coupon -> isCouponValid(coupon.getId()))
+                .flatMap(coupon -> coupon.getCouponRules().stream())
+                .forEach(rule -> rule.getRule().seeBonus(order));
+    }
+
     /**
      * Crea un coupon a un cliente
      *

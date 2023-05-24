@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/activity/{activityId}/campaign")
 @RequiredArgsConstructor
@@ -30,6 +32,12 @@ public class CampaignController {
     public ResponseEntity<?> modifyCampaign(@PathVariable long campaignId, @RequestBody CampaignRequest campaignRequest, @PathVariable long activityId) {
         Campaign campaign = campaignService.modifyCampaign(campaignId, activityId, campaignRequest);
         return ResponseEntity.ok(campaign);
+    }
+
+    @PostMapping("/{campaignId}/seeBonuses")
+    public ResponseEntity<List<String>> seeBonuses(@PathVariable long campaignId, @RequestBody CustomerOrder order, @PathVariable long activityId) {
+        return ResponseEntity.ok()
+                .body(campaignService.seeBonuses(campaignId, activityId, order));
     }
 
     @PostMapping("/{campaignId}/applyRules")

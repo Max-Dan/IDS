@@ -152,12 +152,11 @@ public class CampaignService {
      *
      * @return la lista di vantaggi che può portare
      */
-    public List<String> seeBonuses(long campaignId, CustomerOrder order) {
-        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
+    public List<String> seeBonuses(long campaignId, long activityId, CustomerOrder order) {
+        checkValidCampaignForActivity(campaignId, activityId);
         return campaignRuleRepository.findAll()
                 .stream()
-                .filter(abstractRule -> abstractRule.getCampaign()
-                        .equals(campaign))
+                .filter(abstractRule -> abstractRule.getCampaign().getId() == campaignId)
                 .map(rule -> rule.getClass().getSimpleName() + "   " + rule.getRule().seeBonus(order))
                 .toList();
     }

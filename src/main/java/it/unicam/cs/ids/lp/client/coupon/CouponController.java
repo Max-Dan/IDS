@@ -29,6 +29,12 @@ public class CouponController {
         return ResponseEntity.ok(couponService.isCouponValid(couponId));
     }
 
+    @GetMapping("/seeBonusCoupon")
+    public ResponseEntity<String> seeBonusCoupon(@RequestBody Set<Long> couponIds, CustomerOrder order) {
+        couponService.seeBonus(couponIds, order);
+        return ResponseEntity.ok("");
+    }
+
     @GetMapping("/applyCoupons")
     public ResponseEntity<String> applyCoupons(@RequestBody Set<Long> couponIds, CustomerOrder order) {
         couponService.applyCoupons(couponIds, order);
