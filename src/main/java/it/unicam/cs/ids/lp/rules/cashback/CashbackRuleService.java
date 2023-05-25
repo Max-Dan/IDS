@@ -4,7 +4,6 @@ import it.unicam.cs.ids.lp.activity.campaign.Campaign;
 import it.unicam.cs.ids.lp.activity.campaign.CampaignRepository;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
-import it.unicam.cs.ids.lp.client.card.programs.CashbackDataRepository;
 import it.unicam.cs.ids.lp.client.coupon.Coupon;
 import it.unicam.cs.ids.lp.client.coupon.CouponRepository;
 import it.unicam.cs.ids.lp.rules.platform_rules.campaign.CampaignRule;
@@ -25,12 +24,6 @@ public class CashbackRuleService {
     private final CampaignRepository campaignRepository;
     private final CouponRuleRepository couponRuleRepository;
     private final CampaignRuleRepository campaignRuleRepository;
-    private final CashbackDataRepository cashbackDataRepository;
-
-//    public void applyRule(CashbackRule cashbackRule, CustomerOrder order){
-//        CashbackData cashbackData = cashbackRule.applyRule(order);
-//        cashbackDataRepository.save(cashbackData);
-//    }
 
     public CashbackRule setCouponCashback(long couponId, CashbackRuleRequest request) {
         Coupon coupon = couponRepository.findById(couponId).orElseThrow();
@@ -81,11 +74,13 @@ public class CashbackRuleService {
         cashbackRuleRepository.deleteById(referralId);
     }
 
-    public CashbackRule deleteCampaignCashback(long activityId, long campaignId, CashbackRuleRequest request) {
+    public CashbackRule deleteCampaignCashback(long activityId, long campaignId) {
+        //TODO
         return null;
     }
 
-    public CashbackRule deleteCouponCashback(long couponId, CashbackRuleRequest request) {
+    public CashbackRule deleteCouponCashback(long couponId) {
+        //TODO
         return null;
     }
 }

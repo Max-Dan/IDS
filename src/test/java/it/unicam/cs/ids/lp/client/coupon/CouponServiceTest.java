@@ -17,7 +17,6 @@ import it.unicam.cs.ids.lp.client.card.CustomerCardRequest;
 import it.unicam.cs.ids.lp.client.card.CustomerCardService;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import it.unicam.cs.ids.lp.client.order.CustomerOrderMapper;
-import it.unicam.cs.ids.lp.rules.RulesEnum;
 import it.unicam.cs.ids.lp.rules.cashback.CashbackRuleRequest;
 import it.unicam.cs.ids.lp.rules.cashback.CashbackRuleService;
 import org.junit.jupiter.api.Assertions;
@@ -83,7 +82,7 @@ class CouponServiceTest {
 
     @Test
     void applyCoupons() {
-        Coupon coupon = couponService.createCoupon(customerCard.getId(), new CouponRequest(Set.of(RulesEnum.CASHBACK), LocalDate.EPOCH));
+        Coupon coupon = couponService.createCoupon(customerCard.getId(), new CouponRequest(LocalDate.EPOCH));
         CashbackRuleRequest cashbackRequest = new CashbackRuleRequest(Set.of(product), 5);
         cashbackRuleService.setCouponCashback(coupon.getId(), cashbackRequest);
 
@@ -99,7 +98,7 @@ class CouponServiceTest {
 
     @Test
     void createCoupon() {
-        CouponRequest couponRequest = new CouponRequest(Set.of(RulesEnum.CASHBACK), null);
+        CouponRequest couponRequest = new CouponRequest(null);
         Coupon coupon = couponService.createCoupon(customerCard.getId(), couponRequest);
         Assertions.assertTrue(coupon.getId() != 0);
     }

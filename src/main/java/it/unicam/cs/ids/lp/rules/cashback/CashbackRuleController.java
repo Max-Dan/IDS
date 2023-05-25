@@ -32,8 +32,8 @@ public class CashbackRuleController {
     }
 
     @DeleteMapping("/campaign/{campaignId}/cashback/delete")
-    public ResponseEntity<CashbackRule> deleteCampaignCashback(@PathVariable long activityId, @PathVariable long campaignId, @RequestBody CashbackRuleRequest request) {
-        CashbackRule cashbackRule = cashbackRuleService.deleteCampaignCashback(activityId, campaignId, request);
+    public ResponseEntity<CashbackRule> deleteCampaignCashback(@PathVariable long activityId, @PathVariable long campaignId) {
+        CashbackRule cashbackRule = cashbackRuleService.deleteCampaignCashback(activityId, campaignId);
         return ResponseEntity.ok(cashbackRule);
     }
 
@@ -45,9 +45,8 @@ public class CashbackRuleController {
     }
 
     @DeleteMapping("/coupon/{couponId}/cashback/delete")
-    public ResponseEntity<CashbackRule> deleteCouponCashback(@PathVariable long activityId, @PathVariable long couponId,
-                                                             @RequestBody CashbackRuleRequest request) {
-        CashbackRule cashbackRule = cashbackRuleService.deleteCouponCashback(couponId, request);
+    public ResponseEntity<CashbackRule> deleteCouponCashback(@PathVariable long activityId, @PathVariable long couponId) {
+        CashbackRule cashbackRule = cashbackRuleService.deleteCouponCashback(couponId);
         return ResponseEntity.ok(cashbackRule);
     }
 }

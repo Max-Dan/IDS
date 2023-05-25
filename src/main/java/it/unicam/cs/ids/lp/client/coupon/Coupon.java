@@ -29,7 +29,7 @@ public class Coupon {
     @JoinColumn
     private CustomerCard customerCard;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     private Set<CouponRule> couponRules = new HashSet<>();
 
