@@ -5,14 +5,15 @@ import it.unicam.cs.ids.lp.LoyaltyPlatformApplication;
 import it.unicam.cs.ids.lp.activity.Activity;
 import it.unicam.cs.ids.lp.activity.ActivityRepository;
 import it.unicam.cs.ids.lp.activity.campaign.Campaign;
-import it.unicam.cs.ids.lp.activity.campaign.CampaignMapper;
-import it.unicam.cs.ids.lp.activity.campaign.CampaignRepository;
 import it.unicam.cs.ids.lp.activity.campaign.CampaignRequest;
+import it.unicam.cs.ids.lp.activity.campaign.CampaignService;
 import it.unicam.cs.ids.lp.activity.card.Card;
-import it.unicam.cs.ids.lp.activity.card.CardRepository;
-import it.unicam.cs.ids.lp.client.card.CustomerCard;
-import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
+import it.unicam.cs.ids.lp.activity.card.CardRequest;
+import it.unicam.cs.ids.lp.activity.card.CardService;
+import it.unicam.cs.ids.lp.client.card.CustomerCardRequest;
+import it.unicam.cs.ids.lp.client.card.CustomerCardService;
 import it.unicam.cs.ids.lp.client.registration.CustomerMapper;
+import it.unicam.cs.ids.lp.client.registration.CustomerRegistrationService;
 import it.unicam.cs.ids.lp.client.registration.CustomerRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,8 +28,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -45,30 +44,22 @@ class CustomerControllerTest {
 
     @Autowired
     private MockMvc mvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @Autowired
     private CustomerRepository customerRepository;
-
     @Autowired
     private CustomerMapper customerMapper;
-
     @Autowired
     private ActivityRepository activityRepository;
-
     @Autowired
-    private CampaignRepository campaignRepository;
-
+    private CustomerRegistrationService customerRegistrationService;
     @Autowired
-    private CardRepository cardRepository;
-
+    private CardService cardService;
     @Autowired
-    private CustomerCardRepository customerCardRepository;
-
+    private CampaignService campaignService;
     @Autowired
-    private CampaignMapper campaignMapper;
+    private CustomerCardService customerCardService;
 
     private Customer customer;
 
@@ -91,27 +82,12 @@ class CustomerControllerTest {
                 "gianni.morandi@gmail.com",
                 "Prendi il latte"
         ));
-        customerRepository.save(customer);
-
+        this.customer = customerRegistrationService.register(this.customer).orElseThrow();
         Activity activity = new Activity();
         activity = activityRepository.save(activity);
-
-        Card card = new Card();
-        card.setActivities(List.of(activity));
-        cardRepository.save(card);
-
-        campaign = campaignMapper.apply(
-                new CampaignRequest("test customer", null), card);
-        campaignRepository.save(campaign);
-
-        CustomerCard customerCard = new CustomerCard();
-        customerCard.getCampaigns().add(campaign);
-        customerCard.setCustomer(customer);
-        customerCard.setCard(card);
-        customerCardRepository.save(customerCard);
-
-        customer.getCards().add(customerCard);
-        customerRepository.save(customer);
+        Card card = cardService.createCard(activity.getId(), new CardRequest(""));
+        this.campaign = campaignService.createCampaign(activity.getId(), new CampaignRequest("", null));
+        customerCardService.createCustomerCard(new CustomerCardRequest(customer.getId(), card.getId(), false, null));
     }
 
     @Test
@@ -188,17 +164,29 @@ class CustomerControllerTest {
                 .andExpect(status().isOk());
 
         Assertions.assertTrue(customerRepository.findById(customer.getId()).orElseThrow()
-                .getCurrentlySubscribedCampaigns().contains(campaign));
+                .getCards()
+                .stream()
+                .flatMap(card -> card.getCampaigns().stream())
+                .anyMatch(campaign1 -> campaign1.equals(campaign)));
     }
 
     @Test
     public void subscribeToCampaignNoCardTest() throws Exception {
-        Customer noCardCustomer = new Customer();
-        customerRepository.save(noCardCustomer);
+        Customer noCardCustomer = customerMapper.apply(new CustomerRequest(
+                "gianni",
+                "morandi",
+                "334-456-2345",
+                "fdasfdsa@dfasdfsd.com",
+                "Prendi il latte"
+        ));
+        noCardCustomer = customerRegistrationService.register(noCardCustomer).orElseThrow();
 
         mvc.perform(get("/customer/" + noCardCustomer.getId() + "/subscribeToCampaign/" + campaign.getId()))
                 .andExpect(status().isBadRequest());
         Assertions.assertFalse(customerRepository.findById(customer.getId()).orElseThrow()
-                .getCurrentlySubscribedCampaigns().contains(campaign));
+                .getCards()
+                .stream()
+                .flatMap(card -> card.getCampaigns().stream())
+                .anyMatch(campaign1 -> campaign1.equals(campaign)));
     }
 }

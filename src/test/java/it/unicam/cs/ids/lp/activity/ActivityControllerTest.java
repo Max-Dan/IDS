@@ -47,7 +47,6 @@ class ActivityControllerTest {
                 "via amazon 3",
                 "344-673-9854",
                 "amazon@gmail.com",
-                ContentCategory.TECHNOLOGY,
                 "passwordDiAmazon124"
         );
         mvc.perform(put("/activity/register")
@@ -60,7 +59,7 @@ class ActivityControllerTest {
     @Test
     void modifyActivityName() throws Exception {
         ActivityRequest activityRequest = new ActivityRequest(
-                "Apple", null, null, null, null, null);
+                "Apple", null, null, null, null);
         mvc.perform(post("/activity/" + activity.getId() + "/modifyData")
                 .content(objectMapper.writeValueAsString(activityRequest))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -73,7 +72,7 @@ class ActivityControllerTest {
     @Test
     void modifyActivityAddress() throws Exception {
         ActivityRequest activityRequest = new ActivityRequest(
-                null, "via apple 3", null, null, null, null);
+                null, "via apple 3", null, null, null);
         mvc.perform(post("/activity/" + activity.getId() + "/modifyData")
                 .content(objectMapper.writeValueAsString(activityRequest))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -86,7 +85,7 @@ class ActivityControllerTest {
     @Test
     void modifyActivityTelephoneNumber() throws Exception {
         ActivityRequest activityRequest = new ActivityRequest(
-                null, null, "445-678-6548", null, null, null);
+                null, null, "445-678-6548", null, null);
         mvc.perform(post("/activity/" + activity.getId() + "/modifyData")
                 .content(objectMapper.writeValueAsString(activityRequest))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -99,7 +98,7 @@ class ActivityControllerTest {
     @Test
     void modifyActivityEmail() throws Exception {
         ActivityRequest activityRequest = new ActivityRequest(
-                null, null, null, "apple@gmail.com", null, null);
+                null, null, null, "apple@gmail.com", null);
         mvc.perform(post("/activity/" + activity.getId() + "/modifyData")
                 .content(objectMapper.writeValueAsString(activityRequest))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -107,18 +106,5 @@ class ActivityControllerTest {
 
         Assertions.assertEquals(activityRepository.findById(activity.getId()).orElseThrow().getEmail()
                 , activity.getEmail());
-    }
-
-    @Test
-    void modifyActivityCategory() throws Exception {
-        ActivityRequest activityRequest = new ActivityRequest(
-                null, null, null, null, ContentCategory.LIFESTYLE, null);
-        mvc.perform(post("/activity/" + activity.getId() + "/modifyData")
-                .content(objectMapper.writeValueAsString(activityRequest))
-                .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk());
-
-        Assertions.assertEquals(activityRepository.findById(activity.getId()).orElseThrow().getCategory()
-                , activity.getCategory());
     }
 }

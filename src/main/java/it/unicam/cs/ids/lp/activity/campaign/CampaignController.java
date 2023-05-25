@@ -34,10 +34,16 @@ public class CampaignController {
         return ResponseEntity.ok(campaign);
     }
 
+    @PostMapping("/{campaignId}/seeBonuses")
+    public ResponseEntity<List<String>> seeBonuses(@PathVariable long campaignId, @RequestBody CustomerOrder order, @PathVariable long activityId) {
+        return ResponseEntity.ok()
+                .body(campaignService.seeBonuses(campaignId, activityId, order));
+    }
+
     @PostMapping("/{campaignId}/applyRules")
-    public ResponseEntity<List<String>> applyRules(@PathVariable long campaignId, @RequestBody CustomerOrder order, @PathVariable long activityId) {
-        List<String> strings = campaignService.applyRules(campaignId, activityId, order);
-        return ResponseEntity.ok().body(strings);
+    public ResponseEntity<String> applyRules(@PathVariable long campaignId, @RequestBody CustomerOrder order, @PathVariable long activityId) {
+        campaignService.applyRules(campaignId, activityId, order);
+        return ResponseEntity.ok().body("");
     }
 
     @GetMapping("/getAllCampaigns")

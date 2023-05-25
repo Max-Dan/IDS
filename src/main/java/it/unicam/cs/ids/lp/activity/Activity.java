@@ -38,14 +38,11 @@ public class Activity {
 
     private LocalDate registrationDate;
 
-    @Enumerated(EnumType.STRING)
-    private ContentCategory category;
-
     @ManyToOne
     @JoinColumn
     private Card card;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable
     @ToString.Exclude
     @JsonIgnore

@@ -27,8 +27,7 @@ public class ActivityRegistrationService
                 && dataValidatorUtil.isNameValid(activity.getName())
                 && dataValidatorUtil.isAddressValid(activity.getAddress())
                 && dataValidatorUtil.isTelephoneNumberValid(activity.getTelephoneNumber())
-                && dataValidatorUtil.isEmailValid(activity.getEmail())
-                && dataValidatorUtil.isCategoryValid(activity.getCategory());
+                && dataValidatorUtil.isEmailValid(activity.getEmail());
     }
 
     @Override

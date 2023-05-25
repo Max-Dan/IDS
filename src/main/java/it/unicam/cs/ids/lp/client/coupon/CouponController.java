@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -15,17 +14,12 @@ public class CouponController {
 
     private final CouponService couponService;
 
-    @GetMapping("/{customerId}/getCoupon/{couponId}")
-    public ResponseEntity<Coupon> getCoupon(@PathVariable long couponId, @PathVariable long customerId) {
-        return ResponseEntity.ok(couponService.getCoupon(customerId, couponId).orElseThrow());
+    @GetMapping("/{customerCardId}/getCoupon/{couponId}")
+    public ResponseEntity<Coupon> getCoupon(@PathVariable long couponId, @PathVariable long customerCardId) {
+        return ResponseEntity.ok(couponService.getCoupon(customerCardId, couponId).orElseThrow());
     }
 
-    @GetMapping("/{customerId}/getCoupons")
-    public ResponseEntity<Set<Coupon>> getCoupons(@PathVariable long customerId) {
-        return ResponseEntity.ok(couponService.getCoupons(customerId));
-    }
-
-    @GetMapping("/{customerCardId}/getCardCoupons")
+    @GetMapping("/{customerCardId}/getCoupons")
     public ResponseEntity<Set<Coupon>> getCardCoupons(@PathVariable long customerCardId) {
         return ResponseEntity.ok(couponService.getCardCoupons(customerCardId));
     }
@@ -35,14 +29,21 @@ public class CouponController {
         return ResponseEntity.ok(couponService.isCouponValid(couponId));
     }
 
-    @GetMapping("/applyCoupons")
-    public ResponseEntity<List<String>> applyCoupons(@RequestBody Set<Long> couponIds, CustomerOrder order) {
-        return ResponseEntity.ok(couponService.applyCoupons(couponIds, order));
+    @GetMapping("/seeBonusCoupon")
+    public ResponseEntity<String> seeBonusCoupon(@RequestBody Set<Long> couponIds, CustomerOrder order) {
+        couponService.seeBonus(couponIds, order);
+        return ResponseEntity.ok("");
     }
 
-    @PutMapping("/{customerId}/giveCoupon")
-    public ResponseEntity<?> giveCoupon(@PathVariable long customerId, @RequestBody CouponRequest couponRequest) {
-        couponService.createCoupon(customerId, couponRequest);
+    @GetMapping("/applyCoupons")
+    public ResponseEntity<String> applyCoupons(@RequestBody Set<Long> couponIds, CustomerOrder order) {
+        couponService.applyCoupons(couponIds, order);
+        return ResponseEntity.ok("");
+    }
+
+    @PutMapping("/{customerCardId}/giveCoupon")
+    public ResponseEntity<?> giveCoupon(@PathVariable long customerCardId, @RequestBody CouponRequest couponRequest) {
+        couponService.createCoupon(customerCardId, couponRequest);
         return ResponseEntity.ok("");
     }
 

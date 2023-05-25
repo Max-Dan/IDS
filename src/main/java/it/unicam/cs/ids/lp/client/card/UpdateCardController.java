@@ -1,8 +1,5 @@
 package it.unicam.cs.ids.lp.client.card;
 
-import it.unicam.cs.ids.lp.activity.card.CardProgram;
-import it.unicam.cs.ids.lp.client.card.programs.CashbackCard;
-import it.unicam.cs.ids.lp.client.card.programs.MembershipCard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +32,6 @@ public class UpdateCardController {
                 new CustomerCardRequest(
                         customerCard.getCustomer().getId(),
                         customerCard.getCard().getId(),
-                        request.getNewProgram(),
                         false,
                         null
                 );
@@ -55,11 +51,7 @@ public class UpdateCardController {
         CustomerCard customerCard = optionalCard.get();
 
         customerCard.setFamily(request.isFamily());
-        if (customerCard.getProgram() == CardProgram.CASHBACK) {
-            ((CashbackCard) customerCard).setRemainingCashback(request.getRemainingCashback());
-        } else if (customerCard.getProgram() == CardProgram.MEMBERSHIP) {
-            ((MembershipCard) customerCard).setMembership(request.getMembership());
-        }
+
         customerCardRepository.save(customerCard);
         System.out.println("Card attributes modified: " + customerCard);
         return new ResponseEntity<>(HttpStatus.OK);

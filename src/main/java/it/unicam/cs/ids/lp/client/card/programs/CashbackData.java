@@ -1,6 +1,5 @@
 package it.unicam.cs.ids.lp.client.card.programs;
 
-import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,14 +11,7 @@ import lombok.ToString;
 @Setter
 @ToString(callSuper = true)
 @NoArgsConstructor
-public class CashbackCard extends CustomerCard {
+public class CashbackData extends ProgramData {
 
     private int remainingCashback;
-
-    @Override
-    public void applyBonus() {
-        remainingCashback += 50;
-    }
-
 }
-

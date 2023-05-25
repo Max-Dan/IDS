@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.lp.rules.cashback;
 
+import it.unicam.cs.ids.lp.rules.Rule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,16 +12,42 @@ public class CashbackRuleController {
 
     private final CashbackRuleService cashbackRuleService;
 
+    @PostMapping("/cashback/addCashback")
+    public ResponseEntity<CashbackRule> setReferralCashback(@PathVariable long activityId,
+                                                            @RequestBody CashbackReferralRequest request) {
+        CashbackRule cashbackRule = cashbackRuleService.setReferralCashback(activityId, request);
+        return ResponseEntity.ok(cashbackRule);
+    }
+
+    @DeleteMapping("/cashback/deleteCashback/{referralId}")
+    public ResponseEntity<String> deleteReferralCashback(@PathVariable long activityId,
+                                                         @PathVariable long referralId) {
+        cashbackRuleService.deleteReferralCashback(activityId, referralId);
+        return ResponseEntity.ok("");
+    }
+
     @PostMapping("/campaign/{campaignId}/cashback/add")
     public ResponseEntity<CashbackRule> setCampaignCashback(@PathVariable long activityId, @PathVariable long campaignId, @RequestBody CashbackRuleRequest request) {
         CashbackRule cashbackRule = cashbackRuleService.setCampaignCashback(activityId, campaignId, request);
         return ResponseEntity.ok(cashbackRule);
     }
 
+    @DeleteMapping("/campaign/{campaignId}/cashback/delete/{cashbackId}")
+    public ResponseEntity<Rule<?>> deleteCampaignCashback(@PathVariable long activityId, @PathVariable long campaignId, @PathVariable long cashbackId) {
+        Rule<?> cashbackRule = cashbackRuleService.deleteCampaignCashback(activityId, campaignId, cashbackId);
+        return ResponseEntity.ok(cashbackRule);
+    }
+
     @PostMapping("/coupon/{couponId}/cashback/add")
-    public ResponseEntity<CashbackRule> setCouponCashback(@PathVariable long activityId, @PathVariable long couponId,
-                                                          @RequestBody CashbackRuleRequest request) {
+    public ResponseEntity<Rule<Integer>> setCouponCashback(@PathVariable long activityId, @PathVariable long couponId,
+                                                           @RequestBody CashbackRuleRequest request) {
         CashbackRule cashbackRule = cashbackRuleService.setCouponCashback(couponId, request);
         return ResponseEntity.ok(cashbackRule);
+    }
+
+    @DeleteMapping("/coupon/{couponId}/cashback/delete/{cashbackId}")
+    public ResponseEntity<String> deleteCouponCashback(@PathVariable long activityId, @PathVariable long couponId, @PathVariable long cashbackId) {
+        cashbackRuleService.deleteCouponCashback(couponId, cashbackId);
+        return ResponseEntity.ok("");
     }
 }

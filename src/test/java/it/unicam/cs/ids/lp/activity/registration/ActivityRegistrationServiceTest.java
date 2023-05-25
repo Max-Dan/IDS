@@ -2,7 +2,6 @@ package it.unicam.cs.ids.lp.activity.registration;
 
 import it.unicam.cs.ids.lp.activity.Activity;
 import it.unicam.cs.ids.lp.activity.ActivityRepository;
-import it.unicam.cs.ids.lp.activity.ContentCategory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,6 @@ class ActivityRegistrationServiceTest {
                 "via california",
                 "445-678-9034",
                 "test@gmail.com",
-                ContentCategory.TECHNOLOGY,
                 "sonoLaApple"
         ));
     }

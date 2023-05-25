@@ -2,6 +2,8 @@ package it.unicam.cs.ids.lp.client;
 
 import it.unicam.cs.ids.lp.activity.campaign.Campaign;
 import it.unicam.cs.ids.lp.activity.campaign.CampaignRepository;
+import it.unicam.cs.ids.lp.client.card.CustomerCard;
+import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
 import it.unicam.cs.ids.lp.client.registration.CustomerRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
 
     private final CampaignRepository campaignRepository;
+    private final CustomerCardRepository customerCardRepository;
 
     public void modifyCustomerData(long customerId, CustomerRequest customerRequest) {
         Customer customer = customerRepository.getReferenceById(customerId);
@@ -34,14 +37,16 @@ public class CustomerService {
      * @return true se ha i requisiti per iscriversi alla campagna, false altrimenti
      */
     public boolean subscribeToCampaign(long customerId, long campaignId) {
-        Customer customer = customerRepository.findById(customerId).orElseThrow();
         Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
-        if (customer.getCards()
+        CustomerCard customerCard = customerRepository.findById(customerId).orElseThrow()
+                .getCards()
                 .stream()
-                .noneMatch(customerCard -> customerCard.getCard().equals(campaign.getCard())))
+                .filter(customerCard1 -> customerCard1.getCard().equals(campaign.getCard()))
+                .findFirst().orElse(null);
+        if (customerCard == null || customerCard.getCampaigns().contains(campaign))
             return false;
-        customer.getCurrentlySubscribedCampaigns().add(campaign);
-        customerRepository.save(customer);
+        customerCard.getCampaigns().add(campaign);
+        customerCardRepository.save(customerCard);
         return true;
     }
 }
