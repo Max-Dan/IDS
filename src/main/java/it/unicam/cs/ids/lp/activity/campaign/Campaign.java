@@ -2,6 +2,7 @@ package it.unicam.cs.ids.lp.activity.campaign;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.unicam.cs.ids.lp.activity.card.Card;
+import it.unicam.cs.ids.lp.rules.platform_rules.campaign.CampaignRule;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 
 @Entity
@@ -30,6 +33,11 @@ public class Campaign {
     @ToString.Exclude
     @JsonIgnore
     private Card card;
+
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
+    @ToString.Exclude
+    @JsonIgnore
+    private Set<CampaignRule> campaignRules = new HashSet<>();
 
     private LocalDate startDate;
 

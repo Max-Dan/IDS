@@ -16,19 +16,15 @@ import it.unicam.cs.ids.lp.activity.product.ProductService;
 import it.unicam.cs.ids.lp.activity.registration.ActivityRegistrationService;
 import it.unicam.cs.ids.lp.client.Customer;
 import it.unicam.cs.ids.lp.client.CustomerRepository;
-import it.unicam.cs.ids.lp.client.CustomerService;
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import it.unicam.cs.ids.lp.client.card.CustomerCardRequest;
 import it.unicam.cs.ids.lp.client.card.CustomerCardService;
 import it.unicam.cs.ids.lp.client.coupon.Coupon;
-import it.unicam.cs.ids.lp.client.coupon.CouponRepository;
 import it.unicam.cs.ids.lp.client.coupon.CouponRequest;
 import it.unicam.cs.ids.lp.client.coupon.CouponService;
-import it.unicam.cs.ids.lp.client.order.CustomerOrderMapper;
-import it.unicam.cs.ids.lp.client.order.CustomerOrderRepository;
 import it.unicam.cs.ids.lp.rules.Rule;
 import it.unicam.cs.ids.lp.rules.platform_rules.AbstractPlatformRule;
-import it.unicam.cs.ids.lp.rules.platform_rules.AbstractPlatformRuleRepository;
+import it.unicam.cs.ids.lp.rules.platform_rules.campaign.CampaignRule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,23 +54,11 @@ class CashbackRuleServiceTest {
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
-    private CustomerOrderMapper customerOrderMapper;
-    @Autowired
-    private CustomerOrderRepository customerOrderRepository;
-    @Autowired
     private CustomerCardService customerCardService;
     @Autowired
     private ActivityRepository activityRepository;
     @Autowired
-    private CustomerService customerService;
-    @Autowired
-    private CouponRepository couponRepository;
-    @Autowired
     private CouponService couponService;
-    @Autowired
-    private CashbackRuleRepository cashbackRuleRepository;
-    @Autowired
-    private AbstractPlatformRuleRepository abstractPlatformRuleRepository;
     @Autowired
     private CardRepository cardRepository;
 
@@ -107,12 +91,13 @@ class CashbackRuleServiceTest {
         Campaign campaign = campaignService.createCampaign(activity.getId(), new CampaignRequest("", null));
         Rule<Integer> rule = cashbackRuleService.setCampaignCashback(activity.getId(), campaign.getId(), new CashbackRuleRequest(new HashSet<>(productRepository.findByActivities_Id(activity.getId())), 5));
 
-        //TODO mettere set di regole in campaign
-//        Assertions.assertTrue(abstractPlatformRuleRepository.findAll()
-//                .stream()
-//                        .filter()
-//                .map(AbstractPlatformRule::getRule)
-//                .allMatch(rule1 -> rule1.equals(rule)));
+        Assertions.assertFalse(campaignRepository.findById(campaign.getId()).orElseThrow()
+                .getCampaignRules()
+                .isEmpty());
+        Assertions.assertEquals(rule, campaignRepository.findById(campaign.getId()).orElseThrow()
+                .getCampaignRules().stream()
+                .map(CampaignRule::getRule)
+                .findFirst().orElseThrow());
     }
 
     @Test
@@ -131,29 +116,5 @@ class CashbackRuleServiceTest {
 
         Card card = cardRepository.findByActivities_Id(activity.getId()).orElseThrow();
         Assertions.assertTrue(card.getReferralRules().isEmpty());
-    }
-
-    @Test
-    void deleteCampaignCashback() {
-        Campaign campaign = campaignService.createCampaign(activity.getId(), new CampaignRequest("", null));
-
-        cashbackRuleService.deleteCampaignCashback(activity.getId(), campaign.getId());
-
-        //TODO mettere set di regole in campaign
-        //Assertions.assertTrue(campaignRepository.findById(campaign.getId()).orElseThrow().ge);
-    }
-
-    @Test
-    void deleteCouponCashback() {
-        Customer customer = customerRepository.save(new Customer());
-        CustomerCard customerCard = customerCardService.createCustomerCard(
-                new CustomerCardRequest(customer.getId(), activity.getCard().getId(), false, null));
-
-        Coupon coupon = couponService.createCoupon(customerCard.getId(), new CouponRequest(null));
-        cashbackRuleService.setCouponCashback(coupon.getId(), new CashbackRuleRequest(new HashSet<>(productRepository.findByActivities_Id(activity.getId())), 5));
-
-        Assertions.assertFalse(couponRepository.findById(coupon.getId()).orElseThrow().getCouponRules().isEmpty());
-        cashbackRuleService.deleteCouponCashback(coupon.getId());
-        Assertions.assertTrue(couponRepository.findById(coupon.getId()).orElseThrow().getCouponRules().isEmpty());
     }
 }
