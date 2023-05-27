@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.lp.client.card;
 
+import it.unicam.cs.ids.lp.rules.Rule;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ public class CustomerCardUpdateRequest {
     private int tier;
     private int remainingCashback;
     private LocalDate membership;
+    private Rule<?> programRule;
     private boolean family;
 }
 
