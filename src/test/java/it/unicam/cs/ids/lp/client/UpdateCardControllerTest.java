@@ -1,6 +1,5 @@
 package it.unicam.cs.ids.lp.client;
 
-import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
 import it.unicam.cs.ids.lp.client.card.CustomerCardUpdateRequest;
@@ -31,11 +30,6 @@ class UpdateCardControllerTest {
     @Autowired
     private CashbackRuleRepository cashbackRuleRepository;
 
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private CardRepository cardRepository;
 
     @Test
     void modifyProgram() {
