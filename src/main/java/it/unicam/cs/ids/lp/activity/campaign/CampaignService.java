@@ -3,6 +3,7 @@ package it.unicam.cs.ids.lp.activity.campaign;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
+import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
 import it.unicam.cs.ids.lp.client.card.programs.ProgramDataMapper;
 import it.unicam.cs.ids.lp.client.card.programs.ProgramDataRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
@@ -24,6 +25,7 @@ public class CampaignService {
     private final CampaignRuleRepository campaignRuleRepository;
     private final ProgramDataRepository programDataRepository;
     private final ProgramDataMapper programDataMapper;
+    private final CustomerCardRepository customerCardRepository;
 
     /**
      * Crea una campagna associata alla carta dell'attività
@@ -83,8 +85,11 @@ public class CampaignService {
         checkValidCampaignForActivity(campaignId, activityId);
         CustomerCard customerCard = getCustomerCard(campaignId, order);
         createNotExistentProgramData(campaignId, customerCard);
-        campaignRuleRepository.findByCampaign_Id(campaignId)
-                .forEach(campaignRule -> campaignRule.getRule().applyRule(order, programDataRepository));
+        campaignRepository.findById(campaignId).orElseThrow()
+                .getCampaignRules()
+                .stream()
+                .map(campaignRule -> campaignRule.getRule().applyRule(order, programDataRepository))
+                .forEach(programDataRepository::save);
     }
 
     /**
@@ -94,14 +99,12 @@ public class CampaignService {
      * @param customerCard id del customer
      */
     private void createNotExistentProgramData(long campaignId, CustomerCard customerCard) {
-        campaignRuleRepository.findByCampaign_Id(campaignId)
+        campaignRepository.findById(campaignId).orElseThrow().getCampaignRules()
                 .stream()
-                .filter(campaignRule -> customerCard.getProgramsData()
-                        .stream()
-                        .noneMatch(programData -> programData.getRule().equals(campaignRule.getRule())))
                 .map(campaignRule -> programDataMapper.map(campaignRule.getRule(), customerCard))
                 .peek(programData -> customerCard.getProgramsData().add(programData))
                 .forEach(programDataRepository::save);
+        customerCardRepository.save(customerCard);
     }
 
     /**

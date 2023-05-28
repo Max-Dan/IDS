@@ -34,11 +34,11 @@ public class CustomerCard {
     @JoinColumn
     private Card card;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     private List<Campaign> campaigns = new LinkedList<>();
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn
     @ToString.Exclude
     private List<ProgramData> programsData = new LinkedList<>();
