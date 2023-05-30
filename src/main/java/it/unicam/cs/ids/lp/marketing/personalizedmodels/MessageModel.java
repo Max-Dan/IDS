@@ -40,7 +40,7 @@ public class MessageModel {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, modelName, messageText, coupon);
+        return Objects.hash(id, modelName);
     }
 }
 
