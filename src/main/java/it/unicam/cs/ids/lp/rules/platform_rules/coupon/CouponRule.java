@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.lp.rules.platform_rules.coupon;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.unicam.cs.ids.lp.client.coupon.Coupon;
 import it.unicam.cs.ids.lp.rules.platform_rules.AbstractPlatformRule;
 import jakarta.persistence.Entity;
@@ -19,5 +20,6 @@ public class CouponRule extends AbstractPlatformRule {
 
     @ManyToOne
     @JoinColumn
+    @JsonIgnore
     private Coupon coupon;
 }

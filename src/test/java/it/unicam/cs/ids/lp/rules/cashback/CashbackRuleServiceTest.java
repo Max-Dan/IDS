@@ -10,6 +10,7 @@ import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.activity.card.CardRequest;
 import it.unicam.cs.ids.lp.activity.card.CardService;
+import it.unicam.cs.ids.lp.activity.product.Product;
 import it.unicam.cs.ids.lp.activity.product.ProductRepository;
 import it.unicam.cs.ids.lp.activity.product.ProductRequest;
 import it.unicam.cs.ids.lp.activity.product.ProductService;
@@ -30,6 +31,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.stream.Collectors;
 
 @SpringBootTest
 class CashbackRuleServiceTest {
@@ -76,7 +79,7 @@ class CashbackRuleServiceTest {
                 new CustomerCardRequest(customer.getId(), activity.getCard().getId(), false, null));
 
         Coupon coupon = couponService.createCoupon(customerCard.getId(), new CouponRequest(null));
-        Rule<Integer> rule = cashbackRuleService.setCouponCashback(coupon.getId(), new CashbackRuleRequest(productRepository.findByActivity_Id(activity.getId()), 5));
+        Rule<Integer> rule = cashbackRuleService.setCouponCashback(coupon.getId(), new CashbackRuleRequest(productRepository.findByActivity_Id(activity.getId()).stream().map(Product::getId).collect(Collectors.toSet()), 5));
 
         Assertions.assertTrue(coupon.getCouponRules().stream()
                 .map(AbstractPlatformRule::getRule)
@@ -87,7 +90,7 @@ class CashbackRuleServiceTest {
     @Test
     void setCampaignCashback() {
         Campaign campaign = campaignService.createCampaign(activity.getId(), new CampaignRequest("", null));
-        Rule<Integer> rule = cashbackRuleService.setCampaignCashback(activity.getId(), campaign.getId(), new CashbackRuleRequest(productRepository.findByActivity_Id(activity.getId()), 5));
+        Rule<Integer> rule = cashbackRuleService.setCampaignCashback(activity.getId(), campaign.getId(), new CashbackRuleRequest(productRepository.findByActivity_Id(activity.getId()).stream().map(Product::getId).collect(Collectors.toSet()), 5));
 
         Assertions.assertFalse(campaignRepository.findById(campaign.getId()).orElseThrow()
                 .getCampaignRules()
