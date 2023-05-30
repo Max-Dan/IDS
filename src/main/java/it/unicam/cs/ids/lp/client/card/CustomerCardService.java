@@ -19,8 +19,10 @@ public class CustomerCardService {
 
 
     public CustomerCard createCustomerCard(CustomerCardRequest request) {
-        CustomerCard customerCard = customerCardMapper.apply(request);
         Customer customer = customerRepository.findById(request.customerId()).orElseThrow();
+        if (customer.getCards().stream().anyMatch(customerCard -> customerCard.getCard().getId() == request.cardId()))
+            return null;
+        CustomerCard customerCard = customerCardMapper.apply(request);
         if (request.referredCode() == null
                 || customerCardRepository.findByReferralCode(request.referredCode()).isEmpty()) {
             customerCardRepository.save(customerCard);
