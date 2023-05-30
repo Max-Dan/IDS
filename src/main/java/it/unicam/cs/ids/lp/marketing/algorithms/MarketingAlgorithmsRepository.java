@@ -3,6 +3,8 @@ package it.unicam.cs.ids.lp.marketing.algorithms;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface MarketingAlgorithmsRepository extends JpaRepository<MarketingAlgorithm, Long> {
     /**
@@ -13,8 +15,9 @@ public interface MarketingAlgorithmsRepository extends JpaRepository<MarketingAl
      * Prima della spedizione vediamo se l'algoritmo non è scaduto, viene effettuato un check
      * e se la data di scadenza è passata allora il messaggio non verrà mandato
      */
-    MarketingAlgorithm findById(long id);
+    Optional<MarketingAlgorithm> findById(long id);
 
-    MarketingAlgorithm findByName(String algorithmName);
+
+    Optional<MarketingAlgorithm> findByName(String algorithmName);
 }
 

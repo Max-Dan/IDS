@@ -1,43 +1,39 @@
 package it.unicam.cs.ids.lp.marketing.algorithms;
 
-import it.unicam.cs.ids.lp.client.Customer;
-import it.unicam.cs.ids.lp.marketing.personalizedmodels.MessageModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDate;
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/MarketingAutomation")
 @RequiredArgsConstructor
 public class MarketingAlgorithmController {
 
-    private final MarketingAlgorithmsRepository marketingAlgorithmsRepository;
+    private final MarketingAlgorithmService marketingAlgorithmService;
 
-    @GetMapping
-    public ResponseEntity<String> processAlgorithms() {
-        List<MarketingAlgorithm> marketingAlgorithms = marketingAlgorithmsRepository.findAll();
-
-        StringBuilder result = new StringBuilder();
-
-        for (MarketingAlgorithm algorithm : marketingAlgorithms) {
-            if (algorithm.getExpirationDate().isAfter(LocalDate.now()) && algorithm.isTodayInDeliveryDates()) {
-                for (Customer customer : algorithm.getSubscribedCustomers()) {
-                    MessageModel model = algorithm.getModel();
-                    result.append("Customer Name: ").append(customer.getName()).append(" ")
-                            .append(customer.getSurname()).append("\n")
-                            .append("Message: ").append(model.getMessageText()).append("\n")
-                            .append("Here is the coupon code: ").append(model.getCoupon().getId()).append("\n\n");
-                }
-            }
-        }
-
-        return ResponseEntity.ok(result.toString());
+    @PostMapping("/createAlgorithm")
+    public ResponseEntity<MarketingAlgorithm> createAlgorithm(@RequestBody MarketingAlgorithmRequest request) {
+        MarketingAlgorithm algorithm = marketingAlgorithmService.createAlgorithm(request);
+        return ResponseEntity.ok(algorithm);
     }
 
+    @DeleteMapping("/deleteAlgorithm/{id}")
+    public ResponseEntity<Void> deleteAlgorithm(@PathVariable long id) {
+        marketingAlgorithmService.deleteAlgorithm(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/processAlgorithms")
+    public ResponseEntity<?> processAlgorithms() {
+        marketingAlgorithmService.processAlgorithms();
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/updateAlgorithm")
+    public ResponseEntity<MarketingAlgorithm> updateAlgorithm(@RequestBody MarketingAlgorithmRequest request) {
+        MarketingAlgorithm algorithm = marketingAlgorithmService.updateAlgorithm(request);
+        return ResponseEntity.ok(algorithm);
+    }
 }
+
 

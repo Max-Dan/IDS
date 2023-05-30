@@ -9,7 +9,6 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -28,7 +27,7 @@ public class MarketingAlgorithm {
     private LocalDate expirationDate;
 
     @ElementCollection
-    private List<String> deliveryDates;  // Date in format "MM-dd"
+    private Set<String> deliveryDates;  // Date in format "MM-dd"
 
     @ManyToOne
     @JoinColumn
