@@ -31,6 +31,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -75,7 +76,7 @@ public class CashbackRuleControllerTest {
     @Test
     public void setCashback() throws Exception {
         Set<Product> products = productRepository.findByActivity_Id(activity.getId());
-        CashbackRuleRequest cashbackRequest = new CashbackRuleRequest(products, 5);
+        CashbackRuleRequest cashbackRequest = new CashbackRuleRequest(products.stream().map(Product::getId).collect(Collectors.toSet()), 5);
         String ruleJson = mvc.perform(MockMvcRequestBuilders.post("/activity/" + activity.getId()
                                 + "/campaign/" + campaign.getId() + "/cashback/add")
                         .content(objectMapper.writeValueAsString(cashbackRequest))
