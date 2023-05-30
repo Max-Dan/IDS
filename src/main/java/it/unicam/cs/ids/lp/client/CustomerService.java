@@ -36,12 +36,12 @@ public class CustomerService {
      *
      * @param customerId id del customer
      * @param campaignId id della campagna
-     * @return true se ha i requisiti per iscriversi alla campagna, false altrimenti
+     * @return la campagna iscritta dal customer
      */
-    public boolean subscribeToCampaign(long customerId, long campaignId) {
+    public Optional<Campaign> subscribeToCampaign(long customerId, long campaignId) {
         Optional<Campaign> optionalCampaign = campaignRepository.findById(campaignId);
         if (optionalCampaign.isEmpty())
-            return false;
+            return Optional.empty();
         Campaign campaign = optionalCampaign.get();
         CustomerCard customerCard = customerRepository.findById(customerId).orElseThrow()
                 .getCards()
@@ -49,9 +49,9 @@ public class CustomerService {
                 .filter(customerCard1 -> customerCard1.getCard().equals(campaign.getCard()))
                 .findFirst().orElse(null);
         if (customerCard == null || customerCard.getCampaigns().contains(campaign))
-            return false;
+            return Optional.empty();
         customerCard.getCampaigns().add(campaign);
         customerCardRepository.save(customerCard);
-        return true;
+        return Optional.of(campaign);
     }
 }

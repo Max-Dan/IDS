@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.lp.client;
 
+import it.unicam.cs.ids.lp.activity.campaign.Campaign;
 import it.unicam.cs.ids.lp.client.registration.CustomerRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,8 +33,8 @@ public class CustomerController {
 
     @GetMapping("{customerId}/subscribeToCampaign/{campaignId}")
     public ResponseEntity<?> subscribeToCampaign(@PathVariable long customerId, @PathVariable long campaignId) {
-        boolean success = customerService.subscribeToCampaign(customerId, campaignId);
-        return success ? ResponseEntity.ok("")
+        Optional<Campaign> campaign = customerService.subscribeToCampaign(customerId, campaignId);
+        return campaign.isPresent() ? ResponseEntity.ok(campaign.get())
                 : ResponseEntity.badRequest().body("Il customer non ha la carta della campagna");
     }
 }
