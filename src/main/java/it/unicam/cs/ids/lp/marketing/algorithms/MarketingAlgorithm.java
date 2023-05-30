@@ -54,6 +54,14 @@ public class MarketingAlgorithm {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("MM-dd"));
         return deliveryDates.contains(today);
     }
+
+    public void removeCustomer(Customer customer) {
+        this.subscribedCustomers.remove(customer);
+    }
+
+    public void removeDeliveryDate(String deliveryDate) {
+        this.deliveryDates.remove(deliveryDate);
+    }
 }
 
 

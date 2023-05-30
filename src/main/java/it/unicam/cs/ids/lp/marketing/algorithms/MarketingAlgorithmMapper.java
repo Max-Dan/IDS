@@ -60,6 +60,23 @@ public class MarketingAlgorithmMapper implements Function<MarketingAlgorithmRequ
         return marketingAlgorithm;
     }
 
+    public MarketingAlgorithm deleteSetsAttributes(MarketingAlgorithmRequest request) {
+        MarketingAlgorithm marketingAlgorithm = marketingAlgorithmsRepository.findById(request.id())
+                .orElseThrow(() -> new RuntimeException("Algorithm not found"));
+
+        for (Long customerId : request.subscribedCustomerIds()) {
+            Customer customer = customerRepository.findById(customerId)
+                    .orElseThrow(() -> new RuntimeException("Customer not found"));
+            marketingAlgorithm.removeCustomer(customer);
+        }
+
+        for (String deliveryDate : request.deliveryDates()) {
+            marketingAlgorithm.removeDeliveryDate(deliveryDate);
+        }
+
+        return marketingAlgorithm;
+    }
+
 }
 
 

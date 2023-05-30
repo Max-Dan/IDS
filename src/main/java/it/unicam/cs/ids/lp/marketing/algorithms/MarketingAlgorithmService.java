@@ -29,6 +29,12 @@ public class MarketingAlgorithmService {
         return marketingAlgorithmsRepository.save(algorithm);
     }
 
+    public MarketingAlgorithm deleteSetsAttributes(MarketingAlgorithmRequest request) {
+        MarketingAlgorithm algorithm = marketingAlgorithmMapper.deleteSetsAttributes(request);
+        return marketingAlgorithmsRepository.save(algorithm);
+    }
+
+
     public void processAlgorithms() {
         List<MarketingAlgorithm> marketingAlgorithms = marketingAlgorithmsRepository.findAll();
 

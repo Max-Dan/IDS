@@ -34,6 +34,13 @@ public class MarketingAlgorithmController {
         MarketingAlgorithm algorithm = marketingAlgorithmService.updateAlgorithm(request);
         return ResponseEntity.ok(algorithm);
     }
+
+    @DeleteMapping("/deleteSetsAttributes")
+    public ResponseEntity<MarketingAlgorithm> deleteSetsAttributes(@RequestBody MarketingAlgorithmRequest request) {
+        MarketingAlgorithm algorithm = marketingAlgorithmService.deleteSetsAttributes(request);
+        return ResponseEntity.ok(algorithm);
+    }
+
 }
 
 
