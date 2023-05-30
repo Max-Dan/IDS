@@ -93,7 +93,6 @@ class CouponServiceTest {
         CustomerOrder order = customerOrderMapper.apply(Set.of(product), customer);
 
         List<ProgramData> dataList = couponService.applyCoupon(coupon.getId(), order.getProducts().stream().map(Product::getId).collect(Collectors.toSet()));
-        //TODO da completare
 
         Assertions.assertEquals(1, dataList.size());
         CashbackData cashbackData = (CashbackData) dataList.get(0);
