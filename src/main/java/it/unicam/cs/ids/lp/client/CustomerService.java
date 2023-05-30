@@ -8,6 +8,8 @@ import it.unicam.cs.ids.lp.client.registration.CustomerRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
@@ -34,19 +36,22 @@ public class CustomerService {
      *
      * @param customerId id del customer
      * @param campaignId id della campagna
-     * @return true se ha i requisiti per iscriversi alla campagna, false altrimenti
+     * @return la campagna iscritta dal customer
      */
-    public boolean subscribeToCampaign(long customerId, long campaignId) {
-        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
+    public Optional<Campaign> subscribeToCampaign(long customerId, long campaignId) {
+        Optional<Campaign> optionalCampaign = campaignRepository.findById(campaignId);
+        if (optionalCampaign.isEmpty())
+            return Optional.empty();
+        Campaign campaign = optionalCampaign.get();
         CustomerCard customerCard = customerRepository.findById(customerId).orElseThrow()
                 .getCards()
                 .stream()
                 .filter(customerCard1 -> customerCard1.getCard().equals(campaign.getCard()))
                 .findFirst().orElse(null);
         if (customerCard == null || customerCard.getCampaigns().contains(campaign))
-            return false;
+            return Optional.empty();
         customerCard.getCampaigns().add(campaign);
         customerCardRepository.save(customerCard);
-        return true;
+        return Optional.of(campaign);
     }
 }

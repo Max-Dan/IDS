@@ -1,10 +1,12 @@
 package it.unicam.cs.ids.lp.client.coupon;
 
+import it.unicam.cs.ids.lp.client.card.programs.ProgramData;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -35,10 +37,11 @@ public class CouponController {
         return ResponseEntity.ok("");
     }
 
-    @GetMapping("/applyCoupons")
-    public ResponseEntity<String> applyCoupons(@RequestBody Set<Long> couponIds, CustomerOrder order) {
-        couponService.applyCoupons(couponIds, order);
-        return ResponseEntity.ok("");
+    @PostMapping("/applyCoupon/{couponId}")
+    public ResponseEntity<List<ProgramData>> applyCoupons(@PathVariable long couponId,
+                                                          @RequestBody CouponApplier couponApplier) {
+        List<ProgramData> programData = couponService.applyCoupon(couponId, couponApplier.products());
+        return ResponseEntity.ok(programData);
     }
 
     @PutMapping("/{customerCardId}/giveCoupon")
@@ -47,4 +50,6 @@ public class CouponController {
         return ResponseEntity.ok("");
     }
 
+    private record CouponApplier(Set<Long> products) {
+    }
 }

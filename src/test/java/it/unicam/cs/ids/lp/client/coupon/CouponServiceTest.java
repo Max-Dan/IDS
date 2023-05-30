@@ -15,6 +15,8 @@ import it.unicam.cs.ids.lp.client.CustomerRepository;
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import it.unicam.cs.ids.lp.client.card.CustomerCardRequest;
 import it.unicam.cs.ids.lp.client.card.CustomerCardService;
+import it.unicam.cs.ids.lp.client.card.programs.CashbackData;
+import it.unicam.cs.ids.lp.client.card.programs.ProgramData;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import it.unicam.cs.ids.lp.client.order.CustomerOrderMapper;
 import it.unicam.cs.ids.lp.rules.cashback.CashbackRuleRequest;
@@ -31,7 +33,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
@@ -83,17 +87,16 @@ class CouponServiceTest {
     @Test
     void applyCoupons() {
         Coupon coupon = couponService.createCoupon(customerCard.getId(), new CouponRequest(LocalDate.EPOCH));
-        CashbackRuleRequest cashbackRequest = new CashbackRuleRequest(Set.of(product), 5);
+        CashbackRuleRequest cashbackRequest = new CashbackRuleRequest(Set.of(product.getId()), 5);
         cashbackRuleService.setCouponCashback(coupon.getId(), cashbackRequest);
 
         CustomerOrder order = customerOrderMapper.apply(Set.of(product), customer);
 
-        couponService.applyCoupons(Set.of(coupon.getId()), order);
-        //TODO da completare
-//        Assertions.assertFalse(strings.isEmpty());
-//        Assertions.assertEquals("CashbackRule   5", strings.get(0));
-//        Assertions.assertFalse(coupon.getCouponRules().isEmpty());
-//        Assertions.assertTrue(coupon.getCouponRules().stream().toList().get(0).getRule() instanceof CashbackRule);
+        List<ProgramData> dataList = couponService.applyCoupon(coupon.getId(), order.getProducts().stream().map(Product::getId).collect(Collectors.toSet()));
+
+        Assertions.assertEquals(1, dataList.size());
+        CashbackData cashbackData = (CashbackData) dataList.get(0);
+        Assertions.assertEquals(5, cashbackData.getRemainingCashback());
     }
 
     @Test
