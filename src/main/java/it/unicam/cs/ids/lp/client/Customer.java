@@ -39,6 +39,7 @@ public class Customer implements Serializable {
 
     @OneToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
+    @JsonIgnore
     private Set<CustomerCard> cards = new HashSet<>();
 
     @Override

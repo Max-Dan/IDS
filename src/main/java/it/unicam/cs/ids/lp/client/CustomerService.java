@@ -8,6 +8,8 @@ import it.unicam.cs.ids.lp.client.registration.CustomerRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
@@ -37,7 +39,10 @@ public class CustomerService {
      * @return true se ha i requisiti per iscriversi alla campagna, false altrimenti
      */
     public boolean subscribeToCampaign(long customerId, long campaignId) {
-        Campaign campaign = campaignRepository.findById(campaignId).orElseThrow();
+        Optional<Campaign> optionalCampaign = campaignRepository.findById(campaignId);
+        if (optionalCampaign.isEmpty())
+            return false;
+        Campaign campaign = optionalCampaign.get();
         CustomerCard customerCard = customerRepository.findById(customerId).orElseThrow()
                 .getCards()
                 .stream()

@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.lp.client.card;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.unicam.cs.ids.lp.activity.campaign.Campaign;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.client.Customer;
@@ -41,6 +42,7 @@ public class CustomerCard {
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn
     @ToString.Exclude
+    @JsonIgnore
     private List<ProgramData> programsData = new LinkedList<>();
 
     private String referralCode;
