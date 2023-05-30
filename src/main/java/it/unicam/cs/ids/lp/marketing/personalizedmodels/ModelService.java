@@ -29,6 +29,6 @@ public class ModelService {
     }
 
     public MessageModel findModelByName(String modelName) {
-        return modelRepository.findByName(modelName).orElseThrow();
+        return modelRepository.findByModelName(modelName).orElseThrow();
     }
 }

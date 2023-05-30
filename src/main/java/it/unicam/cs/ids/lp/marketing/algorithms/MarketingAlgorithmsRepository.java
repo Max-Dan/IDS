@@ -17,7 +17,6 @@ public interface MarketingAlgorithmsRepository extends JpaRepository<MarketingAl
      */
     Optional<MarketingAlgorithm> findById(long id);
 
-
-    Optional<MarketingAlgorithm> findByName(String algorithmName);
+    Optional<MarketingAlgorithm> findByAlgorithmName(String algorithmName);
 }
 

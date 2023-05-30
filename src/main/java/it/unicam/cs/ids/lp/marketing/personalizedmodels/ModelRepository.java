@@ -10,6 +10,6 @@ public interface ModelRepository extends JpaRepository<MessageModel, Long> {
 
     Optional<MessageModel> findById(long id);
 
-    Optional<MessageModel> findByName(String modelName);
+    Optional<MessageModel> findByModelName(String modelName);
 }
 
