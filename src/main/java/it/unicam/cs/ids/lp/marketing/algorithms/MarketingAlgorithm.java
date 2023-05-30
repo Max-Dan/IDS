@@ -26,14 +26,14 @@ public class MarketingAlgorithm {
 
     private LocalDate expirationDate;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> deliveryDates;  // Date in format "MM-dd"
 
     @ManyToOne
     @JoinColumn
     private MessageModel model;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     private Set<Customer> subscribedCustomers;
 
