@@ -34,7 +34,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -104,7 +103,7 @@ class CampaignServiceTest {
     void applyRules() {
         CampaignRequest campaignRequest = new CampaignRequest("", null);
         Campaign campaign = campaignService.createCampaign(activity.getId(), campaignRequest);
-        Set<Product> products = new HashSet<>(productRepository.findByActivities_Id(activity.getId()));
+        Set<Product> products = productRepository.findByActivity_Id(activity.getId());
         CashbackRuleRequest cashbackRequest = new CashbackRuleRequest(products, 5);
         cashbackRuleService.setCampaignCashback(activity.getId(), campaign.getId(), cashbackRequest);
 

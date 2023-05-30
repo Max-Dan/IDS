@@ -14,7 +14,7 @@ public class ProductService {
 
     public Product createProduct(long activityId, ProductRequest productRequest) {
         Product product = productMapper.apply(productRequest);
-        product.getActivities().add(activityRepository.findById(activityId).orElseThrow());
+        product.setActivity(activityRepository.findById(activityId).orElseThrow());
         productRepository.save(product);
         return product;
     }

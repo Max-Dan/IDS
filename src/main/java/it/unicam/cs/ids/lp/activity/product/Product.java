@@ -8,9 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -23,11 +21,13 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
     private Long id;
+
     private String name;
-    @ManyToMany
-    @JoinTable
-    @ToString.Exclude
-    private Set<Activity> activities = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn
+    private Activity activity;
+
     private int price;
 
     @Override

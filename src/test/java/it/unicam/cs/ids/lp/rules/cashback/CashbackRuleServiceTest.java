@@ -31,8 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.HashSet;
-
 @SpringBootTest
 class CashbackRuleServiceTest {
 
@@ -78,7 +76,7 @@ class CashbackRuleServiceTest {
                 new CustomerCardRequest(customer.getId(), activity.getCard().getId(), false, null));
 
         Coupon coupon = couponService.createCoupon(customerCard.getId(), new CouponRequest(null));
-        Rule<Integer> rule = cashbackRuleService.setCouponCashback(coupon.getId(), new CashbackRuleRequest(new HashSet<>(productRepository.findByActivities_Id(activity.getId())), 5));
+        Rule<Integer> rule = cashbackRuleService.setCouponCashback(coupon.getId(), new CashbackRuleRequest(productRepository.findByActivity_Id(activity.getId()), 5));
 
         Assertions.assertTrue(coupon.getCouponRules().stream()
                 .map(AbstractPlatformRule::getRule)
@@ -89,7 +87,7 @@ class CashbackRuleServiceTest {
     @Test
     void setCampaignCashback() {
         Campaign campaign = campaignService.createCampaign(activity.getId(), new CampaignRequest("", null));
-        Rule<Integer> rule = cashbackRuleService.setCampaignCashback(activity.getId(), campaign.getId(), new CashbackRuleRequest(new HashSet<>(productRepository.findByActivities_Id(activity.getId())), 5));
+        Rule<Integer> rule = cashbackRuleService.setCampaignCashback(activity.getId(), campaign.getId(), new CashbackRuleRequest(productRepository.findByActivity_Id(activity.getId()), 5));
 
         Assertions.assertFalse(campaignRepository.findById(campaign.getId()).orElseThrow()
                 .getCampaignRules()
