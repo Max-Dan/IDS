@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -20,7 +21,6 @@ public class MarketingAlgorithmMapper implements Function<MarketingAlgorithmRequ
     private final ModelRepository modelRepository;
     private final CustomerRepository customerRepository;
     private final MarketingAlgorithmsRepository marketingAlgorithmsRepository;
-
     @Override
     public MarketingAlgorithm apply(MarketingAlgorithmRequest request) {
         MarketingAlgorithm marketingAlgorithm = new MarketingAlgorithm();
@@ -49,16 +49,24 @@ public class MarketingAlgorithmMapper implements Function<MarketingAlgorithmRequ
         MarketingAlgorithm marketingAlgorithm = marketingAlgorithmsRepository.findById(request.id())
                 .orElseThrow(() -> new RuntimeException("Algorithm not found"));
 
-        this.apply(new MarketingAlgorithmRequest(
-                marketingAlgorithm.getId(),
-                request.algorithmName(),
-                request.expirationDate(),
-                request.deliveryDates(),
-                request.messageModelId(),
-                request.subscribedCustomerIds()
-        ));
-        return marketingAlgorithm;
+        marketingAlgorithm.setAlgorithmName(request.algorithmName());
+        marketingAlgorithm.setDeliveryDates(request.deliveryDates());
+        marketingAlgorithm.setExpirationDate(LocalDate.parse(request.expirationDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+        MessageModel model = modelRepository.findById(request.messageModelId())
+                .orElseThrow(() -> new RuntimeException("Message Model not found"));
+        marketingAlgorithm.setModel(model);
+
+        Set<Customer> customers = request.subscribedCustomerIds().stream()
+                .map(id -> customerRepository.findById(id).orElseThrow(() -> new RuntimeException("Customer not found")))
+                .collect(Collectors.toSet());
+        marketingAlgorithm.setSubscribedCustomers(customers);
+
+        marketingAlgorithmsRepository.save(marketingAlgorithm);
+        return marketingAlgorithmsRepository.findById(request.id())
+                .orElseThrow(() -> new RuntimeException("Algorithm not found"));
     }
+
 
     public MarketingAlgorithm deleteSetsAttributes(MarketingAlgorithmRequest request) {
         MarketingAlgorithm marketingAlgorithm = marketingAlgorithmsRepository.findById(request.id())
@@ -73,8 +81,10 @@ public class MarketingAlgorithmMapper implements Function<MarketingAlgorithmRequ
         for (String deliveryDate : request.deliveryDates()) {
             marketingAlgorithm.removeDeliveryDate(deliveryDate);
         }
+        marketingAlgorithmsRepository.save(marketingAlgorithm);
+        return marketingAlgorithmsRepository.findById(request.id())
+                .orElseThrow(() -> new RuntimeException("Algorithm not found"));
 
-        return marketingAlgorithm;
     }
 
 }

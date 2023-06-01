@@ -98,7 +98,7 @@ public class MarketingAlgorithmServiceTest {
         subscribedCustomerIds.add(customer.getId());
 
         MarketingAlgorithmRequest request = new MarketingAlgorithmRequest(
-                0L, "algorithm", "2024-05-30", deliveryDates, model.getId(), subscribedCustomerIds
+                0, "algorithm", "2024-05-30", deliveryDates, model.getId(), subscribedCustomerIds
         );
 
         MarketingAlgorithm algorithm = marketingAlgorithmService.createAlgorithm(request);
@@ -132,7 +132,7 @@ public class MarketingAlgorithmServiceTest {
 
 
         MarketingAlgorithmRequest deleteRequest = new MarketingAlgorithmRequest(
-                algorithm.getId(), "algorithm", "2024-05-30", new HashSet<>(), model.getId(), new HashSet<>()
+                algorithm.getId(), "algorithm", "2024-05-30", deliveryDates, model.getId(), subscribedCustomerIds
         );
 
         MarketingAlgorithm updatedAlgorithm = marketingAlgorithmService.deleteSetsAttributes(deleteRequest);
