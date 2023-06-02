@@ -35,7 +35,7 @@ public class CustomerCard {
     @JoinColumn
     private Card card;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     private List<Campaign> campaigns = new LinkedList<>();
 

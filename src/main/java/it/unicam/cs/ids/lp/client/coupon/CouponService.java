@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -98,8 +97,8 @@ public class CouponService {
      */
     public List<ProgramData> applyCoupon(long couponId, Set<Long> products) {
         CustomerCard customerCard = couponRepository.findById(couponId).orElseThrow().getCustomerCard();
-        Set<Product> productList = new HashSet<>(productRepository.findAllById(products));
-        CustomerOrder order = customerOrderMapper.apply(productList, customerCard.getCustomer());
+        List<Product> productList = productRepository.findAllById(products);
+        CustomerOrder order = customerOrderMapper.mapOrder(productList, customerCard.getCustomer());
         List<Coupon> coupons = couponRepository.findAllById(Set.of(couponId));
         coupons.stream()
                 .filter(coupon -> isCouponValid(coupon.getId()))

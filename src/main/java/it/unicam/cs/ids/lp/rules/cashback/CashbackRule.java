@@ -45,7 +45,11 @@ public class CashbackRule extends ReferralRule<Integer> {
 
     public ProgramData applyRule(CustomerOrder order, ProgramDataRepository programDataRepository) {
         Set<ProgramData> rules = programDataRepository.findByRule(this);
-        CashbackData cashbackData = (CashbackData) rules.stream().filter(programData -> programData.getCustomerCard().getCustomer().equals(order.getCustomer())).findFirst().orElseThrow();
+        CashbackData cashbackData = (CashbackData) rules.stream()
+                .filter(programData -> programData.getCustomerCard().getCustomer()
+                        .equals(order.getCustomer()))
+                .findFirst()
+                .orElseThrow();
         int value = seeBonus(order);
         cashbackData.setRemainingCashback(cashbackData.getRemainingCashback() + value);
         return cashbackData;

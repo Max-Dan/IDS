@@ -35,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
@@ -104,13 +103,13 @@ class CampaignServiceTest {
     void applyRules() {
         CampaignRequest campaignRequest = new CampaignRequest("", null);
         Campaign campaign = campaignService.createCampaign(activity.getId(), campaignRequest);
-        Set<Product> products = productRepository.findByActivity_Id(activity.getId());
+        List<Product> products = productRepository.findByActivity_Id(activity.getId());
         CashbackRuleRequest cashbackRequest = new CashbackRuleRequest(products.stream().map(Product::getId).collect(Collectors.toSet()), 5);
         cashbackRuleService.setCampaignCashback(activity.getId(), campaign.getId(), cashbackRequest);
 
         Customer customer = customerRepository.save(new Customer());
         CustomerOrder order =
-                customerOrderMapper.apply(products, customer);
+                customerOrderMapper.mapOrder(products, customer);
         customerOrderRepository.save(order);
         customerCardService.createCustomerCard(new CustomerCardRequest(customer.getId(), activity.getCard().getId(), false, ""));
         customerService.subscribeToCampaign(customer.getId(), campaign.getId());

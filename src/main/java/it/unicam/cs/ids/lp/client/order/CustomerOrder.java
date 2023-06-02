@@ -10,8 +10,8 @@ import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -32,7 +32,7 @@ public class CustomerOrder {
     @ManyToMany
     @JoinTable
     @ToString.Exclude
-    private Set<Product> products;
+    private List<Product> products;
 
     private LocalDate date;
 
