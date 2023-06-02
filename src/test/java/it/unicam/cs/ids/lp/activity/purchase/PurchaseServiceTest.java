@@ -80,7 +80,7 @@ class PurchaseServiceTest {
                 new CashbackRuleRequest(productRepository.findByActivity_Id(activity.getId()).stream().map(Product::getId).collect(Collectors.toSet()), 5));
 
         purchaseService.applyBonus(activity.getId(), customerCard.getId(),
-                productRepository.findByActivity_Id(activity.getId()).stream().map(Product::getId).collect(Collectors.toSet()));
+                productRepository.findByActivity_Id(activity.getId()).stream().map(Product::getId).toList());
 
         customerCard = customerCardRepository.findById(customerCard.getId()).orElseThrow();
         Assertions.assertFalse(customerCard.getProgramsData().isEmpty());

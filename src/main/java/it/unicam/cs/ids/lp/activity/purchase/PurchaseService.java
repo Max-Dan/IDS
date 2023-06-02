@@ -13,10 +13,8 @@ import it.unicam.cs.ids.lp.client.order.CustomerOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -30,9 +28,9 @@ public class PurchaseService {
 
     public List<String> checkBonus(long activityId,
                                    long customerCardId,
-                                   Set<Long> productIds) {
+                                   List<Long> productIds) {
         CustomerCard customerCard = checkValidity(activityId, customerCardId);
-        CustomerOrder order = customerOrderMapper.apply(new HashSet<>(productRepository.findAllById(productIds)),
+        CustomerOrder order = customerOrderMapper.mapOrder(productRepository.findAllById(productIds),
                 customerCard.getCustomer());
 
         return customerCard.getCampaigns()
@@ -45,9 +43,9 @@ public class PurchaseService {
 
     public List<ProgramData> applyBonus(long activityId,
                                         long customerCardId,
-                                        Set<Long> productIds) {
+                                        List<Long> productIds) {
         CustomerCard customerCard = checkValidity(activityId, customerCardId);
-        CustomerOrder order = customerOrderMapper.apply(new HashSet<>(productRepository.findAllById(productIds)),
+        CustomerOrder order = customerOrderMapper.mapOrder(productRepository.findAllById(productIds),
                 customerCard.getCustomer());
         customerOrderRepository.save(order);
 

@@ -90,7 +90,7 @@ class CouponServiceTest {
         CashbackRuleRequest cashbackRequest = new CashbackRuleRequest(Set.of(product.getId()), 5);
         cashbackRuleService.setCouponCashback(coupon.getId(), cashbackRequest);
 
-        CustomerOrder order = customerOrderMapper.apply(Set.of(product), customer);
+        CustomerOrder order = customerOrderMapper.mapOrder(List.of(product), customer);
 
         List<ProgramData> dataList = couponService.applyCoupon(coupon.getId(), order.getProducts().stream().map(Product::getId).collect(Collectors.toSet()));
 

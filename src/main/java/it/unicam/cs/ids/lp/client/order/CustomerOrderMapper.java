@@ -5,14 +5,12 @@ import it.unicam.cs.ids.lp.client.Customer;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Set;
-import java.util.function.BiFunction;
+import java.util.List;
 
 @Service
-public class CustomerOrderMapper implements BiFunction<Set<Product>, Customer, CustomerOrder> {
+public class CustomerOrderMapper {
 
-    @Override
-    public CustomerOrder apply(Set<Product> products, Customer customer) {
+    public CustomerOrder mapOrder(List<Product> products, Customer customer) {
         CustomerOrder order = new CustomerOrder();
         order.setCustomer(customer);
         order.setProducts(products);

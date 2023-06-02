@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
 import java.util.Set;
 
 @RunWith(SpringRunner.class)
@@ -35,7 +36,7 @@ class CashbackRuleTest {
         Product p2 = new Product();
         p2.setId(2L);
         p2.setPrice(600);
-        order.setProducts(Set.of(p1, p2));
+        order.setProducts(List.of(p1, p2));
         cashbackRule.setProducts(Set.of(p1, p2));
         int cashback = cashbackRule.seeBonus(order);
         Assertions.assertEquals(200 / 100 * 5 + 600 / 100 * 5, cashback);
@@ -53,7 +54,7 @@ class CashbackRuleTest {
         Product p3 = new Product();
         p3.setId(3L);
         p3.setPrice(1000);
-        order.setProducts(Set.of(p1, p2, p3));
+        order.setProducts(List.of(p1, p2, p3));
         cashbackRule.setCashbackRate(5);
         cashbackRule.setProducts(Set.of(p1, p2));
         int cashback = cashbackRule.seeBonus(order);

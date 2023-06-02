@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,16 +17,19 @@ public class PurchasesController {
     @GetMapping("/checkBonus/{customerCardId}")
     public ResponseEntity<List<String>> checkBonusFromCard(@PathVariable long activityId,
                                                            @PathVariable long customerCardId,
-                                                           @RequestBody Set<Long> productIds) {
-        List<String> strings = purchaseService.checkBonus(activityId, customerCardId, productIds);
+                                                           @RequestBody PurchaseProducts products) {
+        List<String> strings = purchaseService.checkBonus(activityId, customerCardId, products.productIds());
         return ResponseEntity.ok(strings);
     }
 
     @GetMapping("/applyBonus/{customerCardId}")
     public ResponseEntity<?> applyBonusFromCard(@PathVariable long activityId,
                                                 @PathVariable long customerCardId,
-                                                @RequestBody Set<Long> productIds) {
-        List<ProgramData> programData = purchaseService.applyBonus(activityId, customerCardId, productIds);
+                                                @RequestBody PurchaseProducts products) {
+        List<ProgramData> programData = purchaseService.applyBonus(activityId, customerCardId, products.productIds());
         return ResponseEntity.ok(programData);
+    }
+
+    private record PurchaseProducts(List<Long> productIds) {
     }
 }
