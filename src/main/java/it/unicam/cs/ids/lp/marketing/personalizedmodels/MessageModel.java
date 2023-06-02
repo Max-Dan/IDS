@@ -24,7 +24,7 @@ public class MessageModel {
 
     private String messageText;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn
     private Coupon coupon;
 

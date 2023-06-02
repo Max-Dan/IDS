@@ -33,15 +33,12 @@ public class MarketingAlgorithmServiceTest {
     private CustomerRepository customerRepository;
 
     @Autowired
-    private MarketingAlgorithmMapper marketingAlgorithmMapper;
-    @Autowired
     private CouponRepository couponRepository;
 
     @AfterEach
     public void cleanUp() {
         marketingAlgorithmsRepository.deleteAll();
         modelRepository.deleteAll();
-        customerRepository.deleteAll();
     }
 
     @Test
@@ -170,7 +167,4 @@ public class MarketingAlgorithmServiceTest {
 
         Assertions.assertDoesNotThrow(() -> marketingAlgorithmService.processAlgorithms());
     }
-
-
 }
-
