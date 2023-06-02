@@ -1,5 +1,6 @@
 package it.unicam.cs.ids.lp.activity.purchase;
 
+import it.unicam.cs.ids.lp.client.card.programs.ProgramData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +27,7 @@ public class PurchasesController {
     public ResponseEntity<?> applyBonusFromCard(@PathVariable long activityId,
                                                 @PathVariable long customerCardId,
                                                 @RequestBody Set<Long> productIds) {
-        List<String> strings = purchaseService.applyBonus(activityId, customerCardId, productIds);
-        strings.add("Bonus applicati");
-        return ResponseEntity.ok(strings);
+        List<ProgramData> programData = purchaseService.applyBonus(activityId, customerCardId, productIds);
+        return ResponseEntity.ok(programData);
     }
 }

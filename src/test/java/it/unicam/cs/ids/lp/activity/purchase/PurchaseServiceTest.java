@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.HashSet;
 import java.util.stream.Collectors;
 
 @SpringBootTest
@@ -78,10 +77,10 @@ class PurchaseServiceTest {
         customerService.subscribeToCampaign(customer.getId(), campaign.getId());
 
         cashbackRuleService.setCampaignCashback(activity.getId(), campaign.getId(),
-                new CashbackRuleRequest(new HashSet<>(productRepository.findByActivities_Id(activity.getId())), 5));
+                new CashbackRuleRequest(productRepository.findByActivity_Id(activity.getId()).stream().map(Product::getId).collect(Collectors.toSet()), 5));
 
         purchaseService.applyBonus(activity.getId(), customerCard.getId(),
-                productRepository.findByActivities_Id(activity.getId()).stream().map(Product::getId).collect(Collectors.toSet()));
+                productRepository.findByActivity_Id(activity.getId()).stream().map(Product::getId).collect(Collectors.toSet()));
 
         customerCard = customerCardRepository.findById(customerCard.getId()).orElseThrow();
         Assertions.assertFalse(customerCard.getProgramsData().isEmpty());

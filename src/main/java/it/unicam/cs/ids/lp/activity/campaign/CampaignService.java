@@ -4,6 +4,7 @@ import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
+import it.unicam.cs.ids.lp.client.card.programs.ProgramData;
 import it.unicam.cs.ids.lp.client.card.programs.ProgramDataMapper;
 import it.unicam.cs.ids.lp.client.card.programs.ProgramDataRepository;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
@@ -80,16 +81,18 @@ public class CampaignService {
      * @param campaignId id della campagna
      * @param activityId id dell'attività
      * @param order      ordine del cliente
+     * @return i programdata aggiornati
      */
-    public void applyRules(long campaignId, long activityId, CustomerOrder order) {
+    public List<ProgramData> applyRules(long campaignId, long activityId, CustomerOrder order) {
         checkValidCampaignForActivity(campaignId, activityId);
         CustomerCard customerCard = getCustomerCard(campaignId, order);
         createNotExistentProgramData(campaignId, customerCard);
-        campaignRepository.findById(campaignId).orElseThrow()
+        return campaignRepository.findById(campaignId).orElseThrow()
                 .getCampaignRules()
                 .stream()
                 .map(campaignRule -> campaignRule.getRule().applyRule(order, programDataRepository))
-                .forEach(programDataRepository::save);
+                .map(programDataRepository::save)
+                .toList();
     }
 
     /**

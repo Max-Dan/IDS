@@ -6,6 +6,7 @@ import it.unicam.cs.ids.lp.activity.campaign.CampaignService;
 import it.unicam.cs.ids.lp.activity.product.ProductRepository;
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
+import it.unicam.cs.ids.lp.client.card.programs.ProgramData;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import it.unicam.cs.ids.lp.client.order.CustomerOrderMapper;
 import it.unicam.cs.ids.lp.client.order.CustomerOrderRepository;
@@ -42,19 +43,19 @@ public class PurchaseService {
                 .toList();
     }
 
-    public List<String> applyBonus(long activityId,
-                                   long customerCardId,
-                                   Set<Long> productIds) {
+    public List<ProgramData> applyBonus(long activityId,
+                                        long customerCardId,
+                                        Set<Long> productIds) {
         CustomerCard customerCard = checkValidity(activityId, customerCardId);
         CustomerOrder order = customerOrderMapper.apply(new HashSet<>(productRepository.findAllById(productIds)),
                 customerCard.getCustomer());
         customerOrderRepository.save(order);
 
-        customerCard.getCampaigns()
+        return customerCard.getCampaigns()
                 .stream()
                 .filter(Campaign::isCurrentlyActive)
-                .forEach(campaign -> campaignService.applyRules(campaign.getId(), activityId, order));
-        return null;
+                .flatMap(campaign -> campaignService.applyRules(campaign.getId(), activityId, order).stream())
+                .toList();
     }
 
     private CustomerCard checkValidity(long activityId,
