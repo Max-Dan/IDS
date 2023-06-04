@@ -35,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
@@ -92,7 +91,7 @@ class CouponServiceTest {
 
         CustomerOrder order = customerOrderMapper.mapOrder(List.of(product), customer);
 
-        List<ProgramData> dataList = couponService.applyCoupon(coupon.getId(), order.getProducts().stream().map(Product::getId).collect(Collectors.toSet()));
+        List<ProgramData> dataList = couponService.applyCoupon(coupon.getId(), order.getProducts().stream().map(Product::getId).toList());
 
         Assertions.assertEquals(1, dataList.size());
         CashbackData cashbackData = (CashbackData) dataList.get(0);

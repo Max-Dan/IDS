@@ -2,6 +2,7 @@ package it.unicam.cs.ids.lp.client.coupon;
 
 import it.unicam.cs.ids.lp.activity.product.Product;
 import it.unicam.cs.ids.lp.activity.product.ProductRepository;
+import it.unicam.cs.ids.lp.activity.purchase.PurchaseService;
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
 import it.unicam.cs.ids.lp.client.card.programs.ProgramData;
@@ -28,6 +29,8 @@ public class CouponService {
     private final ProgramDataMapper programDataMapper;
     private final CustomerOrderMapper customerOrderMapper;
     private final ProductRepository productRepository;
+
+    private final PurchaseService purchaseService;
 
     /**
      * Restituisce il coupon posseduto da un cliente
@@ -95,7 +98,7 @@ public class CouponService {
      * @param products prodotti comprati dal cliente
      * @return i dati nuovi nella carta del cliente
      */
-    public List<ProgramData> applyCoupon(long couponId, Set<Long> products) {
+    public List<ProgramData> applyCoupon(long couponId, List<Long> products) {
         CustomerCard customerCard = couponRepository.findById(couponId).orElseThrow().getCustomerCard();
         List<Product> productList = productRepository.findAllById(products);
         CustomerOrder order = customerOrderMapper.mapOrder(productList, customerCard.getCustomer());
@@ -112,6 +115,7 @@ public class CouponService {
                 .map(rule -> rule.getRule().applyRule(order, programDataRepository))
                 .toList();
         couponRepository.deleteById(couponId);
+        purchaseService.applyBonus(productList.get(0).getActivity().getId(), customerCard.getId(), products);
         return dataList;
     }
 }
