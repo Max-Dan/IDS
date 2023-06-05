@@ -50,6 +50,6 @@ public class CouponController {
         return ResponseEntity.ok("");
     }
 
-    private record CouponApplier(Set<Long> products) {
+    private record CouponApplier(List<Long> products) {
     }
 }
