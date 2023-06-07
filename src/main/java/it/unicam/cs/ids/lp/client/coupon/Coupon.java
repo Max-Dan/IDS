@@ -33,7 +33,7 @@ public class Coupon {
     @ToString.Exclude
     private Set<CouponRule> couponRules = new HashSet<>();
 
-    private LocalDate end;
+    private LocalDate endDate;
 
     @Override
     public boolean equals(Object o) {

@@ -9,7 +9,7 @@ public class CouponMapper {
     public Coupon mapCoupon(CouponRequest couponRequest, CustomerCard customerCard) {
         Coupon coupon = new Coupon();
         coupon.setCustomerCard(customerCard);
-        coupon.setEnd(couponRequest.end());
+        coupon.setEndDate(couponRequest.endDate());
         return coupon;
     }
 }

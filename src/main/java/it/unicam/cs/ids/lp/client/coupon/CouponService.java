@@ -63,9 +63,9 @@ public class CouponService {
      */
     public boolean isCouponValid(long couponId) {
         return couponRepository.findById(couponId)
-                .map(coupon -> coupon.getEnd() == null
-                        || coupon.getEnd().isEqual(LocalDate.now())
-                        || coupon.getEnd().isBefore(LocalDate.now()))
+                .map(coupon -> coupon.getEndDate() == null
+                        || coupon.getEndDate().isEqual(LocalDate.now())
+                        || coupon.getEndDate().isBefore(LocalDate.now()))
                 .orElse(false);
     }
 
