@@ -6,10 +6,12 @@ import it.unicam.cs.ids.lp.activity.purchase.PurchaseService;
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
 import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
 import it.unicam.cs.ids.lp.client.card.programs.ProgramData;
-import it.unicam.cs.ids.lp.client.card.programs.ProgramDataMapper;
 import it.unicam.cs.ids.lp.client.card.programs.ProgramDataRepository;
+import it.unicam.cs.ids.lp.client.card.programs.ProgramDataService;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
 import it.unicam.cs.ids.lp.client.order.CustomerOrderMapper;
+import it.unicam.cs.ids.lp.rules.Rule;
+import it.unicam.cs.ids.lp.rules.platform_rules.coupon.CouponRule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,11 +28,10 @@ public class CouponService {
     private final CustomerCardRepository customerCardRepository;
     private final CouponMapper couponMapper;
     private final ProgramDataRepository programDataRepository;
-    private final ProgramDataMapper programDataMapper;
     private final CustomerOrderMapper customerOrderMapper;
     private final ProductRepository productRepository;
-
     private final PurchaseService purchaseService;
+    private final ProgramDataService programDataService;
 
     /**
      * Restituisce il coupon posseduto da un cliente
@@ -102,17 +103,16 @@ public class CouponService {
         CustomerCard customerCard = couponRepository.findById(couponId).orElseThrow().getCustomerCard();
         List<Product> productList = productRepository.findAllById(products);
         CustomerOrder order = customerOrderMapper.mapOrder(productList, customerCard.getCustomer());
-        List<Coupon> coupons = couponRepository.findAllById(Set.of(couponId));
-        coupons.stream()
+        List<? extends Rule<?>> couponRules = couponRepository.findAllById(Set.of(couponId))
+                .stream()
                 .filter(coupon -> isCouponValid(coupon.getId()))
                 .flatMap(coupon -> coupon.getCouponRules().stream())
-                .map(campaignRule -> programDataMapper.map(campaignRule.getRule(), customerCard))
-                .peek(programData -> customerCard.getProgramsData().add(programData))
-                .forEach(programDataRepository::save);
-        List<ProgramData> dataList = coupons.stream()
-                .filter(coupon -> isCouponValid(coupon.getId()))
-                .flatMap(coupon -> coupon.getCouponRules().stream())
-                .map(rule -> rule.getRule().applyRule(order, programDataRepository))
+                .map(CouponRule::getRule)
+                .toList();
+        programDataService.createNotExistentProgramData(couponRules, customerCard);
+
+        List<ProgramData> dataList = couponRules.stream()
+                .map(rule -> rule.applyRule(order, programDataRepository))
                 .toList();
         couponRepository.deleteById(couponId);
         purchaseService.applyBonus(productList.get(0).getActivity().getId(), customerCard.getId(), products);

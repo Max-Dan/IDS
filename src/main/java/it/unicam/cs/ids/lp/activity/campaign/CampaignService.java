@@ -3,11 +3,12 @@ package it.unicam.cs.ids.lp.activity.campaign;
 import it.unicam.cs.ids.lp.activity.card.Card;
 import it.unicam.cs.ids.lp.activity.card.CardRepository;
 import it.unicam.cs.ids.lp.client.card.CustomerCard;
-import it.unicam.cs.ids.lp.client.card.CustomerCardRepository;
 import it.unicam.cs.ids.lp.client.card.programs.ProgramData;
-import it.unicam.cs.ids.lp.client.card.programs.ProgramDataMapper;
 import it.unicam.cs.ids.lp.client.card.programs.ProgramDataRepository;
+import it.unicam.cs.ids.lp.client.card.programs.ProgramDataService;
 import it.unicam.cs.ids.lp.client.order.CustomerOrder;
+import it.unicam.cs.ids.lp.rules.Rule;
+import it.unicam.cs.ids.lp.rules.platform_rules.campaign.CampaignRule;
 import it.unicam.cs.ids.lp.rules.platform_rules.campaign.CampaignRuleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,7 @@ public class CampaignService {
     private final CampaignRepository campaignRepository;
     private final CampaignRuleRepository campaignRuleRepository;
     private final ProgramDataRepository programDataRepository;
-    private final ProgramDataMapper programDataMapper;
-    private final CustomerCardRepository customerCardRepository;
+    private final ProgramDataService programDataService;
 
     /**
      * Crea una campagna associata alla carta dell'attività
@@ -86,28 +86,17 @@ public class CampaignService {
     public List<ProgramData> applyRules(long campaignId, long activityId, CustomerOrder order) {
         checkValidCampaignForActivity(campaignId, activityId);
         CustomerCard customerCard = getCustomerCard(campaignId, order);
-        createNotExistentProgramData(campaignId, customerCard);
-        return campaignRepository.findById(campaignId).orElseThrow()
+        List<? extends Rule<?>> campaignRules = campaignRepository.findById(campaignId).orElseThrow()
                 .getCampaignRules()
                 .stream()
-                .map(campaignRule -> campaignRule.getRule().applyRule(order, programDataRepository))
+                .map(CampaignRule::getRule)
+                .toList();
+        programDataService.createNotExistentProgramData(campaignRules, customerCard);
+        return campaignRules
+                .stream()
+                .map(campaignRule -> campaignRule.applyRule(order, programDataRepository))
                 .map(programDataRepository::save)
                 .toList();
-    }
-
-    /**
-     * Se la carta del customer non ha ancora un programdata di una regola della campagna, la crea
-     *
-     * @param campaignId   id della campagna
-     * @param customerCard id del customer
-     */
-    private void createNotExistentProgramData(long campaignId, CustomerCard customerCard) {
-        campaignRepository.findById(campaignId).orElseThrow().getCampaignRules()
-                .stream()
-                .map(campaignRule -> programDataMapper.map(campaignRule.getRule(), customerCard))
-                .peek(programData -> customerCard.getProgramsData().add(programData))
-                .forEach(programDataRepository::save);
-        customerCardRepository.save(customerCard);
     }
 
     /**
